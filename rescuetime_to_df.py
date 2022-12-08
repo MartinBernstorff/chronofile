@@ -66,9 +66,9 @@ def get_events_containing_str(
     )
 
     # Get a list of unique titles that contain any element in the distracting_title list
-    distracting_titles = data[data["title"].str.contains("|".join(strs_to_match))][
-        "title"
-    ].unique()
+    distracting_titles = data[
+        data["title"].str.contains("|".join([s for s in strs_to_match]))
+    ]["title"].unique()
 
     # Get all rows with "Activity" in the "distracting_titles" list
     data = data[data["title"].isin(distracting_titles)]
@@ -98,30 +98,72 @@ def compute_end_time(data: pd.DataFrame) -> pd.DataFrame:
     return data
 
 
-def combine_events_with_same_title(data: pd.DataFrame) -> pd.DataFrame:
-    """
-    Combines any rows in a data frame where the distance between start_time and end_time is less than 1 minute.
+def combine_overlapping_rows(
+    df: pd.DataFrame,
+    start_col_name: str,
+    end_col_name: str,
+    group_by_col: str,
+    duration_col_name: str,
+    allowed_gap: pd.Timedelta,
+) -> pd.DataFrame:
+    """Combine rows with overlapping end and start times.
+
+    First group by group_by_col. Then, if a row's end time is the same or later than the next row's start time, combine the two rows.
 
     Args:
-        data (pd.DataFrame): The data frame to modify.
+        df (pd.DataFrame): The data frame to modify.
+        start_col_name (str): The name of the column containing the start time.
+        end_col_name (str): The name of the column containing the end time.
+        group_by_col (str): The name of the column to group by.
+        duration_col_name (str): The name of the column containing the duration.
+        allowed_gap (pd.Timedelta): The maximum allowed gap between the end of a row and the start of the next row.
 
     Returns:
         pd.DataFrame: The modified data frame.
     """
-    # Combine any rows where the distance between start_time and end_time is less than 1 minute
-    data = (
-        data.groupby(["title", pd.Grouper(key="start_time", freq="1min")])
-        .agg(
-            {
-                "duration": "sum",
-                "duration_seconds": "sum",
-                "end_time": "max",
-            }
-        )
-        .reset_index()
-    )
+    grouped_df = df.groupby(group_by_col)
+    df_elements = []
 
-    # Drop duration columns
-    data = data.drop(columns=["duration", "duration_seconds"])
+    for _, group_df in grouped_df:
 
-    return data
+        # Keep iterating until no more rows can be combined
+        while True:
+            if len(group_df) == 1:
+                break
+
+            n_before_combining = len(group_df)
+
+            group_df = group_df.reset_index(drop=True)
+
+            for index, row in group_df.iterrows():
+                if index == len(group_df) - 1:
+                    break
+
+                if (
+                    row[end_col_name]
+                    >= group_df.iloc[index + 1][start_col_name] - allowed_gap
+                ):
+                    group_df.at[index + 1, start_col_name] = group_df.iloc[index][
+                        start_col_name
+                    ]
+
+                    group_df.at[index + 1, duration_col_name] = (
+                        group_df.iloc[index][duration_col_name]
+                        + group_df.iloc[index + 1][duration_col_name]
+                    )
+
+                    # Set the drop column to True for the row that will be dropped
+                    group_df.at[index, "drop"] = True
+
+            if "drop" in group_df.columns:
+                group_df = group_df[group_df["drop"] != True]
+
+            if n_before_combining == len(group_df):
+                break
+
+        df_elements += [group_df.apply(lambda x: x).reset_index(drop=True)]
+
+    df = pd.concat(df_elements)
+    df["duration_seconds"] = df["duration"].dt.total_seconds()
+
+    return df
