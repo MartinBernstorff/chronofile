@@ -22,17 +22,26 @@ if __name__ == "__main__":
     events_of_interest = get_events_containing_str(
         data=data,
         strs_to_match=[
-            "Star realms",
-            "youtube",
-            "reddit",
-            "macrumors",
+            "dr.dk",
+            "facebook",
             "hey",
+            "HEY",
+            "linkedin",
+            "macrumors",
+            "reddit",
+            "Star realms",
             "twitter",
             "Visual",
+            "youtube",
         ],
     )
     events_of_interest = compute_end_time(data=events_of_interest)[
         ["start_time", "end_time", "title", "duration"]
+    ]
+
+    # Drop rows with duration less than 2 seconds
+    events_of_interest = events_of_interest[
+        events_of_interest["duration"] > pd.Timedelta("2 seconds")
     ]
 
     events_of_interest = combine_overlapping_rows(
@@ -41,10 +50,10 @@ if __name__ == "__main__":
         end_col_name="end_time",
         duration_col_name="duration",
         group_by_col="title",
-        allowed_gap=pd.Timedelta("5 minutes"),
+        allowed_gap=pd.Timedelta("4 minutes 55 seconds"),
     )
 
-    calendar = CalendarManager()
+    calendar = CalendarManager(color_code=True)
 
     calendar.sync_df_to_calendar(
         df=events_of_interest,
