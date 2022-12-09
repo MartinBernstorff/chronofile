@@ -39,7 +39,7 @@ class MinimalEvent(BaseModel):
 
 class CalendarManager:
     def __init__(self, color_code: bool = False):
-        self.calendar = GoogleCalendar("martinbernstorff@gmail.com")
+        self.calendar = GoogleCalendar("martinbernstorff@gmail.com", credentials_path='credentials/credentials.json')
         self.timezone = self.calendar.get_settings().timezone
         self.color_code = color_code
 

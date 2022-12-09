@@ -12,11 +12,14 @@ from rescuetime_to_df import (
 if __name__ == "__main__":
     log.info("Starting script")
 
+    # Get today as YYYY-MM-DD
+    today = pd.Timestamp.today().strftime("%Y-%m-%d")
+
     data = get_from_rescuetime(
         perspective="interval",
         resolution_time="minute",
-        restrict_begin="2022-12-08",
-        restrict_end="2022-12-08",
+        restrict_begin=today,
+        restrict_end=today,
     )
 
     events_of_interest = get_events_containing_str(
