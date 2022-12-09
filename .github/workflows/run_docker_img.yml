@@ -11,6 +11,11 @@ on:
 jobs:
   build-and-run-container:
     runs-on: ubuntu-latest
+
+    concurrency:
+      group: "${{ github.workflow }} - ${{ matrix.os }} @ ${{ github.ref }}"
+      cancel-in-progress: true
+
     steps:
       - uses: actions/checkout@v2
       - name: Restore Docker image cache
