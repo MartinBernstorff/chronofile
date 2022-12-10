@@ -55,6 +55,9 @@ if __name__ == "__main__":
         allowed_gap=pd.Timedelta("4 minutes 55 seconds"),
     )
 
+    # Sort events of interest by start time
+    events_of_interest = events_of_interest.sort_values(by="start_time")
+
     calendar = CalendarManager(color_code=True)
 
     calendar.sync_df_to_calendar(
