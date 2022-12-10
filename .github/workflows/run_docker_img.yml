@@ -3,7 +3,8 @@ name: Build and run Docker container from Dockerfile every hour
 on:
   schedule:
     # Run the workflow every hour
-    - cron: "*/30 9-23 * * *"
+    - cron: "*/30 9-22 * * *"
+    - cron: "55 23 * * *"
   push:
     branches:
       - main
