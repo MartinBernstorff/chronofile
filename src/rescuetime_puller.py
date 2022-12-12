@@ -72,8 +72,15 @@ class RescuetimePuller:
             pd.DataFrame: A data frame containing only rows with titles containing "youtube".
         """
         # Get a list of unique titles that contain any element in the distracting_title list
+        # Convert the title column to lowercase
+        data[self.title_col_name] = data[self.title_col_name].str.lower()
+
+        # Convert the list of strings to match to a regex pattern
+        regex_pattern = r"|".join([s.lower() for s in strs_to_match])
+
+        # Get the relevant titles
         distracting_titles = data[
-            data[self.title_col_name].str.contains("|".join([s for s in strs_to_match]))
+            data[self.title_col_name].str.contains(regex_pattern)
         ][self.title_col_name].unique()
 
         # Get all rows with "Activity" in the "distracting_titles" list
