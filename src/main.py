@@ -29,6 +29,7 @@ if __name__ == "__main__":
             "twitter",
             "Visual",
             "youtube",
+            "citrix",
         ],
         min_duration="5 seconds",
     )
