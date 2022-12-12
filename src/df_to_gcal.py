@@ -8,7 +8,7 @@ from gcsa.event import Event
 from gcsa.google_calendar import GoogleCalendar
 from pydantic import BaseModel
 
-from log import log
+from utils.log import log
 
 
 class MinimalEvent(BaseModel):
@@ -39,7 +39,10 @@ class MinimalEvent(BaseModel):
 
 class CalendarManager:
     def __init__(self, color_code: bool = False):
-        self.calendar = GoogleCalendar("martinbernstorff@gmail.com", credentials_path='credentials/credentials.json')
+        self.calendar = GoogleCalendar(
+            "martinbernstorff@gmail.com",
+            credentials_path="credentials/credentials.json",
+        )
         self.timezone = self.calendar.get_settings().timezone
         self.color_code = color_code
 
