@@ -9,6 +9,10 @@ API_KEY = "B6300jX6LJHN6RU0uhZCQfOJEMrn2RfLIY0bkT_z"
 if __name__ == "__main__":
     log.info("Starting script")
 
+    # One week ago as YYYY-MM-DD
+    one_week_ago_timestamp = pd.Timestamp.today() - pd.Timedelta(days=7)
+    one_week_ago_str = one_week_ago_timestamp.strftime("%Y-%m-%d")
+
     # Get today as YYYY-MM-DD
     today = pd.Timestamp.today().strftime("%Y-%m-%d")
 
