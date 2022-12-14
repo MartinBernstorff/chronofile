@@ -1,7 +1,7 @@
 import pandas as pd
 
 from df_to_gcal import CalendarManager
-from rescuetime_puller import RescuetimePuller
+from src.input_services.rescuetime import Rescuetime
 from utils.log import log
 
 API_KEY = "B6300jX6LJHN6RU0uhZCQfOJEMrn2RfLIY0bkT_z"
@@ -9,8 +9,8 @@ API_KEY = "B6300jX6LJHN6RU0uhZCQfOJEMrn2RfLIY0bkT_z"
 if __name__ == "__main__":
     log.info("Starting script")
 
-    rt_puller = RescuetimePuller(api_key=API_KEY)
-    rescuetime_df = rt_puller.pull(
+    rescuetime = Rescuetime(api_key=API_KEY)
+    rescuetime_df = rescuetime.pull(
         perspective="interval",
         resolution_time="minute",
         anchor_date=pd.Timestamp.today(),
