@@ -30,6 +30,10 @@ if __name__ == "__main__":
             "Visual",
             "youtube",
             "citrix",
+            "github",
+            "wandb.ai",
+            "logseq",
+            "mail",
         ],
         min_duration="5 seconds",
     )
