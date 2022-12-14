@@ -20,7 +20,7 @@ if __name__ == "__main__":
     rescuetime_df = rt_puller.pull(
         perspective="interval",
         resolution_time="minute",
-        restrict_begin=today,
+        restrict_begin=one_week_ago_str,
         restrict_end=today,
         titles_to_keep=[
             "calendar",
