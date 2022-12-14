@@ -184,8 +184,8 @@ class RescuetimePuller:
 
     def pull(
         self,
-        restrict_begin: Union[str, None] = None,
-        restrict_end: Union[str, None] = None,
+        anchor_date: pd.Timestamp,
+        lookbehind_distance: pd.Timedelta,
         perspective: Literal["interval"] = "interval",
         resolution_time: Literal["minute"] = "minute",
         titles_to_keep=List[str],
@@ -194,8 +194,8 @@ class RescuetimePuller:
         data = self._get_data(
             resolution_time=resolution_time,
             perspective=perspective,
-            restrict_begin=restrict_begin,
-            restrict_end=restrict_end,
+            restrict_begin=(anchor_date - lookbehind_distance).strftime("%Y-%m-%d"),
+            restrict_end=anchor_date.strftime("%Y-%m-%d"),
         )
 
         if titles_to_keep:
