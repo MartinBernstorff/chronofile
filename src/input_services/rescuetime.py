@@ -4,7 +4,7 @@ import pandas as pd
 import requests
 
 
-class RescuetimePuller:
+class Rescuetime:
     def __init__(self, api_key: str):
         self.api_key = api_key
         self.url = "https://www.rescuetime.com/anapi/data"
