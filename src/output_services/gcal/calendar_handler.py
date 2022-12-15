@@ -1,5 +1,6 @@
+"""Handles the calendar creation and event moving"""
 from datetime import datetime, timedelta
-from typing import Dict, List, Set
+from typing import List
 
 from gcsa.calendar import Calendar
 from gcsa.event import Event
@@ -9,27 +10,20 @@ from wasabi import Printer
 log = Printer(timestamp=True)
 
 
-class EventsToCalendarMapper:
+class CalendarHandler:
     def __init__(
         self,
         gcal_account: GoogleCalendar,
-        min_date: datetime,
         mapping_buffer: timedelta = timedelta(days=2),
     ):
         self.gcal_account = gcal_account
-        self.min_date_to_sync = min_date - mapping_buffer
-        self.events = list(
-            self.gcal_account.get_events(
-                self.min_date_to_sync, datetime.now(), order_by="updated"
-            )
-        )
 
-    def _find_calendars_in_events(self) -> List[str]:
+    def get_calendar_names_in_events(self, events: List[Event]) -> List[str]:
         # Keep only those who have no spaces in description
         return list(
             {
                 event.description
-                for event in self.events
+                for event in events
                 if event.description is not None and "Data: " in event.description
             }
         )
@@ -37,10 +31,10 @@ class EventsToCalendarMapper:
     def _find_calendars_in_g_account(self) -> List[Calendar]:
         return list(self.gcal_account.get_calendar_list())
 
-    def _create_missing_calendars(self) -> Dict[str, List[Event]]:
+    def create_missing_calendars(self, events: List[Event]):
         calendars_in_g_account = self._find_calendars_in_g_account()
         calendars_in_g_account_names = [c.summary for c in calendars_in_g_account]
-        calendars_in_events = self._find_calendars_in_events()
+        calendars_in_events = self.get_calendar_names_in_events(events=events)
 
         missing_calendar_names = [
             c for c in calendars_in_events if c not in calendars_in_g_account_names
@@ -52,23 +46,27 @@ class EventsToCalendarMapper:
         ]
 
         for calendar in missing_calendar_objects:
+            log.info(f"Creating calendar {calendar.summary} because it was missing")
             self.gcal_account.add_calendar(calendar)
 
-    def move_events_to_correct_calendar(self) -> Dict[str, List[Event]]:
-        self._create_missing_calendars()
-
-        events_to_move = [
-            e
-            for e in self.events
-            if e.description is not None and "Data: " in e.description
+    def get_calendars_in_events(self, events: List[Event]) -> List[Calendar]:
+        calendar_names = self.get_calendar_names_in_events(events=events)
+        return [
+            c
+            for c in self._find_calendars_in_g_account()
+            if c.summary in calendar_names
         ]
 
-        calendar_summary_to_id = {
-            c.summary: c.id for c in self._find_calendars_in_g_account()
-        }
+    def move_event_to_correct_calendar(self, event: Event):
+        if event.description is not None and "Data: " in event.description:
+            calendar_summary_to_id = {
+                c.summary: c.id for c in self._find_calendars_in_g_account()
+            }
 
-        for event in events_to_move:
             log.info(f"Moving event {event.summary} to calendar {event.description}")
+
             self.gcal_account.move_event(
                 event, destination_calendar_id=calendar_summary_to_id[event.description]
             )
+
+            log.info(f"Moved {event.summary} to calendar {event.description}")
