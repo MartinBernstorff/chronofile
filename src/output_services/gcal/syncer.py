@@ -12,33 +12,6 @@ from wasabi import Printer
 
 from utils.log import log
 
-
-class MinimalEvent(BaseModel):
-    title: str
-    start: datetime
-    end: datetime
-    timezone: str = "Europe/Copenhagen"
-
-    def __init__(self, **data) -> None:
-        super().__init__(**data)
-
-        # Convert all datetime.datetime objects to Timestamps without tzoffset
-        if self.start.tzinfo is not None:
-            self.start = pd.Timestamp(self.start).tz_convert(self.timezone)
-        else:
-            self.start = pd.Timestamp(self.start).tz_localize(self.timezone)
-
-        if self.end.tzinfo is not None:
-            self.end = pd.Timestamp(self.end).tz_convert(self.timezone)
-        else:
-            self.end = pd.Timestamp(self.end).tz_localize(self.timezone)
-
-    def to_gcsa_event(self) -> Event:
-        return Event(
-            title=self.title, start=self.start, end=self.end, summary=self.title
-        )
-
-
 log = Printer(timestamp=True)
 
 
