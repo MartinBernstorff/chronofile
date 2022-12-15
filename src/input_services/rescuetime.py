@@ -1,5 +1,6 @@
-from typing import List, Literal, Union
+from typing import Dict, List, Literal, Union
 
+import numpy as np
 import pandas as pd
 import requests
 
@@ -11,6 +12,7 @@ class Rescuetime:
         self.title_col_name: str = "title"
         self.start_col_name: str = "start_time"
         self.end_col_name: str = "end_time"
+        self.category_col_name: str = "category"
         self.duration_col_name: str = "duration_seconds"
 
     def _get_data(
@@ -182,13 +184,37 @@ class Rescuetime:
 
         return data
 
+    def _map_title_to_category(
+        self, data: pd.DataFrame, title_pattern_to_cateogory: Dict[str, str]
+    ) -> pd.DataFrame:
+        """Map titles to categories.
+
+        Assign the category of the first matching title pattern to each row.
+        Title matches are case insensitive. A match is found if the title contains the pattern.
+        """
+        for k in title_pattern_to_cateogory:
+            regex_pattern = k.lower()
+
+            matching_values = data[
+                data[self.title_col_name].str.contains(regex_pattern)
+            ][self.title_col_name].unique()
+
+            # Create a new column where you
+            # map the category to the matching values
+            data.loc[
+                data[self.title_col_name].isin(matching_values),
+                self.category_col_name,
+            ] = title_pattern_to_cateogory[k]
+
+        return data
+
     def pull(
         self,
         anchor_date: pd.Timestamp,
         lookbehind_distance: pd.Timedelta,
         perspective: Literal["interval"] = "interval",
         resolution_time: Literal["minute"] = "minute",
-        titles_to_keep=List[str],
+        titles_to_keep=Dict[str, str],
         min_duration: str = "0 seconds",
     ):
         data = self._get_data(
@@ -199,7 +225,11 @@ class Rescuetime:
         )
 
         if titles_to_keep:
-            data = self._filter_by_title(data=data, strs_to_match=titles_to_keep)
+            titles = [t for t in titles_to_keep]
+            data = self._filter_by_title(data=data, strs_to_match=titles)
+            data = self._map_title_to_category(
+                data=data, title_pattern_to_cateogory=titles_to_keep
+            )
 
         data = self._compute_end_time(data=data)
 
