@@ -68,6 +68,7 @@ class EventsToCalendarMapper:
         }
 
         for event in events_to_move:
+            log.info(f"Moving event {event.summary} to calendar {event.description}")
             self.gcal_account.move_event(
                 event, destination_calendar_id=calendar_summary_to_id[event.description]
             )

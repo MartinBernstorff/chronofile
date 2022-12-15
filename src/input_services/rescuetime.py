@@ -123,8 +123,7 @@ class Rescuetime:
             end_col_name (str): The name of the column containing the end time.
             group_by_col (str): The name of the column to group by.
             duration_col_name (str): The name of the column containing the duration.
-            allowed_gap (pd.Timedelta): The maximum allowed gap between the end of a row and the start of the next row.
-
+            allowed_gap (pd.Timedelta): The maximum allowed gap between the end of a row and the start of the next row. If gap is less than or equal to this value, the two rows will be combined.
         Returns:
             pd.DataFrame: The modified data frame.
         """
@@ -216,6 +215,7 @@ class Rescuetime:
         resolution_time: Literal["minute"] = "minute",
         titles_to_keep=Dict[str, str],
         min_duration: str = "0 seconds",
+        allowed_gap: str = "1 minutes",
     ):
         data = self._get_data(
             resolution_time=resolution_time,
@@ -236,7 +236,7 @@ class Rescuetime:
         data = self._combine_overlapping_rows(
             df=data,
             group_by_col="title",
-            allowed_gap=pd.Timedelta("5 minutes") - pd.Timedelta(min_duration),
+            allowed_gap=allowed_gap,
         )
 
         if min_duration:

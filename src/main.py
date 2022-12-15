@@ -24,7 +24,7 @@ if __name__ == "__main__":
             "github": "Programming",
             "hey": "Browsing",
             "linkedin": "Browsing",
-            "logseq": "Planning",
+            "logseq": "Programming",
             "mail": "Communicating",
             "macrumors": "Browsing",
             "reddit": "Browsing",
@@ -37,6 +37,7 @@ if __name__ == "__main__":
             "word": "Writing",
             "youtube": "Browsing",
         },
+        allowed_gap=pd.Timedelta("5 minutes") - pd.Timedelta("2 seconds"),
         min_duration="5 seconds",
     )
 
