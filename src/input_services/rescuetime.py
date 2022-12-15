@@ -250,5 +250,6 @@ class Rescuetime:
                 self.start_col_name,
                 self.end_col_name,
                 self.duration_col_name,
+                self.category_col_name,
             ]
         ].reset_index(drop=True)

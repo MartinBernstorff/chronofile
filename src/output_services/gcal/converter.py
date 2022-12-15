@@ -17,7 +17,7 @@ def df_to_gcsa_events(df: pd.DataFrame) -> List[Event]:
                 start=pd.Timestamp(row["start_time"], tz="Europe/Copenhagen"),
                 end=pd.Timestamp(row["end_time"], tz="Europe/Copenhagen"),
                 timezone="Europe/Copenhagen",
-                description=(row["category"]),
+                description=(f"Data: {row['category']}"),
             )
         )
 
