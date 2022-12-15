@@ -1,10 +1,7 @@
-# Overview
-RescuetimeConverter
+1. Get all calendars
 
-Dataframe
+2. Get calendars that are in events
 
-EventSplitter
+3. Create calendars if needed
 
-Gcal event
-
-CalendarSyncer
+4. Map events to calendars

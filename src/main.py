@@ -1,8 +1,9 @@
 import pandas as pd
 
 from input_services.rescuetime import Rescuetime
+from output_services.events_to_calendar_mapper import EventsToCalendarMapper
 from output_services.gcal.converter import df_to_gcsa_events
-from output_services.gcal.syncer import GcalSyncer
+from output_services.gcal.syncer import CalendarSyncer
 from utils.log import log
 
 API_KEY = "B6300jX6LJHN6RU0uhZCQfOJEMrn2RfLIY0bkT_z"
@@ -42,4 +43,7 @@ if __name__ == "__main__":
 
     events = df_to_gcsa_events(rescuetime_df)
 
-    calendar = GcalSyncer().sync_events_to_calendar(events)
+    mapper = EventsToCalendarMapper(events=events)
+    mapper._map_events_to_calendars()
+
+    calendar = CalendarSyncer().sync_events_to_calendar(events)

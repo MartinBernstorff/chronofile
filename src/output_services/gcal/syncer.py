@@ -15,7 +15,7 @@ from utils.log import log
 log = Printer(timestamp=True)
 
 
-class GcalSyncer:
+class CalendarSyncer:
     def __init__(self):
         self.calendar = GoogleCalendar(
             "martinbernstorff@gmail.com",
