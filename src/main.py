@@ -37,6 +37,7 @@ if __name__ == "__main__":
             "word": "Writing",
             "youtube": "Browsing",
             "obsidian": "Planning",
+            "pycharm": "Programming",
         },
         min_duration="5 seconds",
     )
