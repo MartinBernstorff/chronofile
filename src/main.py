@@ -36,6 +36,7 @@ if __name__ == "__main__":
             "wandb.ai": "Programming",
             "word": "Writing",
             "youtube": "Browsing",
+            "obsidian": "Planning",
         },
         min_duration="5 seconds",
     )
