@@ -109,7 +109,7 @@ class GcalSyncer:
             log.good(
                 f"Added event to calendar, {event_to_sync.start} - {event_to_sync.summary}"
             )
-            time.sleep(1)
+            time.sleep(5)
 
     def sync_events_to_calendar(
         self, events: List[Event]
