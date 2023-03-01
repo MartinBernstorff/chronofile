@@ -112,8 +112,11 @@ class GcalSyncer:
             time.sleep(5)
 
     def sync_events_to_calendar(
-        self, events: List[Event]
+        self, events: List[Event], do_not_sync: bool = False
     ) -> None:  # Add calendar arguments here
+        if do_not_sync:
+            return None
+        
         calendar = self.calendar
 
         min_date_in_events = min([event.start for event in events])

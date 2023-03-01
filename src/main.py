@@ -11,6 +11,7 @@ if __name__ == "__main__":
     log.info("Starting script")
 
     rescuetime = Rescuetime(api_key=API_KEY)
+    
     rescuetime_df = rescuetime.pull(
         perspective="interval",
         resolution_time="minute",
