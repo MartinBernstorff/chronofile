@@ -1,8 +1,31 @@
-from typing import Dict, List, Literal, Union
+from dataclasses import dataclass
+from enum import Enum
+from typing import Dict, List, Literal, Sequence, Union
 
-import numpy as np
 import pandas as pd
 import requests
+
+
+class RecordCategory(Enum):
+    BROWSING = "Browsing"
+    COMMUNICATING = "Communicating"
+    GAMING = "Gaming"
+    PROGRAMMING = "Programming"
+    MISC = "Misc"
+    PLANNING = "Planning"
+    READING = "Reading"
+    REFERENCE = "Reference"
+    SOUND = "Sound"
+    WRITING = "Writing"
+
+
+@dataclass(frozen=True)
+class RecordMetadata:
+    title_matcher: Sequence[
+        str
+    ]  # If a title has a substring matching any of these strings, it will have the metadata applied
+    prettified_title: str | None
+    category: RecordCategory
 
 
 class Rescuetime:
@@ -162,7 +185,7 @@ class Rescuetime:
                         group_df.at[index, "drop"] = True
 
                 if "drop" in group_df.columns:
-                    group_df = group_df[group_df["drop"] != True]
+                    group_df = group_df[group_df["drop"] != True]  # noqa: E712
 
                 if n_before_combining == len(group_df):
                     break
@@ -208,14 +231,53 @@ class Rescuetime:
 
         return data
 
+    def _apply_metadata(
+        self, row: pd.Series, metadata: Sequence[RecordMetadata]
+    ) -> pd.Series:
+        for record in metadata:
+            if any(
+                [title in row[self.title_col_name] for title in record.title_matcher]
+            ):
+                row[self.category_col_name] = record.category.value
+                row[self.title_col_name] = record.prettified_title
+                row[self.title_col_name] = (
+                    f"{self._category2emoji(record.category)} {row[self.title_col_name]} "
+                )
+
+        return row
+
+    def _category2emoji(self, category: RecordCategory) -> str:
+        match category:
+            case RecordCategory.MISC:
+                return " "
+            case RecordCategory.BROWSING:
+                return "🔥"
+            case RecordCategory.COMMUNICATING:
+                return "💬"
+            case RecordCategory.GAMING:
+                return "🎮"
+            case RecordCategory.PROGRAMMING:
+                return "🔨"
+            case RecordCategory.PLANNING:
+                return "🗺️"
+            case RecordCategory.SOUND:
+                return "🎵"
+            case RecordCategory.READING:
+                return "🫖"
+            case RecordCategory.REFERENCE:
+                return "📚"
+            case RecordCategory.WRITING:
+                return "📕"
+
     def pull(
         self,
         anchor_date: pd.Timestamp,
         lookbehind_distance: pd.Timedelta,
+        titles_to_keep: Sequence[str] | None,
         perspective: Literal["interval"] = "interval",
         resolution_time: Literal["minute"] = "minute",
-        titles_to_keep=Dict[str, str],
         min_duration: str = "0 seconds",
+        metadata: Sequence[RecordMetadata] | None = None,
     ):
         data = self._get_data(
             resolution_time=resolution_time,
@@ -227,12 +289,8 @@ class Rescuetime:
         if titles_to_keep:
             titles = [t for t in titles_to_keep]
             data = self._filter_by_title(data=data, strs_to_match=titles)
-            data = self._map_title_to_category(
-                data=data, title_pattern_to_cateogory=titles_to_keep
-            )
 
         data = self._compute_end_time(data=data)
-
         data = self._combine_overlapping_rows(
             df=data,
             group_by_col="title",
@@ -243,6 +301,11 @@ class Rescuetime:
             data = data[data[self.duration_col_name] > pd.Timedelta(min_duration)]
 
         data = data.sort_values(by="start_time")
+
+        if metadata:
+            data = data.apply(
+                lambda row: self._apply_metadata(row=row, metadata=metadata), axis=1
+            )
 
         return data[
             [
