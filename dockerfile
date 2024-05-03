@@ -6,5 +6,5 @@ USER appuser
 COPY requirements.txt .
 RUN --mount=type=cache,target=/root/.cache/pip pip install -r requirements.txt
 COPY . .
-RUN --mount=type=cache,target=/root/.cache/pip pip install -e .
+RUN pip install -e .
 CMD ["python", "src/rescuetime_to_gcal/main.py"]
