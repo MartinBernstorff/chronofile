@@ -129,6 +129,11 @@ if __name__ == "__main__":
                 prettified_title="Omnivore",
                 category=RecordCategory.READING,
             ),
+            RecordMetadata(
+                title_matcher=["twitter"],
+                prettified_title="Browsing",
+                category=RecordCategory.BROWSING,
+            ),
         ],
         min_duration="5 seconds",
     )
