@@ -3,11 +3,7 @@ RUN useradd --create-home appuser
 WORKDIR /home/appuser
 USER appuser
 
-# Copy the current directory contents into the container at /app
+COPY requirements.txt .
+RUN --mount=type=cache,target=/root/.cache/pip pip install -r requirements.txt
 COPY . .
-
-# Install any needed packages specified in requirements.txt
-RUN pip install -r requirements.txt
-
-# Run main.py when the container launches
-CMD ["python", "src/main.py"]
+CMD ["python", "main.py"]
