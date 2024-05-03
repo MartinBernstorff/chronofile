@@ -46,7 +46,7 @@ if __name__ == "__main__":
             ),
             RecordMetadata(
                 title_matcher=["github"],
-                prettified_title=None,
+                prettified_title="GitHub",
                 category=RecordCategory.PROGRAMMING,
             ),
             RecordMetadata(
@@ -70,11 +70,6 @@ if __name__ == "__main__":
                 category=RecordCategory.PLANNING,
             ),
             RecordMetadata(
-                title_matcher=["logseq"],
-                prettified_title="Planning",
-                category=RecordCategory.PLANNING,
-            ),
-            RecordMetadata(
                 title_matcher=["mail"],
                 prettified_title="Mail",
                 category=RecordCategory.COMMUNICATING,
@@ -86,7 +81,7 @@ if __name__ == "__main__":
             ),
             RecordMetadata(
                 title_matcher=["reddit"],
-                prettified_title="Browsing",
+                prettified_title="Reddit",
                 category=RecordCategory.BROWSING,
             ),
             RecordMetadata(
@@ -96,12 +91,12 @@ if __name__ == "__main__":
             ),
             RecordMetadata(
                 title_matcher=["star realms"],
-                prettified_title="Gaming",
+                prettified_title="Star Realms",
                 category=RecordCategory.GAMING,
             ),
             RecordMetadata(
                 title_matcher=["stackoverflow"],
-                prettified_title="Programming",
+                prettified_title="Stack Overflow",
                 category=RecordCategory.PROGRAMMING,
             ),
             RecordMetadata(
@@ -111,7 +106,7 @@ if __name__ == "__main__":
             ),
             RecordMetadata(
                 title_matcher=["Visual"],
-                prettified_title="Programming",
+                prettified_title="Visual Studio Code",
                 category=RecordCategory.PROGRAMMING,
             ),
             RecordMetadata(
@@ -131,11 +126,12 @@ if __name__ == "__main__":
             ),
             RecordMetadata(
                 title_matcher=["twitter"],
-                prettified_title="Browsing",
+                prettified_title="Twitter",
                 category=RecordCategory.BROWSING,
             ),
         ],
         min_duration="5 seconds",
+        allowed_gap_for_combining=pd.Timedelta("15 minutes"),
     )
 
     events = df_to_gcsa_events(rescuetime_df)

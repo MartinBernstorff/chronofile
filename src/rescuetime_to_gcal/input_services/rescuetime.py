@@ -277,6 +277,7 @@ class Rescuetime:
         perspective: Literal["interval"] = "interval",
         resolution_time: Literal["minute"] = "minute",
         min_duration: str = "0 seconds",
+        allowed_gap_for_combining: pd.Timedelta = pd.Timedelta("5 minutes"),
         metadata: Sequence[RecordMetadata] | None = None,
     ):
         data = self._get_data(
@@ -291,14 +292,15 @@ class Rescuetime:
             data = self._filter_by_title(data=data, strs_to_match=titles)
 
         data = self._compute_end_time(data=data)
-        data = self._combine_overlapping_rows(
-            df=data,
-            group_by_col="title",
-            allowed_gap=pd.Timedelta("5 minutes") - pd.Timedelta(min_duration),
-        )
 
         if min_duration:
             data = data[data[self.duration_col_name] > pd.Timedelta(min_duration)]
+
+        data = self._combine_overlapping_rows(
+            df=data,
+            group_by_col="title",
+            allowed_gap=allowed_gap_for_combining - pd.Timedelta(min_duration),
+        )
 
         data = data.sort_values(by="start_time")
 
