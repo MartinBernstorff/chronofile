@@ -1,13 +1,13 @@
 import pandas as pd
-from output_services.gcal.converter import df_to_gcsa_events
-from output_services.gcal.syncer import GcalSyncer
-from utils.log import log
 
 from rescuetime_to_gcal.input_services.rescuetime import (
     RecordCategory,
     RecordMetadata,
     Rescuetime,
 )
+from rescuetime_to_gcal.output_services.gcal.converter import df_to_gcsa_events
+from rescuetime_to_gcal.output_services.gcal.syncer import GcalSyncer
+from rescuetime_to_gcal.utils.log import log
 
 API_KEY = "B6300jX6LJHN6RU0uhZCQfOJEMrn2RfLIY0bkT_z"
 
@@ -21,7 +21,7 @@ if __name__ == "__main__":
         perspective="interval",
         resolution_time="minute",
         anchor_date=pd.Timestamp.today(),
-        lookbehind_distance=pd.Timedelta(hours=2),
+        lookbehind_distance=pd.Timedelta(days=2),
         titles_to_keep=None,
         metadata=[
             RecordMetadata(
