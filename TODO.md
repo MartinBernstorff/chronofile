@@ -1,5 +1,3 @@
-* Fix all linter errors
-
 * Refactorings
     * Move preprocessing out of RescueTime class into an iteration-based pipeline
 

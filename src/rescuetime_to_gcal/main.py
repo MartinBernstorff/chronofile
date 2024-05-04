@@ -133,7 +133,7 @@ if __name__ == "__main__":
             RecordMetadata(
                 title_matcher=["Word"],
                 prettified_title="Word",
-                category=RecordCategory.BROWSING,
+                category=RecordCategory.WRITING,
             ),
             RecordMetadata(
                 title_matcher=["Calendar"],
