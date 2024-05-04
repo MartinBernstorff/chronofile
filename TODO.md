@@ -15,3 +15,6 @@
 
 * CLI
     * Get credentials from environment variables 
+    * Remove credentials from
+        * Git repo (credentials folder)
+        * main.py (API_KEY)
