@@ -249,7 +249,8 @@ class Rescuetime:
                 ]
             ):
                 row[self.category_col_name] = record.category.value
-                row[self.title_col_name] = record.prettified_title
+                if record.prettified_title is not None:
+                    row[self.title_col_name] = record.prettified_title
                 row[self.title_col_name] = (
                     f"{self._category2emoji(record.category)} {row[self.title_col_name]} "
                 )
