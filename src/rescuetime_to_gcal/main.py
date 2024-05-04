@@ -29,6 +29,7 @@ if __name__ == "__main__":
             "system settings",
             "localhost",
             "finder",
+            "google",
         ],
         titles_to_keep=None,
         min_duration="5 seconds",
