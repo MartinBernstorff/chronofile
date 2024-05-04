@@ -129,6 +129,36 @@ if __name__ == "__main__":
                 prettified_title="Twitter",
                 category=RecordCategory.BROWSING,
             ),
+            RecordMetadata(
+                title_matcher=["Word"],
+                prettified_title="Word",
+                category=RecordCategory.BROWSING,
+            ),
+            RecordMetadata(
+                title_matcher=["Calendar"],
+                prettified_title="Calendar",
+                category=RecordCategory.PLANNING,
+            ),
+            RecordMetadata(
+                title_matcher=["Obsidian"],
+                prettified_title="Obsidian",
+                category=RecordCategory.WRITING,
+            ),
+            RecordMetadata(
+                title_matcher=["Docs"],
+                prettified_title=None,
+                category=RecordCategory.PROGRAMMING,
+            ),
+            RecordMetadata(
+                title_matcher=["Alacritty"],
+                prettified_title="Alacritty",
+                category=RecordCategory.PROGRAMMING,
+            ),
+            RecordMetadata(
+                title_matcher=["Orbstack"],
+                prettified_title="Orbstack",
+                category=RecordCategory.PROGRAMMING,
+            ),
         ],
         min_duration="5 seconds",
         allowed_gap_for_combining=pd.Timedelta("15 minutes"),
