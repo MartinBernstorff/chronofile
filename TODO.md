@@ -6,6 +6,8 @@
 
 * Timezone support
 
+* Remove use of pandas, instead use dataclasses
+
 * Window title support
     * E.g. which projects is open in VSCode
     * Can this be done with the rescuetime API?
