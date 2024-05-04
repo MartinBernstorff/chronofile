@@ -22,7 +22,7 @@ if __name__ == "__main__":
         resolution_time="minute",
         anchor_date=pd.Timestamp.today(),
         lookbehind_distance=pd.Timedelta(days=2),
-        titles_to_exclude=["newtab", "raycast"],
+        titles_to_exclude=["newtab", "raycast", "chrome"],
         titles_to_keep=None,
         min_duration="5 seconds",
         allowed_gap_for_combining=pd.Timedelta("15 minutes"),
@@ -43,11 +43,6 @@ if __name__ == "__main__":
                 category=RecordCategory.BROWSING,
             ),
             RecordMetadata(
-                title_matcher=["chrome"],
-                prettified_title="Chrome",
-                category=RecordCategory.BROWSING,
-            ),
-            RecordMetadata(
                 title_matcher=["github"],
                 prettified_title="GitHub",
                 category=RecordCategory.PROGRAMMING,
@@ -60,11 +55,6 @@ if __name__ == "__main__":
             RecordMetadata(
                 title_matcher=["linkedin"],
                 prettified_title="LinkedIn",
-                category=RecordCategory.BROWSING,
-            ),
-            RecordMetadata(
-                title_matcher=["google.com"],
-                prettified_title="Chrome",
                 category=RecordCategory.BROWSING,
             ),
             RecordMetadata(
