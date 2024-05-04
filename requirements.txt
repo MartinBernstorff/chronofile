@@ -1,4 +1,0 @@
-gcsa
-pandas
-wasabi
-pydantic

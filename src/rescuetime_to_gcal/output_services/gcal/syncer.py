@@ -1,17 +1,12 @@
 import time
 from datetime import datetime
-from re import S
-from turtle import color
-from typing import Dict, List
+from typing import List
 
 import pandas as pd
-from gcsa.calendar import Calendar
 from gcsa.event import Event
 from gcsa.google_calendar import GoogleCalendar
 from pydantic import BaseModel
-from wasabi import Printer
-
-from utils.log import log
+from rescuetime_to_gcal.utils.log import log
 
 
 class MinimalEvent(BaseModel):
@@ -40,22 +35,20 @@ class MinimalEvent(BaseModel):
         )
 
 
-log = Printer(timestamp=True)
-
-
 class GcalSyncer:
     def __init__(self):
-        self.calendar = GoogleCalendar(
+        self.calendar: GoogleCalendar = GoogleCalendar(
             "martinbernstorff@gmail.com",
             credentials_path="credentials/credentials.json",
-        )
+        )  # type: ignore
 
         self.timezone = self.calendar.get_settings().timezone
 
     def _deduplicate_events(
-        self, events: List[Event], calendar: Calendar, events_in_calendar: List[Event]
+        self,
+        events: List[Event],
+        events_in_calendar: List[Event],
     ) -> List[Event]:
-
         # Filter out events that are in the calendar, based on the start, end and summary attributes
         events_to_sync = [
             event
@@ -73,7 +66,10 @@ class GcalSyncer:
         return events_to_sync
 
     def _update_event_if_exists(
-        self, event_to_sync: Event, events_in_calendar: List[Event], calendar: Calendar
+        self,
+        event_to_sync: Event,
+        events_in_calendar: List[Event],
+        calendar: GoogleCalendar,
     ) -> bool:
         # Check if event exists in calendar based on summary and start time
         event_matches = [
@@ -95,7 +91,10 @@ class GcalSyncer:
         return True
 
     def _sync_event(
-        self, event_to_sync: Event, events_in_calendar: List[Event], calendar: Calendar
+        self,
+        event_to_sync: Event,
+        events_in_calendar: List[Event],
+        calendar: GoogleCalendar,
     ):
         event_updated = self._update_event_if_exists(
             event_to_sync=event_to_sync,
@@ -116,13 +115,11 @@ class GcalSyncer:
     ) -> None:  # Add calendar arguments here
         if do_not_sync:
             return None
-        
-        calendar = self.calendar
 
         min_date_in_events = min([event.start for event in events])
 
         events_in_calendar = list(
-            calendar.get_events(
+            self.calendar.get_events(
                 min_date_in_events,
                 datetime.today(),
                 order_by="updated",
@@ -131,7 +128,7 @@ class GcalSyncer:
         )
         # Deduplicate events
         dedup_events_to_sync = self._deduplicate_events(
-            events=events, calendar=calendar, events_in_calendar=events_in_calendar
+            events=events, events_in_calendar=events_in_calendar
         )
 
         # Update events if already exists with identical start time
@@ -139,5 +136,5 @@ class GcalSyncer:
             self._sync_event(
                 event_to_sync=event,
                 events_in_calendar=events_in_calendar,
-                calendar=calendar,
+                calendar=self.calendar,
             )

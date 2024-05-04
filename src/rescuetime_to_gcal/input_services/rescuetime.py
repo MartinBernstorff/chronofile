@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from enum import Enum
-from typing import Dict, List, Literal, Sequence, Union
+from typing import Dict, Literal, Sequence, Union
 
 import pandas as pd
 import requests
@@ -85,7 +85,10 @@ class Rescuetime:
         return output_df
 
     def _filter_by_title(
-        self, data: pd.DataFrame, strs_to_match: List[str]
+        self,
+        data: pd.DataFrame,
+        strs_to_match: Sequence[str],
+        mode: Literal["include", "exclude"],
     ) -> pd.DataFrame:
         """
         Gets all rows in a data frame that have a title containing "youtube".
@@ -96,8 +99,6 @@ class Rescuetime:
         Returns:
             pd.DataFrame: A data frame containing only rows with titles containing "youtube".
         """
-        # Get a list of unique titles that contain any element in the distracting_title list
-        # Convert the title column to lowercase
         data[self.title_col_name] = data[self.title_col_name].str.lower()
 
         # Convert the list of strings to match to a regex pattern
@@ -108,8 +109,14 @@ class Rescuetime:
             data[self.title_col_name].str.contains(regex_pattern)
         ][self.title_col_name].unique()
 
+        matching = data[self.title_col_name].isin(distracting_titles)
+        match mode:
+            case "include":
+                data = data[matching]
+            case "exclude":
+                data = data[~matching]
+
         # Get all rows with "Activity" in the "distracting_titles" list
-        data = data[data[self.title_col_name].isin(distracting_titles)]
 
         return data
 
@@ -170,15 +177,15 @@ class Rescuetime:
 
                     if (
                         row[self.end_col_name]
-                        >= group_df.iloc[index + 1][self.start_col_name] - allowed_gap
+                        >= group_df.iloc[index + 1][self.start_col_name] - allowed_gap  # type: ignore
                     ):
-                        group_df.at[index + 1, self.start_col_name] = group_df.iloc[
+                        group_df.at[index + 1, self.start_col_name] = group_df.iloc[  # type: ignore
                             index
                         ][self.start_col_name]
 
-                        group_df.at[index + 1, self.duration_col_name] = (
-                            group_df.iloc[index][self.duration_col_name]
-                            + group_df.iloc[index + 1][self.duration_col_name]
+                        group_df.at[index + 1, self.duration_col_name] = (  # type: ignore
+                            group_df.iloc[index][self.duration_col_name]  # type: ignore
+                            + group_df.iloc[index + 1][self.duration_col_name]  # type: ignore
                         )
 
                         # Set the drop column to True for the row that will be dropped
@@ -277,6 +284,7 @@ class Rescuetime:
         anchor_date: pd.Timestamp,
         lookbehind_distance: pd.Timedelta,
         titles_to_keep: Sequence[str] | None,
+        titles_to_exclude: Sequence[str] | None,
         perspective: Literal["interval"] = "interval",
         resolution_time: Literal["minute"] = "minute",
         min_duration: str = "0 seconds",
@@ -290,9 +298,15 @@ class Rescuetime:
             restrict_end=anchor_date.strftime("%Y-%m-%d"),
         )
 
+        if titles_to_exclude:
+            data = self._filter_by_title(
+                data=data, strs_to_match=titles_to_exclude, mode="exclude"
+            )
+
         if titles_to_keep:
-            titles = [t for t in titles_to_keep]
-            data = self._filter_by_title(data=data, strs_to_match=titles)
+            data = self._filter_by_title(
+                data=data, strs_to_match=titles_to_keep, mode="include"
+            )
 
         data = self._compute_end_time(data=data)
 

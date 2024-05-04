@@ -1,7 +1,9 @@
 FROM python:3.12
 
-COPY requirements.txt .
-RUN --mount=type=cache,target=/root/.cache/pip pip install -r requirements.txt
+RUN pip install uv
+COPY requirements.lock pyproject.toml README.md ./
+RUN uv venv
+RUN uv pip install .
 COPY . .
-RUN pip install -e .
+RUN uv pip install .
 CMD ["python", "src/rescuetime_to_gcal/main.py"]

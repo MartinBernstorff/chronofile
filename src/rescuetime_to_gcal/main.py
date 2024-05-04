@@ -22,6 +22,7 @@ if __name__ == "__main__":
         resolution_time="minute",
         anchor_date=pd.Timestamp.today(),
         lookbehind_distance=pd.Timedelta(days=2),
+        titles_to_exclude=["newtab", "raycast"],
         titles_to_keep=None,
         metadata=[
             RecordMetadata(
