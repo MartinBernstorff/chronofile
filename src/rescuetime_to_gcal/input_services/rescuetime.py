@@ -236,7 +236,10 @@ class Rescuetime:
     ) -> pd.Series:
         for record in metadata:
             if any(
-                [title in row[self.title_col_name] for title in record.title_matcher]
+                [
+                    title.lower() in row[self.title_col_name].lower()
+                    for title in record.title_matcher
+                ]
             ):
                 row[self.category_col_name] = record.category.value
                 row[self.title_col_name] = record.prettified_title
