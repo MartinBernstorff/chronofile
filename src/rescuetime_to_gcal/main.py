@@ -36,6 +36,11 @@ if __name__ == "__main__":
         allowed_gap_for_combining=pd.Timedelta("15 minutes"),
         metadata=[
             RecordMetadata(
+                title_matcher=["skim"],
+                prettified_title="Skim",
+                category=RecordCategory.READING,
+            ),
+            RecordMetadata(
                 title_matcher=["dr.dk"],
                 prettified_title="DR",
                 category=RecordCategory.BROWSING,
