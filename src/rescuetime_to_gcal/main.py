@@ -46,6 +46,11 @@ if __name__ == "__main__":
                 category=RecordCategory.PLANNING,
             ),
             RecordMetadata(
+                title_matcher=["2718"],
+                prettified_title="Marimo",
+                category=RecordCategory.PROGRAMMING,
+            ),
+            RecordMetadata(
                 title_matcher=["skim"],
                 prettified_title="Skim",
                 category=RecordCategory.READING,
