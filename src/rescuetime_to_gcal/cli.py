@@ -5,9 +5,9 @@ import coloredlogs
 import pandas as pd
 import typer
 
+from rescuetime_to_gcal import gcal
 from rescuetime_to_gcal.config import config as cfg
-from rescuetime_to_gcal.gcal.auth import get_refresh_token
-from rescuetime_to_gcal.gcal.client import GcalSyncer
+from rescuetime_to_gcal.gcal.auth import print_refresh_token
 from rescuetime_to_gcal.gcal.converter import df_to_gcsa_events
 from rescuetime_to_gcal.rescuetime import Rescuetime
 
@@ -31,17 +31,14 @@ def auth(
         typer.Argument(envvar="GCAL_CLIENT_SECRET"),
     ],
 ):
-    get_refresh_token(gcal_client_id, gcal_client_secret)
+    logging.info("Getting refresh token")
+    print_refresh_token(gcal_client_id, gcal_client_secret)
 
 
 @app.command(name="sync")
 def cli(
     rescuetime_api_key: Annotated[str, typer.Argument(envvar="RESCUETIME_API_KEY")],
     gcal_email: Annotated[str, typer.Argument(envvar="GCAL_EMAIL")],
-    gcal_project_id: Annotated[
-        str,
-        typer.Argument(envvar="GCAL_PROJECT_ID"),
-    ],
     gcal_client_id: Annotated[
         str,
         typer.Argument(envvar="GCAL_CLIENT_ID"),
@@ -55,7 +52,7 @@ def cli(
         typer.Argument(envvar="GCAL_REFRESH_TOKEN"),
     ],
 ):
-    logging.info("Starting script")
+    logging.info("Starting sync")
     rescuetime_data = Rescuetime(api_key=rescuetime_api_key).pull(
         anchor_date=pd.Timestamp.today(),
         lookbehind_distance=cfg.sync_window,
@@ -68,13 +65,13 @@ def cli(
     events = df_to_gcsa_events(rescuetime_data)
 
     logging.info("Syncing events to calendar")
-    GcalSyncer(
+    gcal.sync(
+        events=events,
         email=gcal_email,
         client_id=gcal_client_id,
-        project_id=gcal_project_id,
         client_secret=gcal_client_secret,
         refresh_token=gcal_refresh_token,
-    ).sync_events_to_calendar(events)
+    )
 
     logging.info(f"Sync complete, synced {len(events)} events")
 
