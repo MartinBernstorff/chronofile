@@ -2,10 +2,11 @@ import json
 
 from oauthlib.oauth2 import WebApplicationClient
 from requests_oauthlib import OAuth2Session
+
 from rescuetime_to_gcal.constants import required_scopes
 
 
-def get_refresh_token(client_id: str, client_secret: str):
+def print_refresh_token(client_id: str, client_secret: str):
     client = WebApplicationClient(client_id)
     session = OAuth2Session(
         client=client,
