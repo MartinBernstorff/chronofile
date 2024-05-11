@@ -33,4 +33,4 @@ jobs:
       - name: Run Docker container
         shell: bash
         run: |
-          docker run rescuetime-to-gcal:latest r2s "${{ secrets.RESCUETIME_API_KEY }}" "${{ secrets.GCAL_EMAIL }}" "${{ secrets.GCAL_PROJECT_ID }}" "${{ secrets.GCAL_CLIENT_ID }}" "${{ secrets.GCAL_CLIENT_SECRET }}" "${{ secrets.GCAL_REFRESH_TOKEN }}"
+          docker run rescuetime-to-gcal:latest r2s sync "${{ secrets.RESCUETIME_API_KEY }}" "${{ secrets.GCAL_EMAIL }}" "${{ secrets.GCAL_PROJECT_ID }}" "${{ secrets.GCAL_CLIENT_ID }}" "${{ secrets.GCAL_CLIENT_SECRET }}" "${{ secrets.GCAL_REFRESH_TOKEN }}"
