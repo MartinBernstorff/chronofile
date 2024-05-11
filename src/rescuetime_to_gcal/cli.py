@@ -66,11 +66,11 @@ def cli(
 
     logging.info("Syncing events to calendar")
     gcal.sync(
+        events=events,
         email=gcal_email,
         client_id=gcal_client_id,
         client_secret=gcal_client_secret,
         refresh_token=gcal_refresh_token,
-        events=events,
     )
 
     logging.info(f"Sync complete, synced {len(events)} events")
