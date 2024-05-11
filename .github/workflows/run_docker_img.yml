@@ -24,9 +24,9 @@ jobs:
         uses: actions/cache@v2
         with:
           path: /home/runner/.docker
-          key: ${{ runner.os }}-docker-${{ hashFiles('**/Dockerfile') }}
+          key: ${{ runner.os }}-docker-${{ hashFiles('dockerfile') }}
           restore-keys: |
-            ${{ runner.os }}-docker-
+            ${{ runner.os }}-docker-${{ hashFiles('dockerfile') }}
       - name: Build Docker container image
         shell: bash
         run: docker build -t rescuetime-to-gcal:latest .
