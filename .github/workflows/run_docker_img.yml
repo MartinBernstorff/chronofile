@@ -24,12 +24,13 @@ jobs:
         uses: actions/cache@v2
         with:
           path: /home/runner/.docker
-          key: ${{ runner.os }}-docker-${{ hashFiles('**/Dockerfile') }}
+          key: ${{ runner.os }}-docker-${{ hashFiles('dockerfile') }}
           restore-keys: |
-            ${{ runner.os }}-docker-
+            ${{ runner.os }}-docker-${{ hashFiles('dockerfile') }}
       - name: Build Docker container image
         shell: bash
-        run: docker build -t docker-action-test .
+        run: docker build -t rescuetime-to-gcal:latest .
       - name: Run Docker container
         shell: bash
-        run: docker run docker-action-test
+        run: |
+          docker run rescuetime-to-gcal:latest r2s "${{ secrets.RESCUETIME_API_KEY }}" "${{ secrets.GCAL_EMAIL }}" "${{ secrets.GCAL_PROJECT_ID }}" "${{ secrets.GCAL_CLIENT_ID }}" "${{ secrets.GCAL_CLIENT_SECRET }}"

@@ -2,17 +2,17 @@
 name = "rescuetime-to-gcal"
 version = "0.1.0"
 description = "Add your description here"
-authors = [
-    { name = "Martin Bernstorff", email = "martinbernstorff@gmail.com" }
-]
+authors = [{ name = "Martin Bernstorff", email = "martinbernstorff@gmail.com" }]
 dependencies = [
     "gcsa>=2.2.0",
     "pandas>=2.2.2",
     "pydantic>=2.7.1",
     "wasabi>=1.1.2",
+    "typer>=0.12.3",
+    "coloredlogs>=15.0.1",
 ]
 readme = "README.md"
-requires-python = ">= 3.8"
+requires-python = ">= 3.10"
 
 [build-system]
 requires = ["hatchling"]
@@ -27,3 +27,6 @@ allow-direct-references = true
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/rescuetime_to_gcal"]
+
+[project.scripts]
+r2s = "rescuetime_to_gcal.cli:app"

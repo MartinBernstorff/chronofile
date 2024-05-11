@@ -1,31 +1,10 @@
-from dataclasses import dataclass
-from enum import Enum
 from typing import Dict, Literal, Sequence, Union
 
 import pandas as pd
 import requests
 
-
-class RecordCategory(Enum):
-    BROWSING = "Browsing"
-    COMMUNICATING = "Communicating"
-    GAMING = "Gaming"
-    PROGRAMMING = "Programming"
-    MISC = "Misc"
-    PLANNING = "Planning"
-    READING = "Reading"
-    REFERENCE = "Reference"
-    SOUND = "Sound"
-    WRITING = "Writing"
-
-
-@dataclass(frozen=True)
-class RecordMetadata:
-    title_matcher: Sequence[
-        str
-    ]  # If a title has a substring matching any of these strings, it will have the metadata applied
-    prettified_title: str | None
-    category: RecordCategory
+from rescuetime_to_gcal.config import RecordCategory, RecordMetadata
+from rescuetime_to_gcal.config import config as cfg
 
 
 class Rescuetime:
@@ -37,6 +16,7 @@ class Rescuetime:
         self.end_col_name: str = "end_time"
         self.category_col_name: str = "category"
         self.duration_col_name: str = "duration_seconds"
+        self.category2emoji: dict[RecordCategory, str] = cfg.category2emoji
 
     def _get_data(
         self,
@@ -258,27 +238,7 @@ class Rescuetime:
         return row
 
     def _category2emoji(self, category: RecordCategory) -> str:
-        match category:
-            case RecordCategory.MISC:
-                return " "
-            case RecordCategory.BROWSING:
-                return "🔥"
-            case RecordCategory.COMMUNICATING:
-                return "💬"
-            case RecordCategory.GAMING:
-                return "🎮"
-            case RecordCategory.PROGRAMMING:
-                return "🔨"
-            case RecordCategory.PLANNING:
-                return "🗺️"
-            case RecordCategory.SOUND:
-                return "🎵"
-            case RecordCategory.READING:
-                return "🫖"
-            case RecordCategory.REFERENCE:
-                return "📚"
-            case RecordCategory.WRITING:
-                return "📕"
+        return self.category2emoji[category]
 
     def pull(
         self,

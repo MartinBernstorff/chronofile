@@ -7,4 +7,3 @@ COPY requirements.lock pyproject.toml README.md ./
 RUN uv pip install -r requirements.lock
 COPY . ./
 RUN uv pip install .
-CMD ["python", "src/rescuetime_to_gcal/main.py"]
