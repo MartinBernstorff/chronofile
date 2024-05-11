@@ -1,5 +1,8 @@
+import json
 import time
+from dataclasses import dataclass
 from datetime import datetime
+from pathlib import Path
 from typing import List
 
 import pandas as pd
@@ -35,11 +38,32 @@ class MinimalEvent(BaseModel):
         )
 
 
+@dataclass
 class GcalSyncer:
-    def __init__(self):
+    gcal_email: str
+    gcal_client_id: str
+    gcal_project_id: str
+    gcal_client_secret: str
+
+    def __post_init__(self):
+        credentials = {
+            "installed": {
+                "client_id": self.gcal_client_id,
+                "project_id": self.gcal_project_id,
+                "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+                "token_uri": "https://oauth2.googleapis.com/token",
+                "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+                "client_secret": self.gcal_client_secret,
+                "redirect_uris": ["http://localhost"],
+            }
+        }
+
+        credentials_path = Path(__file__).parent.parent / "credentials.json"
+        credentials_path.write_text(json.dumps(credentials))
+
         self.calendar: GoogleCalendar = GoogleCalendar(
-            "martinbernstorff@gmail.com",
-            credentials_path="credentials/credentials.json",
+            self.gcal_email,
+            credentials_path=str(credentials_path),
         )  # type: ignore
 
         self.timezone = self.calendar.get_settings().timezone

@@ -33,3 +33,5 @@ jobs:
       - name: Run Docker container
         shell: bash
         run: docker run docker-action-test
+        # TODO: Run the CLI script here
+        # TODO: Ensure relevant secrets are loaded in Docker/Github Actions environment
