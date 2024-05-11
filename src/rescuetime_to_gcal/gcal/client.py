@@ -1,3 +1,4 @@
+import logging
 import time
 from dataclasses import dataclass
 from datetime import datetime
@@ -8,8 +9,8 @@ from gcsa.event import Event
 from gcsa.google_calendar import GoogleCalendar
 from google.oauth2.credentials import Credentials
 from pydantic import BaseModel
-from rescuetime_to_gcal.base_config import required_scopes
-from rescuetime_to_gcal.utils.log import log
+
+from rescuetime_to_gcal.constants import required_scopes
 
 
 class MinimalEvent(BaseModel):
@@ -100,7 +101,7 @@ class GcalSyncer:
         matched_event = event_matches[0]
         event_matches[0].end = event_to_sync.end
         calendar.update_event(matched_event)
-        log.good(
+        logging.info(
             f"Updated event in calendar, {matched_event.start} - {matched_event.summary}"
         )
         return True
@@ -120,7 +121,7 @@ class GcalSyncer:
         if not event_updated:
             # Add event to calendar
             calendar.add_event(event_to_sync)
-            log.good(
+            logging.info(
                 f"Added event to calendar, {event_to_sync.start} - {event_to_sync.summary}"
             )
             time.sleep(5)
