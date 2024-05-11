@@ -6,10 +6,10 @@ import pandas as pd
 import typer
 
 from rescuetime_to_gcal.config import config as cfg
-from rescuetime_to_gcal.input_services.rescuetime import Rescuetime
-from rescuetime_to_gcal.output_services.auth import get_refresh_token
-from rescuetime_to_gcal.output_services.gcal.converter import df_to_gcsa_events
-from rescuetime_to_gcal.output_services.gcal.syncer import GcalSyncer
+from rescuetime_to_gcal.gcal.auth import get_refresh_token
+from rescuetime_to_gcal.gcal.client import GcalSyncer
+from rescuetime_to_gcal.gcal.converter import df_to_gcsa_events
+from rescuetime_to_gcal.rescuetime import Rescuetime
 
 log = coloredlogs.install(  # type: ignore
     level="INFO",
