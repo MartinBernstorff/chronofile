@@ -7,6 +7,7 @@ import typer
 
 from rescuetime_to_gcal.config import config as cfg
 from rescuetime_to_gcal.input_services.rescuetime import Rescuetime
+from rescuetime_to_gcal.output_services.auth import get_refresh_token
 from rescuetime_to_gcal.output_services.gcal.converter import df_to_gcsa_events
 from rescuetime_to_gcal.output_services.gcal.syncer import GcalSyncer
 
@@ -19,7 +20,21 @@ log = coloredlogs.install(  # type: ignore
 app = typer.Typer()
 
 
-@app.command()
+@app.command(name="auth")
+def auth(
+    gcal_client_id: Annotated[
+        str,
+        typer.Argument(envvar="GCAL_CLIENT_ID"),
+    ],
+    gcal_client_secret: Annotated[
+        str,
+        typer.Argument(envvar="GCAL_CLIENT_SECRET"),
+    ],
+):
+    get_refresh_token(gcal_client_id, gcal_client_secret)
+
+
+@app.command(name="sync")
 def cli(
     rescuetime_api_key: Annotated[str, typer.Argument(envvar="RESCUETIME_API_KEY")],
     gcal_email: Annotated[str, typer.Argument(envvar="GCAL_EMAIL")],
@@ -34,6 +49,10 @@ def cli(
     gcal_client_secret: Annotated[
         str,
         typer.Argument(envvar="GCAL_CLIENT_SECRET"),
+    ],
+    gcal_refresh_token: Annotated[
+        str,
+        typer.Argument(envvar="GCAL_REFRESH_TOKEN"),
     ],
 ):
     logging.info("Starting script")
@@ -50,10 +69,11 @@ def cli(
 
     logging.info("Syncing events to calendar")
     GcalSyncer(
-        gcal_email=gcal_email,
-        gcal_client_id=gcal_client_id,
-        gcal_project_id=gcal_project_id,
-        gcal_client_secret=gcal_client_secret,
+        email=gcal_email,
+        client_id=gcal_client_id,
+        project_id=gcal_project_id,
+        client_secret=gcal_client_secret,
+        refresh_token=gcal_refresh_token,
     ).sync_events_to_calendar(events)
 
     logging.info(f"Sync complete, synced {len(events)} events")
