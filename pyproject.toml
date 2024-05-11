@@ -27,3 +27,6 @@ allow-direct-references = true
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/rescuetime_to_gcal"]
+
+[project.scripts]
+r2s = "rescuetime_to_gcal.cli:app"

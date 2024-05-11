@@ -29,9 +29,14 @@ jobs:
             ${{ runner.os }}-docker-
       - name: Build Docker container image
         shell: bash
-        run: docker build -t docker-action-test .
+        run: docker build -t rescuetime-to-gcal:latest .
       - name: Run Docker container
         shell: bash
-        run: docker run docker-action-test
-        # TODO: Run the CLI script here
-        # TODO: Ensure relevant secrets are loaded in Docker/Github Actions environment
+        run: |
+          docker run \                              
+          -e RESCUETIME_API_KEY=${{ secrets.RESCUETIME_API_KEY }} \
+          -e GCAL_EMAIL=${{ secrets.GCAL_EMAIL }} \
+          -e GCAL_CLIENT_ID=${{ secrets.GCAL_CLIENT_ID }} \
+          -e GCAL_PROJECT_ID=${{ secrets.GCAL_PROJECT_ID }} \
+          -e GCAL_CLIENT_SECRET=${{ secrets.GCAL_CLIENT_SECRET }} \
+          rescuetime-to-gcal:latest r2s

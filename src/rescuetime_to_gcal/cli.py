@@ -56,6 +56,8 @@ def cli(
         gcal_client_secret=gcal_client_secret,
     ).sync_events_to_calendar(events)
 
+    logging.info(f"Sync complete, synced {len(events)} events")
+
 
 if __name__ == "__main__":
     app()
