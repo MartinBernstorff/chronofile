@@ -47,6 +47,8 @@ humanfriendly==10.0
     # via coloredlogs
 idna==3.7
     # via requests
+iterpy==1.9.0
+    # via rescuetime-to-gcal
 markdown-it-py==3.0.0
     # via rich
 mdurl==0.1.2

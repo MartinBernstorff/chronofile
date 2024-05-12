@@ -1,15 +1,16 @@
 import datetime
-from typing import Dict, Literal, Sequence, Union
+from typing import Callable, Dict, Literal, Sequence, Union
 
 import pandas as pd
 import pydantic
 import requests
+from iterpy.arr import Arr
 
 from rescuetime_to_gcal.config import RecordCategory, RecordMetadata
 from rescuetime_to_gcal.config import config as cfg
 
 
-class RescuetimeEvent(pydantic.BaseModel):
+class Event(pydantic.BaseModel):
     title: str
     start: datetime.datetime
     duration: datetime.timedelta
@@ -38,7 +39,7 @@ class Rescuetime:
         resolution_time: Literal["minute"] = "minute",
         restrict_begin: Union[str, None] = None,
         restrict_end: Union[str, None] = None,
-    ) -> Sequence[RescuetimeEvent]:
+    ) -> Sequence[Event]:
         params = {
             "key": api_key,
             "perspective": perspective,
@@ -55,7 +56,7 @@ class Rescuetime:
         # Make the API request
         response = requests.get(url, params=params).json()
         events = [
-            RescuetimeEvent(
+            Event(
                 title=row[3],
                 start=row[0],
                 duration=datetime.timedelta(seconds=row[1]),
@@ -64,127 +65,43 @@ class Rescuetime:
         ]
         return events
 
+    @staticmethod
     def _filter_by_title(
-        self,
-        data: pd.DataFrame,
+        data: Sequence[Event],
         strs_to_match: Sequence[str],
-        mode: Literal["include", "exclude"],
-    ) -> pd.DataFrame:
-        """
-        Gets all rows in a data frame that have a title containing "youtube".
+    ) -> Sequence[Event]:
+        return [
+            event
+            for event in data
+            if not any([title.lower() in event.title for title in strs_to_match])
+        ]
 
-        Args:
-            data (pd.DataFrame): The data frame to filter.
-
-        Returns:
-            pd.DataFrame: A data frame containing only rows with titles containing "youtube".
-        """
-        # TODO: Rewrite to use RescuetimeEvents
-        data[self.title_col_name] = data[self.title_col_name].str.lower()
-
-        # Convert the list of strings to match to a regex pattern
-        regex_pattern = r"|".join([s.lower() for s in strs_to_match])
-
-        # Get the relevant titles
-        distracting_titles = data[
-            data[self.title_col_name].str.contains(regex_pattern)
-        ][self.title_col_name].unique()
-
-        matching = data[self.title_col_name].isin(distracting_titles)
-        match mode:
-            case "include":
-                data = data[matching]
-            case "exclude":
-                data = data[~matching]
-
-        # Get all rows with "Activity" in the "distracting_titles" list
-
-        return data
-
-    def _compute_end_time(self, data: pd.DataFrame) -> pd.DataFrame:
-        """
-        Adds duration and end_time columns to a data frame.
-
-        Args:
-            data (pd.DataFrame): The data frame to modify.
-
-        Returns:
-            pd.DataFrame: The modified data frame.
-        """
-        # TODO: Rewrite to use RescuetimeEvents
-        # Create the end_time column
-        data[self.end_col_name] = (
-            data[self.start_col_name] + data[self.duration_col_name]
-        )
-
-        return data
-
-    def _combine_overlapping_rows(
-        self,
-        df: pd.DataFrame,
-        group_by_col: str,
-        allowed_gap: pd.Timedelta,
-    ) -> pd.DataFrame:
+    @staticmethod
+    def _merge_events_within_window(
+        events: Sequence[Event],
+        group_by: Callable[[Event], str],
+        merge_gap: datetime.timedelta,
+    ) -> Sequence[Event]:
         # TODO: Rewrite to use RescuetimeEvents. Add tests.
         """Combine rows with overlapping end and start times.
 
         First group by group_by_col. Then, if a row's end time is the same or later than the next row's start time, combine the two rows.
-
-        Args:
-            df (pd.DataFrame): The data frame to modify.
-            start_col_name (str): The name of the column containing the start time.
-            end_col_name (str): The name of the column containing the end time.
-            group_by_col (str): The name of the column to group by.
-            duration_col_name (str): The name of the column containing the duration.
-            allowed_gap (pd.Timedelta): The maximum allowed gap between the end of a row and the start of the next row.
-
-        Returns:
-            pd.DataFrame: The modified data frame.
         """
-        grouped_df = df.groupby(group_by_col)
-        df_elements = []
+        groups = Arr(events).groupby(group_by)
 
-        for _, group_df in grouped_df:
-            # Keep iterating until no more rows can be combined
-            while True:
-                if len(group_df) == 1:
-                    break
+        for _, group_events in groups:
+            sorted_events = sorted(group_events, key=lambda e: e.start)
+            for i, e in enumerate(sorted_events):
+                if i == 0:
+                    continue
+                if e.start <= sorted_events[i - 1].end + merge_gap:
+                    sorted_events[i - 1].duration += e.duration
+                    # TODO Assumes that events do not overlap, otherwise we cannot add together the durations.
+                    # An alternative is to add an end date to the events, and then update the end date.
+                    sorted_events.pop(i)
+                    i -= 1
 
-                n_before_combining = len(group_df)
-
-                group_df = group_df.reset_index(drop=True)
-
-                for index, row in group_df.iterrows():
-                    if index == len(group_df) - 1:
-                        break
-
-                    if (
-                        row[self.end_col_name]
-                        >= group_df.iloc[index + 1][self.start_col_name] - allowed_gap  # type: ignore
-                    ):
-                        group_df.at[index + 1, self.start_col_name] = group_df.iloc[  # type: ignore
-                            index
-                        ][self.start_col_name]
-
-                        group_df.at[index + 1, self.duration_col_name] = (  # type: ignore
-                            group_df.iloc[index][self.duration_col_name]  # type: ignore
-                            + group_df.iloc[index + 1][self.duration_col_name]  # type: ignore
-                        )
-
-                        # Set the drop column to True for the row that will be dropped
-                        group_df.at[index, "drop"] = True
-
-                if "drop" in group_df.columns:
-                    group_df = group_df[group_df["drop"] != True]  # noqa: E712
-
-                if n_before_combining == len(group_df):
-                    break
-
-            df_elements += [group_df.apply(lambda x: x).reset_index(drop=True)]
-
-        df = pd.concat(df_elements)
-
-        return df
+        return groups.map(lambda g: g[1]).flatten().to_list()
 
     def _set_time_dtypes(self, data: pd.DataFrame) -> pd.DataFrame:
         # TODO: Rewrite to use RescuetimeEvents
@@ -282,10 +199,10 @@ class Rescuetime:
         if min_duration:
             data = data[data[self.duration_col_name] > pd.Timedelta(min_duration)]
 
-        data = self._combine_overlapping_rows(
+        data = self._merge_events_within_window(
             df=data,
-            group_by_col="title",
-            allowed_gap=allowed_gap_for_combining - pd.Timedelta(min_duration),
+            group_by="title",
+            merge_gap=allowed_gap_for_combining - pd.Timedelta(min_duration),
         )
 
         data = data.sort_values(by="start_time")
