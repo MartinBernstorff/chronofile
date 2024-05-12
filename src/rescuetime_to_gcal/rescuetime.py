@@ -1,10 +1,22 @@
+import datetime
 from typing import Dict, Literal, Sequence, Union
 
 import pandas as pd
+import pydantic
 import requests
 
 from rescuetime_to_gcal.config import RecordCategory, RecordMetadata
 from rescuetime_to_gcal.config import config as cfg
+
+
+class RescuetimeEvent(pydantic.BaseModel):
+    title: str
+    start: datetime.datetime
+    duration: datetime.timedelta
+
+    @property
+    def end(self) -> datetime.datetime:
+        return self.start + self.duration
 
 
 class Rescuetime:
@@ -18,19 +30,17 @@ class Rescuetime:
         self.duration_col_name: str = "duration_seconds"
         self.category2emoji: dict[RecordCategory, str] = cfg.category2emoji
 
+    @staticmethod
     def _get_data(
-        self,
+        api_key: str,
+        url: str,
         perspective: Literal["interval"] = "interval",
         resolution_time: Literal["minute"] = "minute",
         restrict_begin: Union[str, None] = None,
         restrict_end: Union[str, None] = None,
-    ) -> pd.DataFrame:
-        """
-        Makes an API request to the RescueTime API and returns the response as a pandas DataFrame.
-        """
-        # Set the parameters for the API request
+    ) -> Sequence[RescuetimeEvent]:
         params = {
-            "key": self.api_key,
+            "key": api_key,
             "perspective": perspective,
             "resolution_time": resolution_time,
             "format": "json",
@@ -43,26 +53,16 @@ class Rescuetime:
             params["restrict_end"] = restrict_end
 
         # Make the API request
-        response = requests.get(self.url, params=params).json()
-
-        # Add column labels to the data
-        column_labels = response["row_headers"]
-        data = [dict(zip(column_labels, row)) for row in response["rows"]]
-
-        output_df = pd.DataFrame(data)
-
-        # Convert the API response to a pandas DataFrame
-        output_df = output_df.rename(
-            columns={
-                "Activity": self.title_col_name,
-                "Date": self.start_col_name,
-                "Time Spent (seconds)": self.duration_col_name,
-            }
-        )
-
-        output_df = self._set_time_dtypes(output_df)
-
-        return output_df
+        response = requests.get(url, params=params).json()
+        events = [
+            RescuetimeEvent(
+                title=row[3],
+                start=row[0],
+                duration=datetime.timedelta(seconds=row[1]),
+            )
+            for row in response["rows"]
+        ]
+        return events
 
     def _filter_by_title(
         self,
@@ -79,6 +79,7 @@ class Rescuetime:
         Returns:
             pd.DataFrame: A data frame containing only rows with titles containing "youtube".
         """
+        # TODO: Rewrite to use RescuetimeEvents
         data[self.title_col_name] = data[self.title_col_name].str.lower()
 
         # Convert the list of strings to match to a regex pattern
@@ -110,6 +111,7 @@ class Rescuetime:
         Returns:
             pd.DataFrame: The modified data frame.
         """
+        # TODO: Rewrite to use RescuetimeEvents
         # Create the end_time column
         data[self.end_col_name] = (
             data[self.start_col_name] + data[self.duration_col_name]
@@ -123,6 +125,7 @@ class Rescuetime:
         group_by_col: str,
         allowed_gap: pd.Timedelta,
     ) -> pd.DataFrame:
+        # TODO: Rewrite to use RescuetimeEvents. Add tests.
         """Combine rows with overlapping end and start times.
 
         First group by group_by_col. Then, if a row's end time is the same or later than the next row's start time, combine the two rows.
@@ -184,6 +187,8 @@ class Rescuetime:
         return df
 
     def _set_time_dtypes(self, data: pd.DataFrame) -> pd.DataFrame:
+        # TODO: Rewrite to use RescuetimeEvents
+
         # Convert the start_time column to a datetime column
         data[self.start_col_name] = pd.to_datetime(data[self.start_col_name])
 
@@ -202,6 +207,7 @@ class Rescuetime:
         Assign the category of the first matching title pattern to each row.
         Title matches are case insensitive. A match is found if the title contains the pattern.
         """
+        # TODO: Rewrite to use RescuetimeEvents
         for k in title_pattern_to_cateogory:
             regex_pattern = k.lower()
 
@@ -221,6 +227,7 @@ class Rescuetime:
     def _apply_metadata(
         self, row: pd.Series, metadata: Sequence[RecordMetadata]
     ) -> pd.Series:
+        # TODO: Rewrite to use RescuetimeEvents
         for record in metadata:
             if any(
                 [
@@ -252,6 +259,7 @@ class Rescuetime:
         allowed_gap_for_combining: pd.Timedelta = pd.Timedelta("5 minutes"),
         metadata: Sequence[RecordMetadata] | None = None,
     ):
+        # TODO: Rewrite to use RescuetimeEvents
         data = self._get_data(
             resolution_time=resolution_time,
             perspective=perspective,

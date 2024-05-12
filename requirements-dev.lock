@@ -22,6 +22,8 @@ click==8.1.7
     # via typer
 coloredlogs==15.0.1
     # via rescuetime-to-gcal
+exceptiongroup==1.2.1
+    # via pytest
 gcsa==2.2.0
     # via rescuetime-to-gcal
 google-api-core==2.19.0
@@ -47,6 +49,8 @@ humanfriendly==10.0
     # via coloredlogs
 idna==3.7
     # via requests
+iniconfig==2.0.0
+    # via pytest
 markdown-it-py==3.0.0
     # via rich
 mdurl==0.1.2
@@ -55,8 +59,12 @@ numpy==1.26.4
     # via pandas
 oauthlib==3.2.2
     # via requests-oauthlib
+packaging==24.0
+    # via pytest
 pandas==2.2.2
     # via rescuetime-to-gcal
+pluggy==1.5.0
+    # via pytest
 proto-plus==1.23.0
     # via google-api-core
 protobuf==4.25.3
@@ -76,6 +84,7 @@ pygments==2.18.0
     # via rich
 pyparsing==3.1.2
     # via httplib2
+pytest==8.2.0
 python-dateutil==2.9.0.post0
     # via beautiful-date
     # via gcsa
@@ -97,6 +106,8 @@ shellingham==1.5.4
     # via typer
 six==1.16.0
     # via python-dateutil
+tomli==2.0.1
+    # via pytest
 typer==0.12.3
     # via rescuetime-to-gcal
 typing-extensions==4.11.0
