@@ -37,15 +37,15 @@ def main(
                 category2emoji=cfg.category2emoji,
             )
         )
-    )
-
-    merged_events = merge_within_window(
-        events.to_list(), lambda e: e.title, cfg.merge_gap
+        .groupby(lambda e: e.title)
+        .map(lambda g: merge_within_window(g[1], merge_gap=cfg.merge_gap))
+        .flatten()
+        .to_list()
     )
 
     logging.info("Syncing events to calendar")
     gcal.sync(
-        input_events=merged_events,
+        input_events=events,
         email=gcal_email,
         client_id=gcal_client_id,
         client_secret=gcal_client_secret,
