@@ -1,16 +1,15 @@
+import datetime
 import logging
 from typing import Annotated
 
 import coloredlogs
-import pandas as pd
 import typer
 from iterpy.arr import Arr
 
-from rescuetime_to_gcal import gcal
+from rescuetime_to_gcal import gcal, rescuetime
 from rescuetime_to_gcal.config import config as cfg
 from rescuetime_to_gcal.gcal.auth import print_refresh_token
 from rescuetime_to_gcal.processing_steps import apply_metadata, merge_within_window
-from rescuetime_to_gcal.rescuetime import RescuetimeClient
 
 log = coloredlogs.install(  # type: ignore
     level="INFO",
@@ -54,8 +53,10 @@ def cli(
     ],
 ):
     logging.info("Starting sync")
-    rescuetime_data = RescuetimeClient(api_key=rescuetime_api_key).pull(
-        anchor_date=pd.Timestamp.today(),
+
+    rescuetime_data = rescuetime.load(
+        api_key=rescuetime_api_key,
+        anchor_date=datetime.datetime.now(),
         lookback_window=cfg.sync_window,
     )
 
