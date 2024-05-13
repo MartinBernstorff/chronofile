@@ -5,7 +5,6 @@ description = "Add your description here"
 authors = [{ name = "Martin Bernstorff", email = "martinbernstorff@gmail.com" }]
 dependencies = [
     "gcsa>=2.2.0",
-    "pandas>=2.2.2",
     "pydantic>=2.7.1",
     "wasabi>=1.1.2",
     "typer>=0.12.3",

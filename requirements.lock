@@ -53,12 +53,8 @@ markdown-it-py==3.0.0
     # via rich
 mdurl==0.1.2
     # via markdown-it-py
-numpy==1.26.4
-    # via pandas
 oauthlib==3.2.2
     # via requests-oauthlib
-pandas==2.2.2
-    # via rescuetime-to-gcal
 proto-plus==1.23.0
     # via google-api-core
 protobuf==4.25.3
@@ -81,9 +77,6 @@ pyparsing==3.1.2
 python-dateutil==2.9.0.post0
     # via beautiful-date
     # via gcsa
-    # via pandas
-pytz==2024.1
-    # via pandas
 pytz-deprecation-shim==0.1.0.post0
     # via tzlocal
 requests==2.31.0
@@ -106,7 +99,6 @@ typing-extensions==4.11.0
     # via pydantic-core
     # via typer
 tzdata==2024.1
-    # via pandas
     # via pytz-deprecation-shim
 tzlocal==4.3.1
     # via gcsa
