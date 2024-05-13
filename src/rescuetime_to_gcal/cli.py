@@ -16,6 +16,15 @@ log = coloredlogs.install(  # type: ignore
 app = typer.Typer()
 
 
+RESCUETIME_API_KEY = "B6300jX6LJHN6RU0uhZCQfOJEMrn2RfLIY0bkT_z"
+GCAL_EMAIL = "martinbernstorff@gmail.com"
+GCAL_CLIENT_ID = (
+    "952562068458-eaok38c6ojn9cmm2s08v8l6hocok5a21.apps.googleusercontent.com"
+)
+GCAL_CLIENT_SECRET = "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"
+GCAL_REFRESH_TOKEN = "1//0chpk9cJszftQCgYIARAAGAwSNwF-L9Ir47o_-OiYSl_0mfBcTuhOmAt6YvFoOB3WU4VaByZi05HDne_AHke6DRLgCAzSL20qHgo"
+
+
 @app.command(name="auth")
 def auth(
     gcal_client_id: Annotated[
