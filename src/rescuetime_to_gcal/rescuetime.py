@@ -13,11 +13,28 @@ from rescuetime_to_gcal.config import config as cfg
 class Event(pydantic.BaseModel):
     title: str
     start: datetime.datetime
+    end: datetime.datetime
+
+    def duration(self) -> datetime.timedelta:
+        return self.end - self.start
+
+    # TODO Add a post-init checking that the end time is after the start time.
+
+    def __repr__(self):
+        return f"Event(title={self.title}, {self.start} to {self.end})"
+
+
+class RescuetimeEvent(pydantic.BaseModel):
+    title: str
+    start: datetime.datetime
     duration: datetime.timedelta
 
-    @property
-    def end(self) -> datetime.datetime:
-        return self.start + self.duration
+    def to_generic_event(self) -> Event:
+        return Event(
+            title=self.title,
+            start=self.start,
+            end=self.start + self.duration,
+        )
 
 
 class Rescuetime:
@@ -56,14 +73,14 @@ class Rescuetime:
         # Make the API request
         response = requests.get(url, params=params).json()
         events = [
-            Event(
+            RescuetimeEvent(
                 title=row[3],
                 start=row[0],
                 duration=datetime.timedelta(seconds=row[1]),
             )
             for row in response["rows"]
         ]
-        return events
+        return [e.to_generic_event() for e in events]
 
     @staticmethod
     def _filter_by_title(
@@ -82,39 +99,28 @@ class Rescuetime:
         group_by: Callable[[Event], str],
         merge_gap: datetime.timedelta,
     ) -> Sequence[Event]:
-        # TODO: Rewrite to use RescuetimeEvents. Add tests.
-        """Combine rows with overlapping end and start times.
-
-        First group by group_by_col. Then, if a row's end time is the same or later than the next row's start time, combine the two rows.
-        """
+        """Combine rows if end time is within merge_gap of the next event within groups by the group_by function."""
         groups = Arr(events).groupby(group_by)
 
+        processed_events = []
         for _, group_events in groups:
             sorted_events = sorted(group_events, key=lambda e: e.start)
-            for i, e in enumerate(sorted_events):
-                if i == 0:
-                    continue
-                if e.start <= sorted_events[i - 1].end + merge_gap:
-                    sorted_events[i - 1].duration += e.duration
-                    # TODO Assumes that events do not overlap, otherwise we cannot add together the durations.
-                    # An alternative is to add an end date to the events, and then update the end date.
+
+            i = 1  # Skip the first event
+            while i < len(sorted_events) - 1:
+                cur = sorted_events[i]
+                prev = sorted_events[i - 1]
+
+                overlapping = cur.start <= prev.end + merge_gap
+                if overlapping and prev.end < cur.end:
+                    prev.end = cur.end
                     sorted_events.pop(i)
-                    i -= 1
+                else:
+                    i += 1
 
-        return groups.map(lambda g: g[1]).flatten().to_list()
+            processed_events.append(sorted_events)
 
-    def _set_time_dtypes(self, data: pd.DataFrame) -> pd.DataFrame:
-        # TODO: Rewrite to use RescuetimeEvents
-
-        # Convert the start_time column to a datetime column
-        data[self.start_col_name] = pd.to_datetime(data[self.start_col_name])
-
-        # Convert the duration_seconds column to a timedelta column
-        data[self.duration_col_name] = pd.to_timedelta(
-            data[self.duration_col_name], unit="seconds"
-        )
-
-        return data
+        return Arr(processed_events).flatten().to_list()
 
     def _map_title_to_category(
         self, data: pd.DataFrame, title_pattern_to_cateogory: Dict[str, str]
