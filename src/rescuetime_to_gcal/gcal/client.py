@@ -1,7 +1,7 @@
 import logging
 import time
 from datetime import datetime
-from typing import Sequence
+from typing import Callable, Sequence
 
 from gcsa.event import Event as GCSAEvent
 from gcsa.google_calendar import GoogleCalendar
@@ -11,24 +11,20 @@ from rescuetime_to_gcal.constants import required_scopes
 from rescuetime_to_gcal.event import Event
 
 
-def _deduplicate_events(
-    events: Sequence[GCSAEvent], events_in_calendar: Sequence[GCSAEvent]
+def _determine_diff(
+    input_events: Sequence[GCSAEvent],
+    origin_events: Sequence[GCSAEvent],
+    hasher: Callable[[GCSAEvent], str],
 ) -> Sequence[GCSAEvent]:
-    # Filter out events that are in the calendar, based on the start, end and summary attributes
-    events_to_sync = [
-        event
-        for event in events
-        if not any(
-            [
-                event.start == calendar_event.start
-                and event.end == calendar_event.end
-                and event.summary == calendar_event.summary
-                for calendar_event in events_in_calendar
-            ]
-        )
-    ]
+    origin_hashes = {hasher(e) for e in origin_events}
+    selected_events = []
 
-    return events_to_sync
+    for event in input_events:
+        event_identity = hasher(event)
+        if event_identity not in origin_hashes:
+            selected_events.append(event)
+
+    return selected_events
 
 
 def _update_event_if_exists(
@@ -80,7 +76,7 @@ def sync(
     client_id: str,
     client_secret: str,
     refresh_token: str,
-    events: Sequence[Event],
+    input_events: Sequence[Event],
 ) -> None:
     calendar = GoogleCalendar(
         email,
@@ -94,31 +90,32 @@ def sync(
         ),
     )
 
-    events_in_calendar = list(
+    origin_events = list(
         calendar.get_events(
-            min([event.start for event in events]),
+            min([event.start for event in input_events]),
             datetime.today(),
             order_by="updated",
             single_events=True,
         )
     )
 
-    deduped_events = _deduplicate_events(
-        events=[
+    deduped_events = _determine_diff(
+        input_events=[
             GCSAEvent(
                 summary=e.title,
                 start=e.start,
                 end=e.end,
             )
-            for e in events
+            for e in input_events
         ],
-        events_in_calendar=events_in_calendar,
+        origin_events=origin_events,
+        hasher=lambda e: f"{e.start} to {e.end} - {e.summary}",
     )
 
     # Update events if already exists with identical start time
     for event in deduped_events:
         _sync_event(
             event_to_sync=event,
-            events_in_calendar=events_in_calendar,
+            events_in_calendar=origin_events,
             calendar=calendar,
         )

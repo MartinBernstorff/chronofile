@@ -45,7 +45,7 @@ def main(
 
     logging.info("Syncing events to calendar")
     gcal.sync(
-        events=merged_events,
+        input_events=merged_events,
         email=gcal_email,
         client_id=gcal_client_id,
         client_secret=gcal_client_secret,
