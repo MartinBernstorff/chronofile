@@ -17,14 +17,7 @@ def _determine_diff(
     hasher: Callable[[GCSAEvent], str],
 ) -> Sequence[GCSAEvent]:
     origin_hashes = {hasher(e) for e in origin_events}
-    selected_events = []
-
-    for event in input_events:
-        event_identity = hasher(event)
-        if event_identity not in origin_hashes:
-            selected_events.append(event)
-
-    return selected_events
+    return [e for e in input_events if hasher(e) not in origin_hashes]
 
 
 def _update_event_if_exists(
