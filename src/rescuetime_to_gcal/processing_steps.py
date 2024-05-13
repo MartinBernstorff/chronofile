@@ -1,7 +1,5 @@
 import datetime
-from typing import Callable, Mapping, Sequence
-
-from iterpy.arr import Arr
+from typing import Mapping, Sequence
 
 from rescuetime_to_gcal.config import RecordCategory, RecordMetadata
 from rescuetime_to_gcal.event import Event
@@ -33,30 +31,42 @@ def filter_by_title(
     ]
 
 
+def _new_event(event: Event, end_time: datetime.datetime) -> Event:
+    return Event(
+        title=event.title,
+        start=event.start,
+        end=end_time,
+    )
+
+
 def merge_within_window(
     events: Sequence[Event],
-    group_by: Callable[[Event], str],
     merge_gap: datetime.timedelta,
 ) -> Sequence[Event]:
     """Combine rows if end time is within merge_gap of the next event within groups by the group_by function."""
-    groups = Arr(events).groupby(group_by)
+    if len(events) < 2:
+        return events
 
-    processed_events = []
-    for _, group_events in groups:
-        sorted_events = sorted(group_events, key=lambda e: e.start)
+    processed_events: list[Event] = []
+    sorted_events = sorted(events, key=lambda e: e.start)
 
-        i = 1  # Skip the first event
-        while i < len(sorted_events) - 1:
-            cur = sorted_events[i]
-            prev = sorted_events[i - 1]
+    cur_event = sorted_events[0]
+    cur_end_time = cur_event.end
+    for candidate in sorted_events[1:]:
+        overlapping = cur_end_time + merge_gap >= candidate.start
+        if overlapping:
+            cur_end_time = candidate.end
 
-            overlapping = cur.start <= prev.end + merge_gap
-            if overlapping and prev.end < cur.end:
-                prev.end = cur.end
-                sorted_events.pop(i)
+        # Cases where events should be appended
+        if not overlapping:
+            processed_events.append(_new_event(cur_event, cur_end_time))
+            cur_event = candidate
+            cur_end_time = candidate.end
+
+        if candidate == sorted_events[-1]:
+            if overlapping:
+                processed_events.append(_new_event(cur_event, cur_end_time))
             else:
-                i += 1
+                processed_events.append(candidate)
 
-        processed_events.append(sorted_events)
-
-    return Arr(processed_events).flatten().to_list()
+    return processed_events

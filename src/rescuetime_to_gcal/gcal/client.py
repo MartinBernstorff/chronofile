@@ -17,6 +17,8 @@ def _determine_diff(
     hasher: Callable[[GCSAEvent], str],
 ) -> Sequence[GCSAEvent]:
     origin_hashes = {hasher(e) for e in origin_events}
+    input_hashes = {hasher(e) for e in input_events}
+    # TODO Fix deduplication. It seems hashing is not working properly; it is not deduplicating events.
     return [e for e in input_events if hasher(e) not in origin_hashes]
 
 

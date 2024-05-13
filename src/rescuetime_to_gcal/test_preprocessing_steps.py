@@ -2,6 +2,8 @@ import copy
 import datetime
 import random
 
+from iterpy.arr import Arr
+
 from rescuetime_to_gcal.event import Event
 from rescuetime_to_gcal.processing_steps import filter_by_title, merge_within_window
 
@@ -69,13 +71,19 @@ def test_merge_events_within_window():
         random.shuffle(shuffled_events)
         # Shuffle events to ensure the test is order-independent
 
-        combined = merge_within_window(
-            events=shuffled_events,
-            group_by=lambda e: e.title,
-            merge_gap=datetime.timedelta(days=365 * 1.5),
-        )
+        combined = (
+            Arr(shuffled_events)
+            .groupby(lambda e: e.title)
+            .map(
+                lambda g: merge_within_window(
+                    g[1], merge_gap=datetime.timedelta(days=365 * 1.5)
+                )
+            )
+            .flatten()
+        ).to_list()
 
-        assert sorted(combined, key=lambda e: e.start) == [
+        output = sorted(combined, key=lambda e: e.start)
+        expected = [
             FakeEvent(
                 title="test1",
                 start=datetime.datetime(2023, 1, 1, 0, 0),
@@ -92,3 +100,5 @@ def test_merge_events_within_window():
                 end=datetime.datetime(2035, 1, 1, 0, 0, 2),
             ),
         ]
+
+        assert "\n".join(str(e) for e in output) == "\n".join(str(e) for e in expected)

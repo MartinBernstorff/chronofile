@@ -40,7 +40,7 @@ def main(
     )
 
     merged_events = merge_within_window(
-        rescuetime_data, lambda e: e.title, cfg.merge_gap
+        events.to_list(), lambda e: e.title, cfg.merge_gap
     )
 
     logging.info("Syncing events to calendar")
