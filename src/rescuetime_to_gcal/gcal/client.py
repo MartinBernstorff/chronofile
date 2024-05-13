@@ -3,16 +3,17 @@ import time
 from datetime import datetime
 from typing import Sequence
 
-from gcsa.event import Event
+from gcsa.event import Event as GCSAEvent
 from gcsa.google_calendar import GoogleCalendar
 from google.oauth2.credentials import Credentials
 
 from rescuetime_to_gcal.constants import required_scopes
+from rescuetime_to_gcal.event import Event
 
 
 def _deduplicate_events(
-    events: Sequence[Event], events_in_calendar: Sequence[Event]
-) -> Sequence[Event]:
+    events: Sequence[GCSAEvent], events_in_calendar: Sequence[GCSAEvent]
+) -> Sequence[GCSAEvent]:
     # Filter out events that are in the calendar, based on the start, end and summary attributes
     events_to_sync = [
         event
@@ -31,8 +32,8 @@ def _deduplicate_events(
 
 
 def _update_event_if_exists(
-    event_to_sync: Event,
-    events_in_calendar: Sequence[Event],
+    event_to_sync: GCSAEvent,
+    events_in_calendar: Sequence[GCSAEvent],
     calendar: GoogleCalendar,
 ) -> bool:
     # Check if event exists in calendar based on summary and start time
@@ -55,8 +56,8 @@ def _update_event_if_exists(
 
 
 def _sync_event(
-    event_to_sync: Event,
-    events_in_calendar: Sequence[Event],
+    event_to_sync: GCSAEvent,
+    events_in_calendar: Sequence[GCSAEvent],
     calendar: GoogleCalendar,
 ):
     event_updated = _update_event_if_exists(
@@ -103,7 +104,15 @@ def sync(
     )
 
     deduped_events = _deduplicate_events(
-        events=events, events_in_calendar=events_in_calendar
+        events=[
+            GCSAEvent(
+                summary=e.title,
+                start=e.start,
+                end=e.end,
+            )
+            for e in events
+        ],
+        events_in_calendar=events_in_calendar,
     )
 
     # Update events if already exists with identical start time

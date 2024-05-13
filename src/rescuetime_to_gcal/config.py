@@ -1,8 +1,10 @@
+import datetime
 from dataclasses import dataclass
 from enum import Enum
-from typing import Sequence
+from typing import Mapping, Sequence
 
 import pandas as pd
+import pydantic
 
 
 class RecordCategory(Enum):
@@ -27,24 +29,23 @@ class RecordMetadata:
     category: RecordCategory
 
 
-@dataclass(frozen=True)
-class Config:
-    sync_window: pd.Timedelta
+class Config(pydantic.BaseModel):
+    sync_window: datetime.timedelta
     # How far back from the current date to look for events
 
-    exclude_titles: list[str]
+    exclude_titles: Sequence[str]
     # Exclude events who contain these titles. Case insensitive.
 
-    merge_gap: pd.Timedelta
+    merge_gap: datetime.timedelta
     # If events have the same title and the first event's end time is within this gap, combine the events
 
-    min_duration: str
+    min_duration: datetime.timedelta
     # Exclude events shorter than this
 
-    metadata_enrichment: list[RecordMetadata]
+    metadata_enrichment: Sequence[RecordMetadata]
     # Enrich events with metadata, e.g. emoji selection
 
-    category2emoji: dict[RecordCategory, str]
+    category2emoji: Mapping[RecordCategory, str]
     # Map categories to emoji
 
 
@@ -59,8 +60,8 @@ config = Config(
         "finder",
         "google",
     ],
-    merge_gap=pd.Timedelta(minutes=15),
-    min_duration="5 seconds",
+    merge_gap=datetime.timedelta(minutes=15),
+    min_duration=datetime.timedelta(seconds=5),
     category2emoji={
         RecordCategory.MISC: "💬",
         RecordCategory.BROWSING: "🔥",
