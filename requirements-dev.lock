@@ -117,5 +117,3 @@ uritemplate==4.1.1
     # via google-api-python-client
 urllib3==2.2.1
     # via requests
-wasabi==1.1.2
-    # via rescuetime-to-gcal
