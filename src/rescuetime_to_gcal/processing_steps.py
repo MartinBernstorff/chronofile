@@ -12,14 +12,12 @@ def apply_metadata(
     metadata: Sequence[RecordMetadata],
     category2emoji: Mapping[RecordCategory, str],
 ) -> Event:
-    for record in metadata:
-        if any(
-            [title.lower() in event.title.lower() for title in record.title_matcher]
-        ):
-            event.category = record.category
-            if record.prettified_title is not None:
-                event.title = record.prettified_title
-            event.title = f"{category2emoji[record.category]} {event.title}"
+    for meta in metadata:
+        if any([title.lower() in event.title.lower() for title in meta.title_matcher]):
+            event.category = meta.category
+            if meta.prettified_title is not None:
+                event.title = meta.prettified_title
+            event.title = f"{category2emoji[meta.category]} {event.title}"
 
     return event
 
