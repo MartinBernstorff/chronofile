@@ -3,7 +3,6 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Mapping, Sequence
 
-import pandas as pd
 import pydantic
 
 
@@ -50,7 +49,7 @@ class Config(pydantic.BaseModel):
 
 
 config = Config(
-    sync_window=pd.Timedelta(days=2),
+    sync_window=datetime.timedelta(days=2),
     exclude_titles=[
         "newtab",
         "raycast",
