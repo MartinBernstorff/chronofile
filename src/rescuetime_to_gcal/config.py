@@ -12,7 +12,6 @@ class RecordCategory(Enum):
     COMMUNICATING = "Communicating"
     GAMING = "Gaming"
     PROGRAMMING = "Programming"
-    MISC = "Misc"
     PLANNING = "Planning"
     READING = "Reading"
     REFERENCE = "Reference"
@@ -30,7 +29,8 @@ class RecordMetadata:
 
 
 class Config(pydantic.BaseModel):
-    rescuetime_timezone: pytz.tzinfo.BaseTzInfo = pytz.timezone("Europe/Copenhagen")
+    rescuetime_timezone: pytz.tzinfo.BaseTzInfo
+    # Timezone of the rescuetime user. Is not provided by the API, so must be provided manually.
 
     sync_window: datetime.timedelta
     # How far back from the current date to look for events
@@ -52,6 +52,7 @@ class Config(pydantic.BaseModel):
 
 
 config = Config(
+    rescuetime_timezone=pytz.timezone("Europe/Copenhagen"),
     sync_window=datetime.timedelta(days=0.5),
     exclude_titles=[
         "newtab",
@@ -65,16 +66,15 @@ config = Config(
     merge_gap=datetime.timedelta(minutes=15),
     min_duration=datetime.timedelta(seconds=5),
     category2emoji={
-        RecordCategory.MISC: "💬",
         RecordCategory.BROWSING: "🔥",
-        RecordCategory.COMMUNICATING: "💬",
+        RecordCategory.COMMUNICATING: "️☎️",
         RecordCategory.GAMING: "🎮",
         RecordCategory.PROGRAMMING: "🤖",
         RecordCategory.PLANNING: "🗺️",
         RecordCategory.SOUND: "🎵",
-        RecordCategory.READING: "🫖",
+        RecordCategory.READING: "📗",
         RecordCategory.REFERENCE: "📚",
-        RecordCategory.WRITING: "📕",
+        RecordCategory.WRITING: "✍️",
     },
     metadata_enrichment=[
         RecordMetadata(
