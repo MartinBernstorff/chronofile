@@ -60,7 +60,6 @@ def _sync_event(
     )
 
     if not event_updated:
-        # Add event to calendar
         calendar.add_event(event_to_sync)
         logging.info(
             f"Added event to calendar, {event_to_sync.start} - {event_to_sync.summary}"
