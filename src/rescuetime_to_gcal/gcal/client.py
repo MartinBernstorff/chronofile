@@ -10,60 +10,7 @@ from iterpy.arr import Arr
 
 from rescuetime_to_gcal.constants import required_scopes
 from rescuetime_to_gcal.event import Event
-
-
-def _event_hasher(event: GCSAEvent) -> str:
-    return f"{event.summary.lower().strip()}: {event.start} to {event.end}"
-
-
-def _determine_diff(
-    input_events: Sequence[GCSAEvent],
-    origin_events: Sequence[GCSAEvent],
-) -> Sequence[GCSAEvent]:
-    origin_hashes = {_event_hasher(e) for e in origin_events}
-    return [e for e in input_events if _event_hasher(e) not in origin_hashes]
-
-
-def _update_event_if_exists(
-    event_to_sync: GCSAEvent,
-    events_in_calendar: Sequence[GCSAEvent],
-    calendar: GoogleCalendar,
-) -> bool:
-    # Check if event exists in calendar based on summary and start time
-    event_matches = [
-        event
-        for event in events_in_calendar
-        if event.summary == event_to_sync.summary and event.start == event_to_sync.start
-    ]
-
-    if len(event_matches) == 0:
-        return False
-
-    matched_event = event_matches[0]
-    matched_event.end = event_to_sync.end
-    calendar.update_event(matched_event)
-    logging.info(
-        f"Updated event in calendar, {matched_event.start} - {matched_event.summary}"
-    )
-    return True
-
-
-def _sync_event(
-    event_to_sync: GCSAEvent,
-    events_in_calendar: Sequence[GCSAEvent],
-    calendar: GoogleCalendar,
-):
-    event_updated = _update_event_if_exists(
-        event_to_sync=event_to_sync,
-        events_in_calendar=events_in_calendar,
-        calendar=calendar,
-    )
-
-    if not event_updated:
-        calendar.add_event(event_to_sync)
-        logging.info(
-            f"Added event to calendar, {event_to_sync.start} - {event_to_sync.summary}"
-        )
+from rescuetime_to_gcal.gcal._deduper import _deduper
 
 
 def _timezone_to_utc(event: GCSAEvent) -> GCSAEvent:
@@ -78,13 +25,13 @@ def _timezone_to_utc(event: GCSAEvent) -> GCSAEvent:
 
 
 def sync(
+    source_events: Sequence[Event],
     email: str,
     client_id: str,
     client_secret: str,
     refresh_token: str,
-    input_events: Sequence[Event],
 ) -> None:
-    calendar = GoogleCalendar(
+    destination = GoogleCalendar(
         email,
         credentials=Credentials(
             token=None,
@@ -96,31 +43,46 @@ def sync(
         ),
     )
 
-    origin_events = Arr(
-        calendar.get_events(
-            min([event.start for event in input_events]),
+    destination_events = Arr(
+        destination.get_events(
+            min([event.start for event in source_events]),
             datetime.today(),
             order_by="updated",
             single_events=True,
         )
     ).map(_timezone_to_utc)
 
-    deduped_events = _determine_diff(
-        input_events=[
+    deduped_events = _deduper(
+        destination_events=destination_events.to_list(),
+        source_events=[
             GCSAEvent(
                 summary=e.title,
                 start=e.start,
                 end=e.end,
                 timezone=e.timezone,
             )
-            for e in input_events
+            for e in source_events
         ],
-        origin_events=origin_events.to_list(),
     )
 
-    for event in deduped_events:
-        _sync_event(
-            event_to_sync=event,
-            events_in_calendar=origin_events.to_list(),
-            calendar=calendar,
-        )
+    for update_event in deduped_events:
+        existing_event = [
+            event
+            for event in destination_events
+            if event.summary == update_event.summary
+            and event.start == update_event.start
+        ]
+
+        event_exists = len(existing_event) != 0
+        if event_exists:
+            matched_event = existing_event[0]
+            matched_event.end = update_event.end
+            destination.update_event(matched_event)
+            logging.info(
+                f"Updated event in calendar, {matched_event.start} - {matched_event.summary}"
+            )
+        else:
+            destination.add_event(update_event)
+            logging.info(
+                f"Created event  {update_event.start} - {update_event.summary}"
+            )
