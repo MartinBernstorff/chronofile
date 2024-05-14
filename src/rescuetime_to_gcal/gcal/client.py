@@ -114,13 +114,8 @@ def sync(
         ],
         origin_events=origin_events.to_list(),
     )
-    # TODO:
-    # Looks like GitHub Actions events are added as "GMT", whereas
-    # local events match my current timezone. This means they are not
-    # deduplicated.
 
-    # Update events if already exists with identical start time
-    for event in deduped_events[0:5]:  # TODO: remove hardcoded limit
+    for event in deduped_events:
         _sync_event(
             event_to_sync=event,
             events_in_calendar=origin_events.to_list(),
