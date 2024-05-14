@@ -49,5 +49,4 @@ def load(
         )
         for row in response["rows"]
     ]
-    # TODO: Change the timezone to UTC
     return [e.to_generic_event() for e in events]

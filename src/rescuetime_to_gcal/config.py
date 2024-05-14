@@ -49,7 +49,7 @@ class Config(pydantic.BaseModel):
 
 
 config = Config(
-    sync_window=datetime.timedelta(days=2),
+    sync_window=datetime.timedelta(days=0.5),
     exclude_titles=[
         "newtab",
         "raycast",

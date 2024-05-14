@@ -1,18 +1,18 @@
 import logging
-import time
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import Sequence
 
 import pytz
 from gcsa.event import Event as GCSAEvent
 from gcsa.google_calendar import GoogleCalendar
 from google.oauth2.credentials import Credentials
+from iterpy.arr import Arr
 
 from rescuetime_to_gcal.constants import required_scopes
 from rescuetime_to_gcal.event import Event
 
 
-def event_hasher(event: GCSAEvent) -> str:
+def _event_hasher(event: GCSAEvent) -> str:
     return f"{event.summary.lower().strip()}: {event.start} to {event.end}"
 
 
@@ -20,17 +20,8 @@ def _determine_diff(
     input_events: Sequence[GCSAEvent],
     origin_events: Sequence[GCSAEvent],
 ) -> Sequence[GCSAEvent]:
-    origin_hashes = {event_hasher(e) for e in origin_events}
-    return [e for e in input_events if event_hasher(e) not in origin_hashes]
-
-
-def within_1_hour(sync_events):
-    return [
-        e
-        for e in sync_events
-        if e.start
-        > datetime.now(tz=pytz.timezone("Europe/Copenhagen")) - timedelta(hours=4)
-    ]
+    origin_hashes = {_event_hasher(e) for e in origin_events}
+    return [e for e in input_events if _event_hasher(e) not in origin_hashes]
 
 
 def _update_event_if_exists(
@@ -49,7 +40,7 @@ def _update_event_if_exists(
         return False
 
     matched_event = event_matches[0]
-    event_matches[0].end = event_to_sync.end
+    matched_event.end = event_to_sync.end
     calendar.update_event(matched_event)
     logging.info(
         f"Updated event in calendar, {matched_event.start} - {matched_event.summary}"
@@ -74,7 +65,13 @@ def _sync_event(
         logging.info(
             f"Added event to calendar, {event_to_sync.start} - {event_to_sync.summary}"
         )
-        time.sleep(5)
+
+
+def _timezone_to_utc(event: GCSAEvent) -> GCSAEvent:
+    event.start = event.start.astimezone(pytz.UTC)
+    event.end = event.end.astimezone(pytz.UTC)
+
+    return event
 
 
 def sync(
@@ -96,15 +93,14 @@ def sync(
         ),
     )
 
-    origin_events = list(
+    origin_events = Arr(
         calendar.get_events(
             min([event.start for event in input_events]),
             datetime.today(),
             order_by="updated",
             single_events=True,
-            timezone="UTC",
         )
-    )
+    ).map(_timezone_to_utc)
 
     deduped_events = _determine_diff(
         input_events=[
@@ -115,13 +111,13 @@ def sync(
             )
             for e in input_events
         ],
-        origin_events=origin_events,
+        origin_events=origin_events.to_list(),
     )
 
     # Update events if already exists with identical start time
     for event in deduped_events:
         _sync_event(
             event_to_sync=event,
-            events_in_calendar=origin_events,
+            events_in_calendar=origin_events.to_list(),
             calendar=calendar,
         )
