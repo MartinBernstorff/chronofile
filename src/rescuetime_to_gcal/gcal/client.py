@@ -1,8 +1,9 @@
 import logging
 import time
-from datetime import datetime
-from typing import Callable, Sequence
+from datetime import datetime, timedelta
+from typing import Sequence
 
+import pytz
 from gcsa.event import Event as GCSAEvent
 from gcsa.google_calendar import GoogleCalendar
 from google.oauth2.credentials import Credentials
@@ -11,15 +12,25 @@ from rescuetime_to_gcal.constants import required_scopes
 from rescuetime_to_gcal.event import Event
 
 
+def event_hasher(event: GCSAEvent) -> str:
+    return f"{event.summary.lower().strip()}: {event.start} to {event.end}"
+
+
 def _determine_diff(
     input_events: Sequence[GCSAEvent],
     origin_events: Sequence[GCSAEvent],
-    hasher: Callable[[GCSAEvent], str],
 ) -> Sequence[GCSAEvent]:
-    origin_hashes = {hasher(e) for e in origin_events}
-    input_hashes = {hasher(e) for e in input_events}
-    # TODO Fix deduplication. It seems hashing is not working properly; it is not deduplicating events.
-    return [e for e in input_events if hasher(e) not in origin_hashes]
+    origin_hashes = {event_hasher(e) for e in origin_events}
+    return [e for e in input_events if event_hasher(e) not in origin_hashes]
+
+
+def within_1_hour(sync_events):
+    return [
+        e
+        for e in sync_events
+        if e.start
+        > datetime.now(tz=pytz.timezone("Europe/Copenhagen")) - timedelta(hours=4)
+    ]
 
 
 def _update_event_if_exists(
@@ -104,7 +115,6 @@ def sync(
             for e in input_events
         ],
         origin_events=origin_events,
-        hasher=lambda e: f"{e.start} to {e.end} - {e.summary}",
     )
 
     # Update events if already exists with identical start time

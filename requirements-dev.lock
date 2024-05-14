@@ -86,6 +86,8 @@ pytest==8.2.0
 python-dateutil==2.9.0.post0
     # via beautiful-date
     # via gcsa
+pytz==2024.1
+    # via rescuetime-to-gcal
 pytz-deprecation-shim==0.1.0.post0
     # via tzlocal
 requests==2.31.0

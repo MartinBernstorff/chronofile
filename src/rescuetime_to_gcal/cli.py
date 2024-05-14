@@ -28,7 +28,7 @@ def auth(
     ],
 ):
     logging.info("Getting refresh token")
-    print_refresh_token(gcal_client_id, gcal_client_secret)
+    print_refresh_token(client_id=gcal_client_id, client_secret=gcal_client_secret)
 
 
 @app.command(name="sync")
@@ -58,7 +58,7 @@ def cli(
         gcal_refresh_token,
     )
 
-    logging.info(f"Sync complete, synced {events.count()} events")
+    logging.info(f"Sync complete, synced {len(events)} events")
 
 
 if __name__ == "__main__":
