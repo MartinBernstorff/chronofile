@@ -50,6 +50,9 @@ class Config(pydantic.BaseModel):
     category2emoji: Mapping[RecordCategory, str]
     # Map categories to emoji
 
+    class Config:
+        arbitrary_types_allowed = True
+
 
 config = Config(
     rescuetime_timezone=pytz.timezone("Europe/Copenhagen"),
