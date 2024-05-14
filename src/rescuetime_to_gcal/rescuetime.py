@@ -2,6 +2,7 @@ import datetime
 from typing import Sequence
 
 import pydantic
+import pytz
 import requests
 
 from rescuetime_to_gcal.event import Event
@@ -15,8 +16,8 @@ class RescuetimeEvent(pydantic.BaseModel):
     def to_generic_event(self) -> Event:
         return Event(
             title=self.title,
-            start=self.start,
-            end=self.start + self.duration,
+            start=self.start.astimezone(pytz.UTC),
+            end=(self.start + self.duration).astimezone(pytz.UTC),
         )
 
 
@@ -48,4 +49,5 @@ def load(
         )
         for row in response["rows"]
     ]
+    # TODO: Change the timezone to UTC
     return [e.to_generic_event() for e in events]

@@ -102,6 +102,7 @@ def sync(
             datetime.today(),
             order_by="updated",
             single_events=True,
+            timezone="UTC",
         )
     )
 
