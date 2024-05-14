@@ -2,6 +2,8 @@ import datetime
 from typing import Sequence
 
 import pydantic
+import pytz
+import pytz.tzfile
 import requests
 
 from rescuetime_to_gcal.event import Event
@@ -9,15 +11,15 @@ from rescuetime_to_gcal.event import Event
 
 class RescuetimeEvent(pydantic.BaseModel):
     title: str
-    start: datetime.datetime
+    start: datetime.datetime  # TODO: Can we handle timezone inference here?
     duration: datetime.timedelta
 
-    def to_generic_event(self) -> Event:
-        # Rescuetime returns in UTC, no need to convert
+    def to_generic_event(self, timezone: pytz.tzinfo.BaseTzInfo) -> Event:
+        # TODO: Rescuetime returns in the user's timezone! How do I know what that is?
         return Event(
             title=self.title,
-            start=self.start,
-            end=(self.start + self.duration),
+            start=timezone.localize(self.start),
+            end=timezone.localize(self.start + self.duration),
         )
 
 
@@ -25,6 +27,7 @@ def load(
     api_key: str,
     anchor_date: datetime.datetime,
     lookback_window: datetime.timedelta,
+    timezone: pytz.tzinfo.BaseTzInfo,
 ) -> Sequence[Event]:
     params = {
         "key": api_key,
@@ -41,6 +44,7 @@ def load(
     response = requests.get(
         "https://www.rescuetime.com/anapi/data", params=params
     ).json()
+
     events = [
         RescuetimeEvent(
             title=row[3],
@@ -49,4 +53,4 @@ def load(
         )
         for row in response["rows"]
     ]
-    return [e.to_generic_event() for e in events]
+    return [e.to_generic_event(timezone) for e in events]

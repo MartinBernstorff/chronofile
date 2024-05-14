@@ -20,6 +20,7 @@ def main(
         api_key=rescuetime_api_key,
         anchor_date=datetime.datetime.now(),
         lookback_window=cfg.sync_window,
+        timezone=cfg.rescuetime_timezone,
     )
 
     logging.info(f"Rescuetime, got {rescuetime_data}")

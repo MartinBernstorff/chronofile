@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime
+from datetime import date, datetime
 from typing import Sequence
 
 import pytz
@@ -67,6 +67,9 @@ def _sync_event(
 
 
 def _timezone_to_utc(event: GCSAEvent) -> GCSAEvent:
+    if isinstance(event.start, date) or isinstance(event.end, date):
+        return event
+
     event.start = event.start.astimezone(pytz.UTC)
     event.end = event.end.astimezone(pytz.UTC)
     event.timezone = "UTC"

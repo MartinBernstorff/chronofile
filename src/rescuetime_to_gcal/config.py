@@ -4,6 +4,7 @@ from enum import Enum
 from typing import Mapping, Sequence
 
 import pydantic
+import pytz
 
 
 class RecordCategory(Enum):
@@ -29,6 +30,8 @@ class RecordMetadata:
 
 
 class Config(pydantic.BaseModel):
+    rescuetime_timezone: pytz.tzinfo.BaseTzInfo = pytz.timezone("Europe/Copenhagen")
+
     sync_window: datetime.timedelta
     # How far back from the current date to look for events
 
