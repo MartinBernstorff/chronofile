@@ -11,11 +11,10 @@ from rescuetime_to_gcal.event import Event
 
 class RescuetimeEvent(pydantic.BaseModel):
     title: str
-    start: datetime.datetime  # TODO: Can we handle timezone inference here?
+    start: datetime.datetime
     duration: datetime.timedelta
 
     def to_generic_event(self, timezone: pytz.tzinfo.BaseTzInfo) -> Event:
-        # TODO: Rescuetime returns in the user's timezone! How do I know what that is?
         return Event(
             title=self.title,
             start=timezone.localize(self.start),
