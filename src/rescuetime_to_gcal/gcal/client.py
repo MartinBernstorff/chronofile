@@ -69,6 +69,7 @@ def _sync_event(
 def _timezone_to_utc(event: GCSAEvent) -> GCSAEvent:
     event.start = event.start.astimezone(pytz.UTC)
     event.end = event.end.astimezone(pytz.UTC)
+    event.timezone = "UTC"
 
     return event
 
@@ -98,7 +99,6 @@ def sync(
             datetime.today(),
             order_by="updated",
             single_events=True,
-            timezone="UTC",
         )
     ).map(_timezone_to_utc)
 
@@ -108,6 +108,7 @@ def sync(
                 summary=e.title,
                 start=e.start,
                 end=e.end,
+                timezone=e.timezone,
             )
             for e in input_events
         ],
