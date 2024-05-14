@@ -2,6 +2,7 @@ import datetime
 import logging
 import os
 
+import devtools
 from iterpy.arr import Arr
 
 from rescuetime_to_gcal import gcal, rescuetime
@@ -23,7 +24,7 @@ def main(
         timezone=cfg.rescuetime_timezone,
     )
 
-    logging.info(f"Rescuetime, got {rescuetime_data}")
+    logging.info(f"Rescuetime, got {devtools.debug.format(rescuetime_data)}")
 
     events = (
         Arr(rescuetime_data)

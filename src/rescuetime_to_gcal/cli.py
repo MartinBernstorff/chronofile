@@ -1,9 +1,13 @@
+import importlib
+import importlib.metadata
 import logging
 from typing import Annotated
 
 import coloredlogs
+import devtools
 import typer
 
+from rescuetime_to_gcal.config import config as cfg
 from rescuetime_to_gcal.gcal.auth import print_refresh_token
 from rescuetime_to_gcal.main import main
 
@@ -48,6 +52,10 @@ def cli(
         typer.Argument(envvar="GCAL_REFRESH_TOKEN"),
     ],
 ):
+    logging.info(
+        f"Running Rescuetime-to-gcal version {importlib.metadata.version('rescuetime-to-gcal')}"
+    )
+    logging.info(devtools.debug.format(cfg))
     logging.info("Starting sync")
 
     events = main(

@@ -10,6 +10,7 @@ dependencies = [
     "coloredlogs>=15.0.1",
     "iterpy>=1.9.0",
     "pytz>=2024.1",
+    "devtools>=0.12.2",
 ]
 readme = "README.md"
 requires-python = ">= 3.10"

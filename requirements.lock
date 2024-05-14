@@ -10,6 +10,8 @@
 -e file:.
 annotated-types==0.6.0
     # via pydantic
+asttokens==2.4.1
+    # via devtools
 beautiful-date==2.3.0
     # via gcsa
 cachetools==5.3.3
@@ -22,6 +24,10 @@ click==8.1.7
     # via typer
 coloredlogs==15.0.1
     # via rescuetime-to-gcal
+devtools==0.12.2
+    # via rescuetime-to-gcal
+executing==2.0.1
+    # via devtools
 gcsa==2.2.0
     # via rescuetime-to-gcal
 google-api-core==2.19.0
@@ -71,6 +77,7 @@ pydantic==2.7.1
 pydantic-core==2.18.2
     # via pydantic
 pygments==2.18.0
+    # via devtools
     # via rich
 pyparsing==3.1.2
     # via httplib2
@@ -93,6 +100,7 @@ rsa==4.9
 shellingham==1.5.4
     # via typer
 six==1.16.0
+    # via asttokens
     # via python-dateutil
 typer==0.12.3
     # via rescuetime-to-gcal
