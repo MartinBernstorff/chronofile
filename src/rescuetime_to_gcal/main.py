@@ -22,6 +22,8 @@ def main(
         lookback_window=cfg.sync_window,
     )
 
+    logging.info(f"Rescuetime, got {rescuetime_data}")
+
     events = (
         Arr(rescuetime_data)
         .filter(
