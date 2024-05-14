@@ -1,0 +1,36 @@
+name: Build and run Docker container from Dockerfile every hour
+
+on:
+  schedule:
+    # Run the workflow every hour
+    - cron: "*/30 9-22 * * *"
+    - cron: "55 23 * * *"
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build-and-run-container:
+    runs-on: ubuntu-latest
+
+    concurrency:
+      group: "${{ github.workflow }} - @ ${{ github.ref }}"
+      cancel-in-progress: true
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Restore Docker image cache
+        uses: actions/cache@v2
+        with:
+          path: /home/runner/.docker
+          key: ${{ runner.os }}-docker-${{ hashFiles('dockerfile') }}
+          restore-keys: |
+            ${{ runner.os }}-docker-${{ hashFiles('dockerfile') }}
+      - name: Build Docker container image
+        shell: bash
+        run: docker build -t rescuetime-to-gcal:latest .
+      - name: Run Docker container
+        shell: bash
+        run: |
+          docker run rescuetime-to-gcal:latest r2s sync "${{ secrets.RESCUETIME_API_KEY }}" "${{ secrets.GCAL_EMAIL }}" "${{ secrets.GCAL_CLIENT_ID }}" "${{ secrets.GCAL_CLIENT_SECRET }}" "${{ secrets.GCAL_REFRESH_TOKEN }}"
