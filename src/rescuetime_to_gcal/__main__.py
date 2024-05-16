@@ -6,8 +6,8 @@ import devtools
 from iterpy.arr import Arr
 
 from rescuetime_to_gcal import gcal, rescuetime
-from rescuetime_to_gcal.config import config as cfg
 from rescuetime_to_gcal._preprocessing import apply_metadata, merge_within_window
+from rescuetime_to_gcal.config import config as cfg
 
 
 def main(
@@ -24,7 +24,7 @@ def main(
         timezone=cfg.rescuetime_timezone,
     )
 
-    logging.info(f"Rescuetime, got {devtools.debug.format(rescuetime_data)}")
+    logging.debug(f"Rescuetime, got {devtools.debug.format(rescuetime_data)}")
 
     events = (
         Arr(rescuetime_data)
@@ -47,7 +47,7 @@ def main(
         .to_list()
     )
 
-    logging.info("Syncing events to calendar")
+    logging.debug("Syncing events to calendar")
     gcal.sync(
         source_events=events,
         email=gcal_email,
