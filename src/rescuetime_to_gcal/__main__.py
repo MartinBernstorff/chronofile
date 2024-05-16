@@ -60,6 +60,14 @@ def main(
 
 
 if __name__ == "__main__":
+    import coloredlogs
+
+    coloredlogs.install(  # type: ignore
+        level="INFO",
+        format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+        datefmt="%Y/%m/%d %H:%M:%S",
+    )
+
     main(
         os.environ["RESCUETIME_API_KEY"],
         os.environ["GCAL_EMAIL"],
