@@ -7,7 +7,7 @@ import pytest
 from iterpy.arr import Arr
 
 from rescuetime_to_gcal.event import Event
-from rescuetime_to_gcal.processing_steps import filter_by_title, merge_within_window
+from rescuetime_to_gcal._preprocessing import filter_by_title, merge_within_window
 
 
 class FakeEvent(Event):

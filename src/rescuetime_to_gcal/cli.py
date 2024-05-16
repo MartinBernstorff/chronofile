@@ -9,7 +9,7 @@ import typer
 
 from rescuetime_to_gcal.config import config as cfg
 from rescuetime_to_gcal.gcal.auth import print_refresh_token
-from rescuetime_to_gcal.main import main
+from rescuetime_to_gcal.__main__ import main
 
 log = coloredlogs.install(  # type: ignore
     level="INFO",
