@@ -8,9 +8,27 @@ from gcsa.google_calendar import GoogleCalendar
 from google.oauth2.credentials import Credentials
 from iterpy.arr import Arr
 
+import rescuetime_to_gcal.delta as delta
 from rescuetime_to_gcal.constants import required_scopes
 from rescuetime_to_gcal.event import Event
-from rescuetime_to_gcal.gcal._deduper import _deduper
+
+
+def _to_gcsa_event(event: Event) -> GCSAEvent:
+    return GCSAEvent(
+        summary=event.title,
+        start=event.start,  # type: ignore
+        end=event.end,  # type: ignore
+        timezone=event.timezone,
+    )
+
+
+def _to_generic_event(event: GCSAEvent) -> Event:
+    return Event(
+        title=event.summary,
+        start=event.start,  # type: ignore
+        end=event.end,  # type: ignore
+        timezone=event.timezone,
+    )
 
 
 def _timezone_to_utc(event: GCSAEvent) -> GCSAEvent:
@@ -43,46 +61,34 @@ def sync(
         ),
     )
 
-    destination_events = Arr(
-        destination.get_events(
-            min([event.start for event in source_events]),
-            datetime.today(),
-            order_by="updated",
-            single_events=True,
-        )
-    ).map(_timezone_to_utc)
-
-    deduped_events = _deduper(
-        destination_events=destination_events.to_list(),
-        source_events=[
-            GCSAEvent(
-                summary=e.title,
-                start=e.start,
-                end=e.end,
-                timezone=e.timezone,
+    destination_events = (
+        Arr(
+            destination.get_events(
+                min([event.start for event in source_events]),
+                datetime.today(),
+                order_by="updated",
+                single_events=True,
             )
-            for e in source_events
-        ],
+        )
+        .map(_timezone_to_utc)
+        .map(_to_generic_event)
+        .to_list()
     )
 
-    for update_event in deduped_events:
-        existing_event = [
-            event
-            for event in destination_events
-            if event.summary == update_event.summary
-            and event.start == update_event.start
-        ]
+    changes = delta.changeset(
+        source_events,
+        destination_events,
+    )
 
-        event_exists = len(existing_event) != 0
-        if event_exists:
-            matched_event = existing_event[0]
-            matched_event.end = update_event.end
-            destination.update_event(matched_event)
-            logging.info(
-                f"Updated event in calendar, {matched_event.start} - {matched_event.summary}"
-            )
-        else:
-            destination.add_event(update_event)
-            logging.info(
-                f"Created event  {update_event.start} - {update_event.summary}"
-            )
+    for change in changes:
+        match change:
+            case delta.NewEvent():
+                logging.info(
+                    f"Creating event {change.event.start} - {change.event.title}"
+                )
+                destination.add_event(_to_gcsa_event(change.event))
+            case delta.UpdateEvent():
+                logging.info(
+                    f"Updating event {change.event.start} - {change.event.title}"
+                )
+                destination.update_event(_to_gcsa_event(change.event))
