@@ -1,6 +1,9 @@
+import logging
 from abc import ABC
 from dataclasses import dataclass
 from typing import Sequence
+
+import devtools
 
 from rescuetime_to_gcal.delta._deduper import deduper
 from rescuetime_to_gcal.event import Event
@@ -55,4 +58,5 @@ def changeset(
         else:
             changeset.append(NewEvent(event=new_event))
 
+    logging.info(f"Changeset: {devtools.debug.format(changeset)}")
     return changeset
