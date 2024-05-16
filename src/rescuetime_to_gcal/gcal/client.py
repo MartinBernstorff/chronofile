@@ -2,6 +2,7 @@ import logging
 from datetime import date, datetime
 from typing import Sequence
 
+import devtools
 import pytz
 from gcsa.event import Event as GCSAEvent
 from gcsa.google_calendar import GoogleCalendar
@@ -74,13 +75,12 @@ def sync(
         .map(_to_generic_event)
         .to_list()
     )
+    logging.debug(f"Destination events: {devtools.debug.format(destination_events)}")
 
     changes = delta.changeset(
         source_events,
         destination_events,
     )
-
-    logging.info(f"Changes: {devtools.debug.format(changes)}")
 
     for change in changes:
         match change:
