@@ -15,11 +15,15 @@ from rescuetime_to_gcal.gcal._consts import required_scopes
 
 
 def _to_gcsa_event(event: Event) -> GCSAEvent:
+    if event.gcal_event_id is None:
+        raise ValueError("Event must have a gcal_event_id")
+
     return GCSAEvent(
         summary=event.title,
         start=event.start,  # type: ignore
         end=event.end,  # type: ignore
         timezone=event.timezone,
+        event_id=event.gcal_event_id,
     )
 
 
@@ -29,6 +33,7 @@ def _to_generic_event(event: GCSAEvent) -> Event:
         start=event.start,  # type: ignore
         end=event.end,  # type: ignore
         timezone=event.timezone,
+        gcal_event_id=event.event_id,
     )
 
 

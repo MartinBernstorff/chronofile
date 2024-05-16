@@ -12,6 +12,7 @@ class Event(pydantic.BaseModel):
     end: datetime.datetime
     category: Optional[RecordCategory] = None
     timezone: str = "UTC"
+    gcal_event_id: Optional[str] = None
 
     @property
     def duration(self) -> datetime.timedelta:
