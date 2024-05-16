@@ -18,4 +18,4 @@ class Event(pydantic.BaseModel):
         return self.end - self.start
 
     def __repr__(self):
-        return f"Event(title={self.title}, {self.start} to {self.end})"
+        return f"Event(title={self.title}, {self.start} to {self.end}, {self.timezone})"

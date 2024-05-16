@@ -7,7 +7,7 @@ from iterpy.arr import Arr
 
 from rescuetime_to_gcal import gcal, rescuetime
 from rescuetime_to_gcal.config import config as cfg
-from rescuetime_to_gcal.processing_steps import apply_metadata, merge_within_window
+from rescuetime_to_gcal._preprocessing import apply_metadata, merge_within_window
 
 
 def main(
