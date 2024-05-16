@@ -5,9 +5,9 @@ from typing import Sequence
 import pytest
 
 from rescuetime_to_gcal import delta
-from rescuetime_to_gcal.delta.main import EventChange, NewEvent, UpdateEvent
+from rescuetime_to_gcal.delta import EventChange, NewEvent, UpdateEvent
 from rescuetime_to_gcal.event import Event
-from rescuetime_to_gcal.test_preprocessing_steps import FakeEvent
+from rescuetime_to_gcal.test_preprocessing import FakeEvent
 
 
 @dataclass(frozen=True)
