@@ -20,10 +20,6 @@ class UpdateEvent(EventChange):
     event: Event
 
 
-# TODO Write tests for this.
-# Specifically, that events which start at the same time and have the same title result in an update.
-
-
 def changeset(
     source_events: Sequence[Event],
     destination_events: Sequence[Event],

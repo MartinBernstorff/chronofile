@@ -5,7 +5,7 @@ from typing import Sequence
 import pytest
 
 from rescuetime_to_gcal import delta
-from rescuetime_to_gcal.delta.main import EventChange, UpdateEvent
+from rescuetime_to_gcal.delta.main import EventChange, NewEvent, UpdateEvent
 from rescuetime_to_gcal.event import Event
 from rescuetime_to_gcal.test_preprocessing_steps import FakeEvent
 
@@ -49,6 +49,12 @@ class ChangesetExample:
                     )
                 )
             ],
+        ),
+        ChangesetExample(
+            "New event in source results in new event",
+            source_events=[FakeEvent()],
+            destination_events=[],
+            result=[NewEvent(FakeEvent())],
         ),
     ],
     ids=lambda e: e.intention,
