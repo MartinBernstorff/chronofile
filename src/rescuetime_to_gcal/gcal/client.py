@@ -9,8 +9,8 @@ from google.oauth2.credentials import Credentials
 from iterpy.arr import Arr
 
 import rescuetime_to_gcal.delta as delta
-from rescuetime_to_gcal.gcal._consts import required_scopes
 from rescuetime_to_gcal.event import Event
+from rescuetime_to_gcal.gcal._consts import required_scopes
 
 
 def _to_gcsa_event(event: Event) -> GCSAEvent:
@@ -80,15 +80,11 @@ def sync(
         destination_events,
     )
 
+    logging.info(f"Changes: {devtools.debug.format(changes)}")
+
     for change in changes:
         match change:
             case delta.NewEvent():
-                logging.info(
-                    f"Creating event {change.event.start} - {change.event.title}"
-                )
                 destination.add_event(_to_gcsa_event(change.event))
             case delta.UpdateEvent():
-                logging.info(
-                    f"Updating event {change.event.start} - {change.event.title}"
-                )
                 destination.update_event(_to_gcsa_event(change.event))
