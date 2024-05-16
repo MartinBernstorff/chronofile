@@ -24,8 +24,6 @@ def main(
         timezone=cfg.rescuetime_timezone,
     )
 
-    logging.debug(f"Rescuetime, got {devtools.debug.format(rescuetime_data)}")
-
     events = (
         Arr(rescuetime_data)
         .filter(

@@ -1,4 +1,5 @@
 import datetime
+import logging
 from typing import Sequence
 
 import pydantic
@@ -52,4 +53,6 @@ def load(
         )
         for row in response["rows"]
     ]
+    logging.debug(f"Rescuetime {devtools.debug.format(events)}")
+
     return [e.to_generic_event(timezone) for e in events]
