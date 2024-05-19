@@ -43,8 +43,8 @@ validate_ci: ## Run all checks
 
 docker_ci: ## Run all checks in docker
 	@echo "––– Running all checks in docker –––"
-	docker build -t rescuetime2gcal_ci -f .github/Dockerfile.dev .
-	docker run rescuetime2gcal_ci make validate_ci
+	docker build -t rescuetime2gcal_ci  -f .github/Dockerfile.dev .
+	docker run --env-file .env rescuetime2gcal_ci make validate_ci
 
 pr: ## Submit a PR
 	@lumberman sync --squash --automerge

@@ -12,6 +12,14 @@ jobs:
       - name: Checkout (GitHub)
         uses: actions/checkout@v3
 
+      - name: Get secrets to .env
+        run: |
+          echo "RESCUETIME_API_KEY=${{ secrets.RESCUETIME_API_KEY }}" >> .env
+          echo "GCAL_EMAIL=${{ secrets.GCAL_EMAIL }}" >> .env
+          echo "GCAL_CLIENT_ID=${{ secrets.GCAL_CLIENT_ID }}" >> .env
+          echo "GCAL_CLIENT_SECRET=${{ secrets.GCAL_CLIENT_SECRET }}" >> .env
+          echo "GCAL_REFRESH_TOKEN=${{ secrets.GCAL_REFRESH_TOKEN }}" >> .env
+
       - name: Build CI container
         run: |
           make docker_ci
