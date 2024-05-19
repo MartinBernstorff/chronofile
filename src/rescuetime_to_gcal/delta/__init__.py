@@ -9,33 +9,28 @@ from rescuetime_to_gcal.delta._deduper import deduper
 from rescuetime_to_gcal.event import Event
 
 
-class EventChange(ABC):
+@dataclass(frozen=True)
+class NewEvent:
     event: Event
 
 
 @dataclass(frozen=True)
-class NewEvent(EventChange):
+class UpdateEvent:
     event: Event
 
 
-@dataclass(frozen=True)
-class UpdateEvent(EventChange):
-    event: Event
+EventChange = NewEvent | UpdateEvent
 
 
 def changeset(
-    source_events: Sequence[Event],
-    destination_events: Sequence[Event],
+    source_events: Sequence[Event], destination_events: Sequence[Event]
 ) -> Sequence[EventChange]:
     """Identify which changes are needed on destination for it to mirror source. Assumes all events are in the same timezone."""
     timezones = set(e.timezone for e in [*source_events, *destination_events])
     if len(timezones) != 1:
         raise ValueError(f"All events must be in the same timezone. Found {timezones}")
 
-    deduped_events = deduper(
-        destination_events=destination_events,
-        source_events=source_events,
-    )
+    deduped_events = deduper(destination_events=destination_events, source_events=source_events)
 
     changeset: list[EventChange] = []
     for new_event in deduped_events:

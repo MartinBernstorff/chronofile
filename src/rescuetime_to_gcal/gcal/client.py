@@ -35,7 +35,7 @@ def _to_generic_event(event: GCSAEvent) -> Event:
 
 
 def _timezone_to_utc(event: GCSAEvent) -> GCSAEvent:
-    if isinstance(event.start, date) or isinstance(event.end, date):
+    if not isinstance(event.start, datetime) or not isinstance(event.end, datetime):
         return event
 
     event.start = event.start.astimezone(pytz.UTC)
@@ -66,7 +66,7 @@ def sync(
 
     destination_events = (
         Arr(
-            destination.get_events(
+            destination.get_events(  # type: ignore
                 min([event.start for event in source_events]),
                 datetime.today(),
                 order_by="updated",
@@ -79,14 +79,11 @@ def sync(
     )
     logging.debug(f"Destination events: {devtools.debug.format(destination_events)}")
 
-    changes = delta.changeset(
-        source_events,
-        destination_events,
-    )
+    changes = delta.changeset(source_events, destination_events)
 
     for change in changes:
         match change:
             case delta.NewEvent():
-                destination.add_event(_to_gcsa_event(change.event))
+                destination.add_event(_to_gcsa_event(change.event))  # type: ignore
             case delta.UpdateEvent():
-                destination.update_event(_to_gcsa_event(change.event))
+                destination.update_event(_to_gcsa_event(change.event))  # type: ignore
