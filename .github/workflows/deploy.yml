@@ -1,4 +1,4 @@
-name: run
+name: deploy
 
 on:
   schedule:
@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  run:
+  deploy:
     runs-on: ubuntu-latest
 
     concurrency:
