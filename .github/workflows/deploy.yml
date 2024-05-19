@@ -1,6 +1,7 @@
-name: Build and run Docker container from Dockerfile every hour
+name: Deploy
 
 on:
+  workflow_dispatch:
   schedule:
     # Run the workflow every hour
     - cron: "*/30 9-22 * * *"
@@ -8,7 +9,6 @@ on:
   push:
     branches:
       - main
-  pull_request:
 
 jobs:
   build-and-run-container:

@@ -11,13 +11,9 @@
 
 <!-- start short-description -->
 
-TODO: Add a short description of the project.
-
 <!-- end short-description -->
 
 ## Usage
-
-TODO: Add minimal usage example
 
 ### Setting up a development environment
 #### Devcontainer
