@@ -2,7 +2,6 @@ import datetime
 import logging
 import os
 
-import devtools
 from iterpy.arr import Arr
 
 from rescuetime_to_gcal import gcal, rescuetime
@@ -47,11 +46,13 @@ def main(
 
     logging.debug("Syncing events to calendar")
     gcal.sync(
+        client=gcal.GcalClient(
+            calendar_id=gcal_email,
+            client_id=gcal_client_id,
+            client_secret=gcal_client_secret,
+            refresh_token=gcal_refresh_token,
+        ),
         source_events=events,
-        email=gcal_email,
-        client_id=gcal_client_id,
-        client_secret=gcal_client_secret,
-        refresh_token=gcal_refresh_token,
     )
 
     return events

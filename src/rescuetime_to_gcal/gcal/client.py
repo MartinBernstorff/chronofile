@@ -1,6 +1,7 @@
 import logging
-from datetime import date, datetime
-from typing import Sequence
+from dataclasses import dataclass
+from datetime import datetime
+from typing import Protocol, Sequence
 
 import devtools
 import pytz
@@ -20,7 +21,7 @@ def _to_gcsa_event(event: Event) -> GCSAEvent:
         start=event.start,  # type: ignore
         end=event.end,  # type: ignore
         timezone=event.timezone,
-        event_id=event.gcal_event_id,  # type: ignore
+        event_id=event.destination_event_id,  # type: ignore
     )
 
 
@@ -30,54 +31,92 @@ def _to_generic_event(event: GCSAEvent) -> Event:
         start=event.start,  # type: ignore
         end=event.end,  # type: ignore
         timezone=event.timezone,
-        gcal_event_id=event.event_id,
+        destination_event_id=event.event_id,
     )
 
 
-def _timezone_to_utc(event: GCSAEvent) -> GCSAEvent:
-    if isinstance(event.start, date) or isinstance(event.end, date):
-        return event
+def _dt_to_utc(dt: datetime) -> datetime:
+    return dt.astimezone(pytz.UTC).replace(tzinfo=pytz.UTC)
 
-    event.start = event.start.astimezone(pytz.UTC)
-    event.end = event.end.astimezone(pytz.UTC)
+
+def _timezone_to_utc(event: GCSAEvent) -> GCSAEvent:
+    if not isinstance(event.start, datetime) or not isinstance(event.end, datetime):
+        raise ValueError("Event must have timestamps, not dates")
+
+    event.start = _dt_to_utc(event.start)
+    event.end = _dt_to_utc(event.end)
+
     event.timezone = "UTC"
 
     return event
 
 
+class DestinationClient(Protocol):
+    """Interface for a client that can add, get, update, and delete events. All responsese must be in UTC."""
+
+    def add_event(self, event: Event) -> Event: ...
+    def get_events(self, start: datetime, end: datetime) -> Sequence[Event]: ...
+    def update_event(self, event: Event) -> Event: ...
+    def delete_event(self, event: Event) -> Event: ...
+
+
+@dataclass
+class GcalClient(DestinationClient):
+    calendar_id: str
+    client_id: str
+    client_secret: str
+    refresh_token: str
+
+    def __post_init__(self):
+        self._client = GoogleCalendar(
+            default_calendar=self.calendar_id,
+            credentials=Credentials(
+                token=None,
+                refresh_token=self.refresh_token,
+                token_uri="https://oauth2.googleapis.com/token",
+                scopes=required_scopes,
+                client_id=self.client_id,
+                client_secret=self.client_secret,
+            ),
+        )
+
+    def add_event(self, event: Event) -> Event:
+        val = self._client.add_event(_to_gcsa_event(event))
+        return _to_generic_event(_timezone_to_utc(val))
+
+    def get_events(self, start: datetime, end: datetime) -> Sequence[Event]:
+        events = (
+            Arr(
+                self._client.get_events(
+                    start, end, order_by="updated", single_events=True
+                )
+            )
+            .map(_timezone_to_utc)
+            .map(_to_generic_event)
+            .to_list()
+        )
+        logging.debug(f"Destination events: {devtools.debug.format(events)}")
+        return events
+
+    def update_event(self, event: Event) -> Event:
+        response = self._client.update_event(_to_gcsa_event(event))
+        return _to_generic_event(_timezone_to_utc(response))
+
+    def delete_event(self, event: Event) -> Event:
+        self._client.delete_event(_to_gcsa_event(event))
+        return event
+
+
 def sync(
     source_events: Sequence[Event],
-    email: str,
-    client_id: str,
-    client_secret: str,
-    refresh_token: str,
+    client: DestinationClient,
 ) -> None:
-    destination = GoogleCalendar(
-        email,
-        credentials=Credentials(
-            token=None,
-            refresh_token=refresh_token,
-            token_uri="https://oauth2.googleapis.com/token",
-            scopes=required_scopes,
-            client_id=client_id,
-            client_secret=client_secret,
-        ),
-    )
-
-    destination_events = (
-        Arr(
-            destination.get_events(
-                min([event.start for event in source_events]),
-                datetime.today(),
-                order_by="updated",
-                single_events=True,
-            )
+    destination_events = Arr(
+        client.get_events(
+            min([event.start for event in source_events]),
+            datetime.today(),
         )
-        .map(_timezone_to_utc)
-        .map(_to_generic_event)
-        .to_list()
-    )
-    logging.debug(f"Destination events: {devtools.debug.format(destination_events)}")
+    ).to_list()
 
     changes = delta.changeset(
         source_events,
@@ -87,6 +126,6 @@ def sync(
     for change in changes:
         match change:
             case delta.NewEvent():
-                destination.add_event(_to_gcsa_event(change.event))
+                client.add_event(change.event)
             case delta.UpdateEvent():
-                destination.update_event(_to_gcsa_event(change.event))
+                client.update_event(change.event)

@@ -1,14 +1,16 @@
 name: Build and run Docker container from Dockerfile every hour
 
 on:
+  workflow_dispatch:
   schedule:
     # Run the workflow every hour
-    - cron: "*/30 9-22 * * *"
+    - cron: "*/15 9-22 * * *"
     - cron: "55 23 * * *"
   push:
     branches:
       - main
-  pull_request:
+
+  # TD Write a docker smoketest and run on pull-request
 
 jobs:
   build-and-run-container:

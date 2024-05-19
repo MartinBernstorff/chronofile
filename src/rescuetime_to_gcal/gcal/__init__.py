@@ -1,1 +1,4 @@
-from .client import sync  # noqa: F401
+from .client import (
+    GcalClient,  # noqa: F401
+    sync,  # noqa: F401
+)
