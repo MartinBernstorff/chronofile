@@ -19,6 +19,7 @@ def main(
     gcal_client_id: str,
     gcal_client_secret: str,
     gcal_refresh_token: str,
+    dry_run: bool,
 ) -> Sequence["Event"]:
     rescuetime_data = rescuetime.load(
         api_key=rescuetime_api_key,
@@ -43,13 +44,14 @@ def main(
     )
 
     logging.debug("Syncing events to calendar")
-    gcal.sync(
-        source_events=events,
-        email=gcal_email,
-        client_id=gcal_client_id,
-        client_secret=gcal_client_secret,
-        refresh_token=gcal_refresh_token,
-    )
+    if not dry_run:
+        gcal.sync(
+            source_events=events,
+            email=gcal_email,
+            client_id=gcal_client_id,
+            client_secret=gcal_client_secret,
+            refresh_token=gcal_refresh_token,
+        )
 
     return events
 
@@ -69,4 +71,5 @@ if __name__ == "__main__":
         os.environ["GCAL_CLIENT_ID"],
         os.environ["GCAL_CLIENT_SECRET"],
         os.environ["GCAL_REFRESH_TOKEN"],
+        dry_run=False,
     )
