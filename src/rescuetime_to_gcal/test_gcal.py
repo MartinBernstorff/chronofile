@@ -1,5 +1,6 @@
 import datetime
 import os
+import time
 
 import pytest
 import pytz
@@ -16,19 +17,38 @@ def _clean_test_interval(
 
 
 @pytest.mark.parametrize(
-    ("client"),
+    ("client", "system_timezone"),
     [
-        GcalClient(
-            calendar_id=os.environ["TEST_CALENDAR_ID"],
-            client_id=os.environ["GCAL_CLIENT_ID"],
-            client_secret=os.environ["GCAL_CLIENT_SECRET"],
-            refresh_token=os.environ["GCAL_REFRESH_TOKEN"],
-        )
+        (
+            GcalClient(
+                calendar_id=os.environ["TEST_CALENDAR_ID"],
+                client_id=os.environ["GCAL_CLIENT_ID"],
+                client_secret=os.environ["GCAL_CLIENT_SECRET"],
+                refresh_token=os.environ["GCAL_REFRESH_TOKEN"],
+            ),
+            "Europe/Copenhagen",
+        ),
+        (
+            GcalClient(
+                calendar_id=os.environ["TEST_CALENDAR_ID"],
+                client_id=os.environ["GCAL_CLIENT_ID"],
+                client_secret=os.environ["GCAL_CLIENT_SECRET"],
+                refresh_token=os.environ["GCAL_REFRESH_TOKEN"],
+            ),
+            "America/New_York",
+        ),
     ],
 )
-def test_client_sync(client: DestinationClient):
+def test_client_sync(
+    client: DestinationClient,
+    system_timezone: pytz.BaseTzInfo,
+):
+    # Update the system timezone
+    os.environ["TZ"] = system_timezone  # type: ignore
+    time.tzset()
+
     base_event = Event(
-        title="test",
+        title="🔥 Test",
         start=datetime.datetime(2023, 1, 1, 0, 0),
         end=datetime.datetime(2023, 1, 1, 0, 0),
     )
@@ -38,13 +58,7 @@ def test_client_sync(client: DestinationClient):
     )
 
     # Create an event
-    add_response = client.add_event(
-        Event(
-            title="test",
-            start=datetime.datetime(2023, 1, 1, 0, 0),
-            end=datetime.datetime(2023, 1, 1, 0, 0),
-        )
-    )
+    add_response = client.add_event(base_event)
     # Get the event back
     loaded_event = client.get_events(
         base_event.start, base_event.end + datetime.timedelta(days=1)
@@ -72,28 +86,4 @@ def test_client_sync(client: DestinationClient):
     )
 
 
-# TD Add tests for round-trip sync
-# * Identity is preserved when creating, loading, and deleting the same event
-# * Across emoji
-# * Across system timezones
-# import datetime
-# import pytz
-
-# # Get the current datetime in the default system timezone
-# default_now: datetime.datetime = datetime.datetime.now()
-# print("Default timezone:", default_now.strftime("%Y-%m-%d %H:%M:%S"))
-
-# # Set the desired timezone
-# new_timezone: str = "US/Eastern"  # Replace with your desired timezone
-# tz: pytz.BaseTzInfo = pytz.timezone(new_timezone)
-
-# # Update the system timezone
-# datetime.datetime.now(tz)
-
-# # Get the current datetime in the new timezone
-# new_now: datetime.datetime = datetime.datetime.now()
-# print("New timezone:", new_now.strftime("%Y-%m-%d %H:%M:%S"))
-
 # TD Setup gcal tests
-# * Add the test calendar env variable to the secrets
-# * Add a run tests workflow
