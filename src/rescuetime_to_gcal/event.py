@@ -1,9 +1,9 @@
-import datetime
+import datetime  # noqa: TCH003
 from typing import Optional
 
 import pydantic
 
-from rescuetime_to_gcal.config import RecordCategory
+from rescuetime_to_gcal.config import RecordCategory  # noqa: TCH001
 
 
 class Event(pydantic.BaseModel):
@@ -15,8 +15,8 @@ class Event(pydantic.BaseModel):
     gcal_event_id: Optional[str] = None
 
     @property
-    def duration(self) -> datetime.timedelta:
+    def duration(self) -> "datetime.timedelta":
         return self.end - self.start
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"Event(title={self.title}, {self.start} to {self.end}, {self.timezone})"

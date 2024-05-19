@@ -3,7 +3,6 @@ import logging
 import os
 from typing import TYPE_CHECKING, Sequence
 
-import devtools
 from iterpy.arr import Arr
 
 from rescuetime_to_gcal import gcal, rescuetime
