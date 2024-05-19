@@ -1,6 +1,6 @@
 {
     "python.testing.pytestArgs": [
-        "rescuetime2gcal"
+        "src"
     ],
     "python.testing.unittestEnabled": false,
     "python.testing.pytestEnabled": true,

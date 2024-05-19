@@ -32,8 +32,6 @@ coverage==7.5.1
 devtools==0.12.2
     # via rescuetime2gcal
 diff-cover==8.0.3
-exceptiongroup==1.2.1
-    # via pytest
 execnet==2.1.1
     # via pytest-xdist
 executing==2.0.1
@@ -142,9 +140,6 @@ six==1.16.0
     # via python-dateutil
 termcolor==2.4.0
     # via pytest-sugar
-tomli==2.0.1
-    # via coverage
-    # via pytest
 typer==0.12.3
     # via rescuetime2gcal
 typing-extensions==4.11.0
