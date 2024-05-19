@@ -18,20 +18,28 @@ cachetools==5.3.3
     # via google-auth
 certifi==2024.2.2
     # via requests
+chardet==5.2.0
+    # via diff-cover
 charset-normalizer==3.3.2
     # via requests
 click==8.1.7
     # via typer
 coloredlogs==15.0.1
-    # via rescuetime-to-gcal
+    # via rescuetime2gcal
+coverage==7.5.1
+    # via pytest-cov
+    # via pytest-testmon
 devtools==0.12.2
-    # via rescuetime-to-gcal
+    # via rescuetime2gcal
+diff-cover==8.0.3
 exceptiongroup==1.2.1
     # via pytest
+execnet==2.1.1
+    # via pytest-xdist
 executing==2.0.1
     # via devtools
-gcsa==2.2.0
-    # via rescuetime-to-gcal
+gcsa==2.3.0
+    # via rescuetime2gcal
 google-api-core==2.19.0
     # via google-api-python-client
 google-api-python-client==2.127.0
@@ -58,16 +66,24 @@ idna==3.7
 iniconfig==2.0.0
     # via pytest
 iterpy==1.9.0
-    # via rescuetime-to-gcal
+    # via rescuetime2gcal
+jinja2==3.1.4
+    # via diff-cover
 markdown-it-py==3.0.0
     # via rich
+markupsafe==2.1.5
+    # via jinja2
 mdurl==0.1.2
     # via markdown-it-py
+nodeenv==1.8.0
+    # via pyright
 oauthlib==3.2.2
     # via requests-oauthlib
 packaging==24.0
     # via pytest
+    # via pytest-sugar
 pluggy==1.5.0
+    # via diff-cover
     # via pytest
 proto-plus==1.23.0
     # via google-api-core
@@ -81,20 +97,30 @@ pyasn1==0.6.0
 pyasn1-modules==0.4.0
     # via google-auth
 pydantic==2.7.1
-    # via rescuetime-to-gcal
+    # via rescuetime2gcal
 pydantic-core==2.18.2
     # via pydantic
 pygments==2.18.0
     # via devtools
+    # via diff-cover
     # via rich
 pyparsing==3.1.2
     # via httplib2
-pytest==8.2.0
+pyright==1.1.350
+pytest==7.4.0
+    # via pytest-cov
+    # via pytest-sugar
+    # via pytest-testmon
+    # via pytest-xdist
+pytest-cov==4.1.0
+pytest-sugar==1.0.0
+pytest-testmon==2.1.0
+pytest-xdist==3.5.0
 python-dateutil==2.9.0.post0
     # via beautiful-date
     # via gcsa
 pytz==2024.1
-    # via rescuetime-to-gcal
+    # via rescuetime2gcal
 pytz-deprecation-shim==0.1.0.post0
     # via tzlocal
 requests==2.31.0
@@ -106,15 +132,21 @@ rich==13.7.1
     # via typer
 rsa==4.9
     # via google-auth
+ruff==0.2.2
+setuptools==69.5.1
+    # via nodeenv
 shellingham==1.5.4
     # via typer
 six==1.16.0
     # via asttokens
     # via python-dateutil
+termcolor==2.4.0
+    # via pytest-sugar
 tomli==2.0.1
+    # via coverage
     # via pytest
 typer==0.12.3
-    # via rescuetime-to-gcal
+    # via rescuetime2gcal
 typing-extensions==4.11.0
     # via pydantic
     # via pydantic-core
