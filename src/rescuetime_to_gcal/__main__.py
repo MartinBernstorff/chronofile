@@ -11,7 +11,7 @@ from rescuetime_to_gcal._preprocessing import apply_metadata, merge_within_windo
 from rescuetime_to_gcal.config import config as cfg
 
 if TYPE_CHECKING:
-    from sched import Event
+    from rescuetime_to_gcal.event import Event
 
 
 def main(
