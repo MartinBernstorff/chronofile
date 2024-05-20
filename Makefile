@@ -58,8 +58,8 @@ docker_build:
 
 docker_deploy:
 	@make docker_build
-	docker run rescuetime-to-gcal:latest rye run r2s sync
+	docker run --env-file .env rescuetime-to-gcal:latest rye run r2s sync
 
 docker_smoketest:
 	@make docker_build
-	docker run rescuetime-to-gcal:latest rye run r2s sync --dry-run 
+	docker run --env-file .env rescuetime-to-gcal:latest rye run r2s sync --dry-run 
