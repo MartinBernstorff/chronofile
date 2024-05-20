@@ -27,6 +27,7 @@
                 "Lint",
                 "Test",
                 "Static type check",
+                "Docker smoketest",
             ],
             "presentation": {
                 "reveal": "always",
@@ -51,7 +52,7 @@
         {
             "label": "Test",
             "type": "shell",
-            "command": "make test-with-coverage",
+            "command": "make test",
             "presentation": {
                 "reveal": "always",
                 "clear": true,
@@ -69,6 +70,18 @@
                 "showReuseMessage": false,
                 "group": "pr"
             }
+        },
+        {
+            "label": "Docker smoketest",
+            "type": "shell",
+            "command": "make docker_smoketest",
+            "presentation": {
+                "reveal": "always",
+                "clear": true,
+                "showReuseMessage": false,
+                "group": "pr"
+            }
         }
+        // TD Add Docker smoketest
     ]
 }

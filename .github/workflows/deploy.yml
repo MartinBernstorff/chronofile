@@ -1,15 +1,15 @@
 name: deploy
 
 on:
+  workflow_dispatch:
   schedule:
     # Run the workflow every hour
-    - cron: "*/30 9-22 * * *"
+    - cron: "*/15 9-22 * * *"
     - cron: "55 23 * * *"
   push:
     branches:
       - main
   pull_request:
-  workflow_dispatch:
 
 jobs:
   deploy:
@@ -30,15 +30,20 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-docker-${{ hashFiles('dockerfile') }}
 
-      - name: Build Docker container image
-        shell: bash
-        run: docker build -t rescuetime-to-gcal:latest .
+      - name: Set environment variables
+        run: |
+          echo "RESCUETIME_API_KEY=${{ secrets.RESCUETIME_API_KEY }}" >> .env
+          echo "GCAL_EMAIL=${{ secrets.GCAL_EMAIL }}" >> .env
+          echo "GCAL_CLIENT_ID=${{ secrets.GCAL_CLIENT_ID }}" >> .env
+          echo "GCAL_CLIENT_SECRET=${{ secrets.GCAL_CLIENT_SECRET }}" >> .env
+          echo "GCAL_REFRESH_TOKEN=${{ secrets.GCAL_REFRESH_TOKEN }}" >> .env
+          echo "TEST_CALENDAR_ID=${{ secrets.TEST_CALENDAR_ID }}" >> .env
 
-      - name: Run Docker container
+      - name: Build and deploy Docker container image
         shell: bash
         run: |
           if [ "${{ github.ref }}" = "refs/heads/main" ]; then
-            docker run rescuetime-to-gcal:latest rye run r2s sync "${{ secrets.RESCUETIME_API_KEY }}" "${{ secrets.GCAL_EMAIL }}" "${{ secrets.GCAL_CLIENT_ID }}" "${{ secrets.GCAL_CLIENT_SECRET }}" "${{ secrets.GCAL_REFRESH_TOKEN }}"
+            make docker_deploy
           else
-            docker run rescuetime-to-gcal:latest rye run r2s sync "${{ secrets.RESCUETIME_API_KEY }}" "${{ secrets.GCAL_EMAIL }}" "${{ secrets.GCAL_CLIENT_ID }}" "${{ secrets.GCAL_CLIENT_SECRET }}" "${{ secrets.GCAL_REFRESH_TOKEN }}" --dry-run
+            make docker_smoketest
           fi

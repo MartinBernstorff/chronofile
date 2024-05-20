@@ -22,8 +22,8 @@ file = "LICENSE"
 file = "README.md"
 content-type = "text/markdown"
 
-[tool]
-rye = { dev-dependencies = [
+[tool.rye]
+dev-dependencies = [
   "diff-cover==8.0.3",
   "pyright==1.1.350",
   "pytest==7.4.0",
@@ -32,7 +32,10 @@ rye = { dev-dependencies = [
   "pytest-xdist==3.5.0",
   "pytest-sugar==1.0.0",
   "ruff==0.2.2",
-] }
+]
+
+[tool.rye.scripts]
+"r2s" = { cmd = "r2s", env-file = ".env" }
 
 [project.urls]
 homepage = "https://github.com/MartinBernstorff/rescuetime2gcal"

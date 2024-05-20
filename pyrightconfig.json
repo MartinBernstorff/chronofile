@@ -2,6 +2,7 @@
     "exclude": [
         ".*venv*",
         ".cache",
+        ".vscode"
     ],
     "pythonPlatform": "Darwin",
     "reportMissingTypeStubs": false,
