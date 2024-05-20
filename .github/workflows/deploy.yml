@@ -1,4 +1,4 @@
-name: Build and run Docker container from Dockerfile every hour
+name: deploy
 
 on:
   workflow_dispatch:
@@ -9,11 +9,10 @@ on:
   push:
     branches:
       - main
-
-  # TD Write a docker smoketest and run on pull-request
+  pull_request:
 
 jobs:
-  build-and-run-container:
+  deploy:
     runs-on: ubuntu-latest
 
     concurrency:
@@ -22,6 +21,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+
       - name: Restore Docker image cache
         uses: actions/cache@v2
         with:
@@ -29,10 +29,16 @@ jobs:
           key: ${{ runner.os }}-docker-${{ hashFiles('dockerfile') }}
           restore-keys: |
             ${{ runner.os }}-docker-${{ hashFiles('dockerfile') }}
+
       - name: Build Docker container image
         shell: bash
         run: docker build -t rescuetime-to-gcal:latest .
+
       - name: Run Docker container
         shell: bash
         run: |
-          docker run rescuetime-to-gcal:latest r2s sync "${{ secrets.RESCUETIME_API_KEY }}" "${{ secrets.GCAL_EMAIL }}" "${{ secrets.GCAL_CLIENT_ID }}" "${{ secrets.GCAL_CLIENT_SECRET }}" "${{ secrets.GCAL_REFRESH_TOKEN }}"
+          if [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            docker run rescuetime-to-gcal:latest rye run r2s sync "${{ secrets.RESCUETIME_API_KEY }}" "${{ secrets.GCAL_EMAIL }}" "${{ secrets.GCAL_CLIENT_ID }}" "${{ secrets.GCAL_CLIENT_SECRET }}" "${{ secrets.GCAL_REFRESH_TOKEN }}"
+          else
+            docker run rescuetime-to-gcal:latest rye run r2s sync "${{ secrets.RESCUETIME_API_KEY }}" "${{ secrets.GCAL_EMAIL }}" "${{ secrets.GCAL_CLIENT_ID }}" "${{ secrets.GCAL_CLIENT_SECRET }}" "${{ secrets.GCAL_REFRESH_TOKEN }}" --dry-run
+          fi

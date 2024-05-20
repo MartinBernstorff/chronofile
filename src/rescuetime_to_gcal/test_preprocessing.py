@@ -6,8 +6,8 @@ from dataclasses import dataclass
 import pytest
 from iterpy.arr import Arr
 
-from rescuetime_to_gcal.event import Event
 from rescuetime_to_gcal._preprocessing import filter_by_title, merge_within_window
+from rescuetime_to_gcal.event import Event
 
 
 class FakeEvent(Event):
@@ -17,17 +17,7 @@ class FakeEvent(Event):
 
 
 def test_filter_by_title():
-    events = [
-        FakeEvent(
-            title="tes",
-        ),
-        FakeEvent(
-            title="test2",
-        ),
-        FakeEvent(
-            title="test3",
-        ),
-    ]
+    events = [FakeEvent(title="tes"), FakeEvent(title="test2"), FakeEvent(title="test3")]
     filtered_events = filter_by_title(data=events, strs_to_match=["test"])
     assert len(filtered_events) == 1
     assert filtered_events[0].title == "tes"
@@ -113,15 +103,9 @@ def test_merge_events_within_window(testcase: MergeTestCase):
         combined = (
             Arr(shuffled_events)
             .groupby(lambda e: e.title)
-            .map(
-                lambda g: merge_within_window(
-                    g[1], merge_gap=datetime.timedelta(days=1)
-                )
-            )
+            .map(lambda g: merge_within_window(g[1], merge_gap=datetime.timedelta(days=1)))
             .flatten()
         ).to_list()
 
         output = sorted(combined, key=lambda e: e.start)
-        assert "\n".join(str(e) for e in output) == "\n".join(
-            str(e) for e in testcase.expected
-        )
+        assert "\n".join(str(e) for e in output) == "\n".join(str(e) for e in testcase.expected)

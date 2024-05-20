@@ -39,10 +39,7 @@ def _clean_test_interval(
         ),
     ],
 )
-def test_client_sync(
-    client: DestinationClient,
-    system_timezone: pytz.BaseTzInfo,
-):
+def test_client_sync(client: DestinationClient, system_timezone: pytz.BaseTzInfo):
     # Update the system timezone
     os.environ["TZ"] = system_timezone  # type: ignore
     time.tzset()
@@ -53,16 +50,14 @@ def test_client_sync(
         end=datetime.datetime(2023, 1, 1, 0, 0),
     )
 
-    _clean_test_interval(
-        client, base_event.start, base_event.end + datetime.timedelta(days=1)
-    )
+    _clean_test_interval(client, base_event.start, base_event.end + datetime.timedelta(days=1))
 
     # Create an event
     add_response = client.add_event(base_event)
     # Get the event back
-    loaded_event = client.get_events(
-        base_event.start, base_event.end + datetime.timedelta(days=1)
-    )[0]
+    loaded_event = client.get_events(base_event.start, base_event.end + datetime.timedelta(days=1))[
+        0
+    ]
 
     # Check identity is unchanged
     assert add_response.identity == loaded_event.identity
@@ -77,12 +72,7 @@ def test_client_sync(
     delete_response = client.delete_event(payload)
     assert delete_response.identity == payload.identity
     assert (
-        len(
-            client.get_events(
-                base_event.start, base_event.end + datetime.timedelta(days=1)
-            )
-        )
-        == 0
+        len(client.get_events(base_event.start, base_event.end + datetime.timedelta(days=1))) == 0
     )
 
 

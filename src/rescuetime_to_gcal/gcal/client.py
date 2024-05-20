@@ -54,10 +54,17 @@ def _timezone_to_utc(event: GCSAEvent) -> GCSAEvent:
 class DestinationClient(Protocol):
     """Interface for a client that can add, get, update, and delete events. All responsese must be in UTC."""
 
-    def add_event(self, event: Event) -> Event: ...
-    def get_events(self, start: datetime, end: datetime) -> Sequence[Event]: ...
-    def update_event(self, event: Event) -> Event: ...
-    def delete_event(self, event: Event) -> Event: ...
+    def add_event(self, event: Event) -> Event:
+        ...
+
+    def get_events(self, start: datetime, end: datetime) -> Sequence[Event]:
+        ...
+
+    def update_event(self, event: Event) -> Event:
+        ...
+
+    def delete_event(self, event: Event) -> Event:
+        ...
 
 
 @dataclass
@@ -81,16 +88,12 @@ class GcalClient(DestinationClient):
         )
 
     def add_event(self, event: Event) -> Event:
-        val = self._client.add_event(_to_gcsa_event(event))
+        val = self._client.add_event(_to_gcsa_event(event))  # type: ignore
         return _to_generic_event(_timezone_to_utc(val))
 
     def get_events(self, start: datetime, end: datetime) -> Sequence[Event]:
         events = (
-            Arr(
-                self._client.get_events(
-                    start, end, order_by="updated", single_events=True
-                )
-            )
+            Arr(self._client.get_events(start, end, order_by="updated", single_events=True))  # type: ignore
             .map(_timezone_to_utc)
             .map(_to_generic_event)
             .to_list()
@@ -99,29 +102,20 @@ class GcalClient(DestinationClient):
         return events
 
     def update_event(self, event: Event) -> Event:
-        response = self._client.update_event(_to_gcsa_event(event))
+        response = self._client.update_event(_to_gcsa_event(event))  # type: ignore
         return _to_generic_event(_timezone_to_utc(response))
 
     def delete_event(self, event: Event) -> Event:
-        self._client.delete_event(_to_gcsa_event(event))
+        self._client.delete_event(_to_gcsa_event(event))  # type: ignore
         return event
 
 
-def sync(
-    source_events: Sequence[Event],
-    client: DestinationClient,
-) -> None:
+def sync(source_events: Sequence[Event], client: DestinationClient) -> None:
     destination_events = Arr(
-        client.get_events(
-            min([event.start for event in source_events]),
-            datetime.today(),
-        )
+        client.get_events(min([event.start for event in source_events]), datetime.today())
     ).to_list()
 
-    changes = delta.changeset(
-        source_events,
-        destination_events,
-    )
+    changes = delta.changeset(source_events, destination_events)
 
     for change in changes:
         match change:

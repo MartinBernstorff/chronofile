@@ -1,0 +1,14 @@
+#   Refer for explanation to following link:
+#   https://github.com/evilmartians/lefthook/blob/master/docs/configuration.md
+
+pre-commit:
+  commands:
+    lint:
+      glob: "*.{py}"
+      run: make lint
+      stage_fixed: true
+
+post-checkout:
+  commands:
+    install:
+      run: make quicksync

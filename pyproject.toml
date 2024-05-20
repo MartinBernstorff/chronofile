@@ -1,35 +1,53 @@
 [project]
-name = "rescuetime-to-gcal"
-version = "0.1.0"
-description = "Add your description here"
-authors = [{ name = "Martin Bernstorff", email = "martinbernstorff@gmail.com" }]
+version = "0.0.1"
+requires-python = ">=3.11"
+name = "rescuetime2gcal"
+description = "Rescuetime2Gcal"
 dependencies = [
-    "gcsa>=2.2.0",
-    "pydantic>=2.7.1",
-    "typer>=0.12.3",
-    "coloredlogs>=15.0.1",
-    "iterpy>=1.9.0",
-    "pytz>=2024.1",
-    "devtools>=0.12.2",
+  "coloredlogs>=15.0.1",
+  "devtools>=0.12.2",
+  "gcsa>=2.3.0",
+  "iterpy>=1.9.0",
+  "pydantic>=2.7.1",
+  "pytz>=2024.1",
+  "typer>=0.12.3",
 ]
-readme = "README.md"
-requires-python = ">= 3.10"
+authors = [{ name = "Martin Bernstorff", email = "martinbernstorff@gmail.com" }]
+classifiers = ["Programming Language :: Python :: 3.11"]
+
+[project.license]
+file = "LICENSE"
+
+[project.readme]
+file = "README.md"
+content-type = "text/markdown"
+
+[tool]
+rye = { dev-dependencies = [
+  "diff-cover==8.0.3",
+  "pyright==1.1.350",
+  "pytest==7.4.0",
+  "pytest-cov==4.1.0",
+  "pytest-testmon==2.1.0",
+  "pytest-xdist==3.5.0",
+  "pytest-sugar==1.0.0",
+  "ruff==0.2.2",
+] }
+
+[project.urls]
+homepage = "https://github.com/MartinBernstorff/rescuetime2gcal"
+repository = "https://github.com/MartinBernstorff/rescuetime2gcal"
+documentation = "https://MartinBernstorff.github.io/rescuetime2gcal/"
 
 [build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+requires = ["setuptools>=61.0.0", "wheel", "setuptools_scm"]
+build-backend = "setuptools.build_meta"
 
-[tool.rye]
-managed = true
-dev-dependencies = [
-    "pytest>=8.2.0",
-]
+[tool.setuptools]
+include-package-data = true
 
-[tool.hatch.metadata]
-allow-direct-references = true
-
-[tool.hatch.build.targets.wheel]
-packages = ["src/rescuetime_to_gcal"]
+[tool.setuptools.package-data]
+"*" = ["py.typed", "*.pyi"]
 
 [project.scripts]
 r2s = "rescuetime_to_gcal.cli:app"

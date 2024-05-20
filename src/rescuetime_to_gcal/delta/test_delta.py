@@ -1,20 +1,22 @@
 import datetime
 from dataclasses import dataclass
-from typing import Sequence
+from typing import TYPE_CHECKING, Sequence
 
 import pytest
 
 from rescuetime_to_gcal import delta
 from rescuetime_to_gcal.delta import EventChange, NewEvent, UpdateEvent
-from rescuetime_to_gcal.event import Event
 from rescuetime_to_gcal.test_preprocessing import FakeEvent
+
+if TYPE_CHECKING:
+    from rescuetime_to_gcal.event import Event
 
 
 @dataclass(frozen=True)
 class ChangesetExample:
     intention: str
-    source_events: Sequence[Event]
-    destination_events: Sequence[Event]
+    source_events: Sequence["Event"]
+    destination_events: Sequence["Event"]
     result: Sequence[EventChange]
 
 
@@ -59,10 +61,5 @@ class ChangesetExample:
     ],
     ids=lambda e: e.intention,
 )
-def test_changeset(
-    example: ChangesetExample,
-):
-    assert example.result == delta.changeset(
-        example.source_events,
-        example.destination_events,
-    )
+def test_changeset(example: ChangesetExample):
+    assert example.result == delta.changeset(example.source_events, example.destination_events)

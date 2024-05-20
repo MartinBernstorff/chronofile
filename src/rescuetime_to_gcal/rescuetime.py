@@ -1,14 +1,16 @@
 import datetime
 import logging
-from typing import Sequence
+from typing import TYPE_CHECKING, Sequence
 
 import devtools
 import pydantic
 import pytz
-import pytz.tzfile
 import requests
 
 from rescuetime_to_gcal.event import Event
+
+if TYPE_CHECKING:
+    import pytz.tzfile
 
 
 class RescuetimeEvent(pydantic.BaseModel):
@@ -16,7 +18,7 @@ class RescuetimeEvent(pydantic.BaseModel):
     start: datetime.datetime
     duration: datetime.timedelta
 
-    def to_generic_event(self, timezone: pytz.tzinfo.BaseTzInfo) -> Event:
+    def to_generic_event(self, timezone: "pytz.tzinfo.BaseTzInfo") -> Event:
         return Event(
             title=self.title,
             start=timezone.localize(self.start),
@@ -28,7 +30,7 @@ def load(
     api_key: str,
     anchor_date: datetime.datetime,
     lookback_window: datetime.timedelta,
-    timezone: pytz.tzinfo.BaseTzInfo,
+    timezone: "pytz.tzinfo.BaseTzInfo",
 ) -> Sequence[Event]:
     params = {
         "key": api_key,
@@ -42,16 +44,10 @@ def load(
     params["restrict_end"] = anchor_date.strftime("%Y-%m-%d")
 
     # Make the API request
-    response = requests.get(
-        "https://www.rescuetime.com/anapi/data", params=params
-    ).json()
+    response = requests.get("https://www.rescuetime.com/anapi/data", params=params).json()
 
     events = [
-        RescuetimeEvent(
-            title=row[3],
-            start=row[0],
-            duration=datetime.timedelta(seconds=row[1]),
-        )
+        RescuetimeEvent(title=row[3], start=row[0], duration=datetime.timedelta(seconds=row[1]))
         for row in response["rows"]
     ]
     logging.debug(f"Rescuetime {devtools.debug.format(events)}")

@@ -1,17 +1,20 @@
-import datetime
-from typing import Mapping, Sequence
+from typing import TYPE_CHECKING, Mapping, Sequence
 
-from rescuetime_to_gcal.config import RecordCategory, RecordMetadata
 from rescuetime_to_gcal.event import Event
+
+if TYPE_CHECKING:
+    import datetime
+
+    from rescuetime_to_gcal.config import RecordCategory, RecordMetadata
 
 
 def apply_metadata(
     event: Event,
-    metadata: Sequence[RecordMetadata],
-    category2emoji: Mapping[RecordCategory, str],
+    metadata: Sequence["RecordMetadata"],
+    category2emoji: Mapping["RecordCategory", str],
 ) -> Event:
     for meta in metadata:
-        if any([title.lower() in event.title.lower() for title in meta.title_matcher]):
+        if any(title.lower() in event.title.lower() for title in meta.title_matcher):
             event.category = meta.category
             if meta.prettified_title is not None:
                 event.title = meta.prettified_title
@@ -20,28 +23,18 @@ def apply_metadata(
     return event
 
 
-def filter_by_title(
-    data: Sequence[Event],
-    strs_to_match: Sequence[str],
-) -> Sequence[Event]:
+def filter_by_title(data: Sequence[Event], strs_to_match: Sequence[str]) -> Sequence[Event]:
     return [
-        event
-        for event in data
-        if not any([title.lower() in event.title for title in strs_to_match])
+        event for event in data if not any(title.lower() in event.title for title in strs_to_match)
     ]
 
 
-def _new_event(event: Event, end_time: datetime.datetime) -> Event:
-    return Event(
-        title=event.title,
-        start=event.start,
-        end=end_time,
-    )
+def _new_event(event: Event, end_time: "datetime.datetime") -> Event:
+    return Event(title=event.title, start=event.start, end=end_time)
 
 
 def merge_within_window(
-    events: Sequence[Event],
-    merge_gap: datetime.timedelta,
+    events: Sequence[Event], merge_gap: "datetime.timedelta"
 ) -> Sequence[Event]:
     """Combine rows if end time is within merge_gap of the next event within groups by the group_by function."""
     if len(events) < 2:
