@@ -38,11 +38,7 @@ jobs:
           echo "GCAL_CLIENT_SECRET=${{ secrets.GCAL_CLIENT_SECRET }}" >> .env
           echo "GCAL_REFRESH_TOKEN=${{ secrets.GCAL_REFRESH_TOKEN }}" >> .env
 
-      - name: Build Docker container image
-        shell: bash
-        run: docker build -t rescuetime-to-gcal:latest .
-
-      - name: Run Docker container
+      - name: Build and deploy Docker container image
         shell: bash
         run: |
           if [ "${{ github.ref }}" = "refs/heads/main" ]; then
