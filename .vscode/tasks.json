@@ -27,6 +27,7 @@
                 "Lint",
                 "Test",
                 "Static type check",
+                "Docker smoketest",
             ],
             "presentation": {
                 "reveal": "always",
@@ -51,7 +52,7 @@
         {
             "label": "Test",
             "type": "shell",
-            "command": "make test-with-coverage",
+            "command": "make test",
             "presentation": {
                 "reveal": "always",
                 "clear": true,

@@ -54,7 +54,7 @@ pr: ## Submit a PR
 #########################
 
 docker_deploy:
-	docker run rescuetime-to-gcal:latest rye run r2s sync
+	docker run rescuetime-to-gcal:latest run rye run r2s sync
 
 docker_smoketest:
-	docker run rescuetime-to-gcal:latest rye run r2s sync--dry-run
+	docker run rescuetime-to-gcal:latest run rye run r2s sync --dry-run
