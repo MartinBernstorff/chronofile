@@ -110,12 +110,17 @@ class GcalClient(DestinationClient):
         return event
 
 
-def sync(source_events: Sequence[Event], client: DestinationClient) -> None:
+def sync(source_events: Sequence[Event], client: DestinationClient, dry_run: bool) -> None:
     destination_events = Arr(
         client.get_events(min([event.start for event in source_events]), datetime.today())
     ).to_list()
 
     changes = delta.changeset(source_events, destination_events)
+    logging.info(f"Changes to be made: {devtools.debug.format(changes)}")
+
+    if dry_run:
+        logging.info("Dry run, not syncing")
+        return
 
     for change in changes:
         match change:
