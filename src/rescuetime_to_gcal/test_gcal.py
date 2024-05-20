@@ -17,28 +17,17 @@ def _clean_test_interval(
 
 
 @pytest.mark.parametrize(
-    ("client", "system_timezone"),
+    ("client"),
     [
-        (
-            GcalClient(
-                calendar_id=os.environ["TEST_CALENDAR_ID"],
-                client_id=os.environ["GCAL_CLIENT_ID"],
-                client_secret=os.environ["GCAL_CLIENT_SECRET"],
-                refresh_token=os.environ["GCAL_REFRESH_TOKEN"],
-            ),
-            "Europe/Copenhagen",
-        ),
-        (
-            GcalClient(
-                calendar_id=os.environ["TEST_CALENDAR_ID"],
-                client_id=os.environ["GCAL_CLIENT_ID"],
-                client_secret=os.environ["GCAL_CLIENT_SECRET"],
-                refresh_token=os.environ["GCAL_REFRESH_TOKEN"],
-            ),
-            "America/New_York",
-        ),
+        GcalClient(
+            calendar_id=os.environ["TEST_CALENDAR_ID"],
+            client_id=os.environ["GCAL_CLIENT_ID"],
+            client_secret=os.environ["GCAL_CLIENT_SECRET"],
+            refresh_token=os.environ["GCAL_REFRESH_TOKEN"],
+        )
     ],
 )
+@pytest.mark.parametrize(("system_timezone"), ["Europe/Copenhagen", "America/New_York"])
 def test_client_sync(client: DestinationClient, system_timezone: pytz.BaseTzInfo):
     # Update the system timezone
     os.environ["TZ"] = system_timezone  # type: ignore
@@ -74,6 +63,3 @@ def test_client_sync(client: DestinationClient, system_timezone: pytz.BaseTzInfo
     assert (
         len(client.get_events(base_event.start, base_event.end + datetime.timedelta(days=1))) == 0
     )
-
-
-# TD Setup gcal tests
