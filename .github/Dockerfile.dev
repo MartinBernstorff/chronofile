@@ -1,4 +1,4 @@
-FROM python:3.12
+FROM python:3.11
 
 # Set the working directory to /app
 WORKDIR /app
@@ -17,6 +17,11 @@ RUN echo 'source "$HOME/.rye/env"' >> ~/.bashrc
 RUN rye config --set-bool behavior.use-uv=true
 RUN rye config --set-bool behavior.global-python=true
 RUN rye config --set default.dependency-operator="~="
+
+COPY Makefile ./
+COPY pyproject.toml ./
+RUN make install
+RUN make types # Type-check to warm the cache
 
 COPY . /app
 RUN make quicksync
