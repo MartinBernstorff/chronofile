@@ -5,8 +5,8 @@ from typing import Sequence
 
 import devtools
 
-from rescuetime_to_gcal.delta._deduper import deduper
-from rescuetime_to_gcal.event import Event
+from rescuetime2gcal.delta._deduper import deduper
+from rescuetime2gcal.event import Event
 
 
 @dataclass(frozen=True)

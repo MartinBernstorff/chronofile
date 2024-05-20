@@ -3,7 +3,7 @@ from typing import Optional
 
 import pydantic
 
-from rescuetime_to_gcal.config import RecordCategory  # noqa: TCH001
+from rescuetime2gcal.config import RecordCategory  # noqa: TCH001
 
 
 class Event(pydantic.BaseModel):

@@ -3,8 +3,8 @@ import os
 
 import pytz
 
-from rescuetime_to_gcal import rescuetime
-from rescuetime_to_gcal.event import Event
+from rescuetime2gcal import rescuetime
+from rescuetime2gcal.event import Event
 
 
 def test_get_data():

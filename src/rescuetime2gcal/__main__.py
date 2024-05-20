@@ -5,12 +5,12 @@ from typing import TYPE_CHECKING, Sequence
 
 from iterpy.arr import Arr
 
-from rescuetime_to_gcal import gcal, rescuetime
-from rescuetime_to_gcal._preprocessing import apply_metadata, merge_within_window
-from rescuetime_to_gcal.config import config as cfg
+from rescuetime2gcal import gcal, rescuetime
+from rescuetime2gcal._preprocessing import apply_metadata, merge_within_window
+from rescuetime2gcal.config import config as cfg
 
 if TYPE_CHECKING:
-    from rescuetime_to_gcal.event import Event
+    from rescuetime2gcal.event import Event
 
 
 def main(

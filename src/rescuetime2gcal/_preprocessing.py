@@ -1,11 +1,11 @@
 from typing import TYPE_CHECKING, Mapping, Sequence
 
-from rescuetime_to_gcal.event import Event
+from rescuetime2gcal.event import Event
 
 if TYPE_CHECKING:
     import datetime
 
-    from rescuetime_to_gcal.config import RecordCategory, RecordMetadata
+    from rescuetime2gcal.config import RecordCategory, RecordMetadata
 
 
 def apply_metadata(

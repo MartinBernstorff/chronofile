@@ -7,7 +7,7 @@ import pydantic
 import pytz
 import requests
 
-from rescuetime_to_gcal.event import Event
+from rescuetime2gcal.event import Event
 
 if TYPE_CHECKING:
     import pytz.tzfile

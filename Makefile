@@ -54,10 +54,12 @@ pr: ## Submit a PR
 #########################
 
 docker_build:
-	docker build -t rescuetime-to-gcal:latest .
+	rye build --wheel --clean
+	docker build --tag rescuetime2gcal:latest .
 
 docker_deploy: docker_build
-	docker run --env-file .env rescuetime-to-gcal:latest rye run r2s sync
+	# TD deploy to GHCR if on main
+	docker run --env-file .env rescuetime2gcal:latest r2s sync
 
 docker_smoketest: docker_build
-	docker run --env-file .env rescuetime-to-gcal:latest rye run r2s sync --dry-run 
+	docker run --env-file .env rescuetime2gcal:latest r2s sync --dry-run 

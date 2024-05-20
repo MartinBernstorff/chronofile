@@ -34,9 +34,6 @@ dev-dependencies = [
   "ruff==0.2.2",
 ]
 
-[tool.rye.scripts]
-"r2s" = { cmd = "r2s", env-file = ".env" }
-
 [project.urls]
 homepage = "https://github.com/MartinBernstorff/rescuetime2gcal"
 repository = "https://github.com/MartinBernstorff/rescuetime2gcal"

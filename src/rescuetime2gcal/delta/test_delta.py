@@ -4,12 +4,12 @@ from typing import TYPE_CHECKING, Sequence
 
 import pytest
 
-from rescuetime_to_gcal import delta
-from rescuetime_to_gcal.delta import EventChange, NewEvent, UpdateEvent
-from rescuetime_to_gcal.test_preprocessing import FakeEvent
+from rescuetime2gcal import delta
+from rescuetime2gcal.delta import EventChange, NewEvent, UpdateEvent
+from rescuetime2gcal.test_preprocessing import FakeEvent
 
 if TYPE_CHECKING:
-    from rescuetime_to_gcal.event import Event
+    from rescuetime2gcal.event import Event
 
 
 @dataclass(frozen=True)

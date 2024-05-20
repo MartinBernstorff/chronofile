@@ -5,8 +5,8 @@ import time
 import pytest
 import pytz
 
-from rescuetime_to_gcal.event import Event
-from rescuetime_to_gcal.gcal.client import DestinationClient, GcalClient
+from rescuetime2gcal.event import Event
+from rescuetime2gcal.gcal.client import DestinationClient, GcalClient
 
 
 def _clean_test_interval(
