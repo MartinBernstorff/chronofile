@@ -38,7 +38,7 @@ jobs:
         shell: bash
         run: |
           if [ "${{ github.ref }}" = "refs/heads/main" ]; then
-            docker run rescuetime-to-gcal:latest r2s sync "${{ secrets.RESCUETIME_API_KEY }}" "${{ secrets.GCAL_EMAIL }}" "${{ secrets.GCAL_CLIENT_ID }}" "${{ secrets.GCAL_CLIENT_SECRET }}" "${{ secrets.GCAL_REFRESH_TOKEN }}"
+            docker run rescuetime-to-gcal:latest rye run r2s sync "${{ secrets.RESCUETIME_API_KEY }}" "${{ secrets.GCAL_EMAIL }}" "${{ secrets.GCAL_CLIENT_ID }}" "${{ secrets.GCAL_CLIENT_SECRET }}" "${{ secrets.GCAL_REFRESH_TOKEN }}"
           else
-            docker run rescuetime-to-gcal:latest r2s sync "${{ secrets.RESCUETIME_API_KEY }}" "${{ secrets.GCAL_EMAIL }}" "${{ secrets.GCAL_CLIENT_ID }}" "${{ secrets.GCAL_CLIENT_SECRET }}" "${{ secrets.GCAL_REFRESH_TOKEN }}" --dry-run
+            docker run rescuetime-to-gcal:latest rye run r2s sync "${{ secrets.RESCUETIME_API_KEY }}" "${{ secrets.GCAL_EMAIL }}" "${{ secrets.GCAL_CLIENT_ID }}" "${{ secrets.GCAL_CLIENT_SECRET }}" "${{ secrets.GCAL_REFRESH_TOKEN }}" --dry-run
           fi
