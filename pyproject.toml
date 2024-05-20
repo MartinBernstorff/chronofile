@@ -50,4 +50,4 @@ include-package-data = true
 "*" = ["py.typed", "*.pyi"]
 
 [project.scripts]
-r2s = "rescuetime_to_gcal.cli:app"
+r2s = "rescuetime2gcal.cli:app"

@@ -4,4 +4,4 @@ FROM python:3.11-slim
 WORKDIR /app
 COPY . /app
 
-RUN --mount=source=dist,target=/dist PYTHONDONTWRITEBYTECODE=1 pip install --no-cache-dir /dist/*.whl
+RUN --mount=type=cache,target=/root/.cache/pip --mount=source=dist,target=/dist PYTHONDONTWRITEBYTECODE=1 pip install --no-cache-dir /dist/*.whl
