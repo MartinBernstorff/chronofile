@@ -19,6 +19,7 @@ jobs:
           echo "GCAL_CLIENT_ID=${{ secrets.GCAL_CLIENT_ID }}" >> .env
           echo "GCAL_CLIENT_SECRET=${{ secrets.GCAL_CLIENT_SECRET }}" >> .env
           echo "GCAL_REFRESH_TOKEN=${{ secrets.GCAL_REFRESH_TOKEN }}" >> .env
+          echo "TEST_CALENDAR_ID=${{ secrets.TEST_CALENDAR_ID }}" >> .env
 
       - name: Build CI container
         run: |
