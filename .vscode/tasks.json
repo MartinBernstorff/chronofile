@@ -69,6 +69,18 @@
                 "showReuseMessage": false,
                 "group": "pr"
             }
+        },
+        {
+            "label": "Docker smoketest",
+            "type": "shell",
+            "command": "make docker_smoketest",
+            "presentation": {
+                "reveal": "always",
+                "clear": true,
+                "showReuseMessage": false,
+                "group": "pr"
+            }
         }
+        // TD Add Docker smoketest
     ]
 }

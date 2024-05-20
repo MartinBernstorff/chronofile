@@ -52,3 +52,9 @@ pr: ## Submit a PR
 #########################
 # End template makefile #
 #########################
+
+docker_deploy:
+	docker run rescuetime-to-gcal:latest rye run r2s sync
+
+docker_smoketest:
+	docker run rescuetime-to-gcal:latest rye run r2s sync--dry-run

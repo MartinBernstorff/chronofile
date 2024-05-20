@@ -30,6 +30,14 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-docker-${{ hashFiles('dockerfile') }}
 
+      - name: Set environment variables
+        run: |
+          echo "TEST_CALENDAR_ID=${{ secrets.TEST_CALENDAR_ID }}" >> .env
+          echo "GCAL_EMAIL=${{ secrets.GCAL_EMAIL }}" >> .env
+          echo "GCAL_CLIENT_ID=${{ secrets.GCAL_CLIENT_ID }}" >> .env
+          echo "GCAL_CLIENT_SECRET=${{ secrets.GCAL_CLIENT_SECRET }}" >> .env
+          echo "GCAL_REFRESH_TOKEN=${{ secrets.GCAL_REFRESH_TOKEN }}" >> .env
+
       - name: Build Docker container image
         shell: bash
         run: docker build -t rescuetime-to-gcal:latest .
@@ -38,7 +46,7 @@ jobs:
         shell: bash
         run: |
           if [ "${{ github.ref }}" = "refs/heads/main" ]; then
-            docker run rescuetime-to-gcal:latest rye run r2s sync "${{ secrets.RESCUETIME_API_KEY }}" "${{ secrets.GCAL_EMAIL }}" "${{ secrets.GCAL_CLIENT_ID }}" "${{ secrets.GCAL_CLIENT_SECRET }}" "${{ secrets.GCAL_REFRESH_TOKEN }}"
+            make docker_deploy
           else
-            docker run rescuetime-to-gcal:latest rye run r2s sync "${{ secrets.RESCUETIME_API_KEY }}" "${{ secrets.GCAL_EMAIL }}" "${{ secrets.GCAL_CLIENT_ID }}" "${{ secrets.GCAL_CLIENT_SECRET }}" "${{ secrets.GCAL_REFRESH_TOKEN }}" --dry-run
+            make docker_smoketest
           fi
