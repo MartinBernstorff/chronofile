@@ -44,16 +44,16 @@ def main(
     )
 
     logging.debug("Syncing events to calendar")
-    if not dry_run:
-        gcal.sync(
-            client=gcal.GcalClient(
-                calendar_id=gcal_email,
-                client_id=gcal_client_id,
-                client_secret=gcal_client_secret,
-                refresh_token=gcal_refresh_token,
-            ),
-            source_events=events,
-        )
+    gcal.sync(
+        client=gcal.GcalClient(
+            calendar_id=gcal_email,
+            client_id=gcal_client_id,
+            client_secret=gcal_client_secret,
+            refresh_token=gcal_refresh_token,
+        ),
+        source_events=events,
+        dry_run=dry_run,
+    )
 
     return events
 
