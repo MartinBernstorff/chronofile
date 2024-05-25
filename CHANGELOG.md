@@ -2,6 +2,19 @@
 
 
 
+## v0.1.1 (2024-05-25)
+
+### Ci
+
+* ci: update semver.yml ([`7590185`](https://github.com/MartinBernstorff/rescuetime-to-gcal/commit/7590185e7242967599d4cc531b277679f4e7bf53))
+
+* ci: update semver.yml ([`55c3ec1`](https://github.com/MartinBernstorff/rescuetime-to-gcal/commit/55c3ec18082e6239ad14b6e823d283518c3fb5a1))
+
+### Unknown
+
+* delete 1 file and update 1 file ([`7334813`](https://github.com/MartinBernstorff/rescuetime-to-gcal/commit/7334813bf9a61dde9dc7174bb980504c4985ad1f))
+
+
 ## v0.1.0 (2024-05-25)
 
 ### Chore
