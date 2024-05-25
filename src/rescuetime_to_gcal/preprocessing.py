@@ -50,8 +50,7 @@ def parse_window_title_event(event: WindowTitleEvent) -> GenericEvent:
 
 
 def parse_url_event(event: URLEvent) -> GenericEvent:
-    # Parse github URLs
-    _, _, _ = re.findall(r"(.+)://(.+)\..+/(.+)", event.url)[0]
+    # _, _, _ = re.findall(r"(.+)://(.+)\..+/(.+)", event.url)[0]
     return GenericEvent(
         title=f"Github · {event.url_title}", start=event.start, end=event.start + event.duration
     )
