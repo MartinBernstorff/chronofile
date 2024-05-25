@@ -92,7 +92,7 @@ def load_all_events(
     supported_buckets: Sequence[Mapping[str, Any]] = []
     for b in bucket_data.values():
         if b["type"] not in ["currentwindow", "web.tab.current", "afkstatus"]:
-            log.warn(f"Unknown bucket type {b['type']}")
+            log.warning(f"Unknown bucket type {b['type']}")
             continue
         supported_buckets.append(b)
 
