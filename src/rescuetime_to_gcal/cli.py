@@ -9,7 +9,7 @@ import coloredlogs
 import devtools
 import typer
 
-from rescuetime_to_gcal import rescuetime
+from rescuetime_to_gcal import activitywatch, rescuetime
 from rescuetime_to_gcal.__main__ import main
 from rescuetime_to_gcal.config import config as cfg
 from rescuetime_to_gcal.gcal.auth import print_refresh_token
@@ -40,6 +40,7 @@ def cli(
     rescuetime_api_key: Annotated[
         str, typer.Argument(envvar="RESCUETIME_API_KEY")
     ],  # TD Make optional
+    activitywatch_base_url: Annotated[str, typer.Argument(envvar="ACTIVITYWATCH_BASE_URL")],
     gcal_email: Annotated[str, typer.Argument(envvar="GCAL_EMAIL")],
     gcal_client_id: Annotated[str, typer.Argument(envvar="GCAL_CLIENT_ID")],
     gcal_client_secret: Annotated[str, typer.Argument(envvar="GCAL_CLIENT_SECRET")],
@@ -62,6 +63,13 @@ def cli(
                 anchor_date=datetime.now(),
                 lookback_window=cfg.sync_window,
                 timezone=cfg.rescuetime_timezone,
+            )
+        )
+
+    if activitywatch_base_url:
+        event_sources.append(
+            partial(
+                activitywatch.load_all_events, date=datetime.now(), base_url=activitywatch_base_url
             )
         )
 

@@ -5,8 +5,8 @@ import time
 import pytest
 import pytz
 
-from rescuetime_to_gcal.generic_event import Event
 from rescuetime_to_gcal.gcal.client import DestinationClient, GcalClient
+from rescuetime_to_gcal.generic_event import GenericEvent
 
 
 def _clean_test_interval(
@@ -33,7 +33,7 @@ def test_client_sync(client: DestinationClient, system_timezone: pytz.BaseTzInfo
     os.environ["TZ"] = system_timezone  # type: ignore
     time.tzset()
 
-    base_event = Event(
+    base_event = GenericEvent(
         title="🔥 Test",
         start=datetime.datetime(2023, 1, 1, 0, 0),
         end=datetime.datetime(2023, 1, 1, 0, 0),

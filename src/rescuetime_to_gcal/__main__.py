@@ -6,12 +6,14 @@ from typing import TYPE_CHECKING, Sequence
 from iterpy.arr import Arr
 
 from rescuetime_to_gcal import gcal, rescuetime
-from rescuetime_to_gcal._preprocessing import apply_metadata, merge_within_window
 from rescuetime_to_gcal.config import config as cfg
+from rescuetime_to_gcal.preprocessing import apply_metadata, merge_within_window
+from rescuetime_to_gcal.source_event import BareEvent, BaseEvent, URLEvent, WindowTitleEvent
 
 if TYPE_CHECKING:
-    from rescuetime_to_gcal.generic_event import Event
     from rescuetime_to_gcal.event_source import EventSource
+    from rescuetime_to_gcal.generic_event import GenericEvent
+    from rescuetime_to_gcal.source_event import SourceEvent
 
 
 def main(
@@ -21,17 +23,20 @@ def main(
     gcal_client_secret: str,
     gcal_refresh_token: str,
     dry_run: bool,
-) -> Sequence["Event"]:
+) -> Sequence["GenericEvent"]:
     input_data = Arr(input_sources).map(lambda f: f()).flatten()
 
     events = (
-        input_data.filter(
-            lambda e: not any(title.lower() in e.title for title in cfg.exclude_titles)
-        )
-        .filter(lambda e: e.duration > cfg.min_duration)
+        input_data.filter(lambda e: e.duration > cfg.min_duration)
         .map(
             lambda e: apply_metadata(
                 event=e, metadata=cfg.metadata_enrichment, category2emoji=cfg.category2emoji
+            )
+        )
+        .flatten()
+        .filter(
+            lambda e: not any(
+                e.title in cfg.exclude_titles for cfg.exclude_titles in cfg.exclude_titles
             )
         )
         .groupby(lambda e: e.title)
@@ -53,22 +58,3 @@ def main(
     )
 
     return events
-
-
-if __name__ == "__main__":
-    import coloredlogs
-
-    coloredlogs.install(  # type: ignore
-        level="INFO",
-        format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
-        datefmt="%Y/%m/%d %H:%M:%S",
-    )
-
-    main(
-        os.environ["RESCUETIME_API_KEY"],
-        os.environ["GCAL_EMAIL"],
-        os.environ["GCAL_CLIENT_ID"],
-        os.environ["GCAL_CLIENT_SECRET"],
-        os.environ["GCAL_REFRESH_TOKEN"],
-        dry_run=False,
-    )

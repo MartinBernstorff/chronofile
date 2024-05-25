@@ -9,14 +9,14 @@ from rescuetime_to_gcal.delta import EventChange, NewEvent, UpdateEvent
 from rescuetime_to_gcal.test_preprocessing import FakeEvent
 
 if TYPE_CHECKING:
-    from rescuetime_to_gcal.generic_event import Event
+    from rescuetime_to_gcal.generic_event import GenericEvent
 
 
 @dataclass(frozen=True)
 class ChangesetExample:
     intention: str
-    source_events: Sequence["Event"]
-    destination_events: Sequence["Event"]
+    source_events: Sequence["GenericEvent"]
+    destination_events: Sequence["GenericEvent"]
     result: Sequence[EventChange]
 
 

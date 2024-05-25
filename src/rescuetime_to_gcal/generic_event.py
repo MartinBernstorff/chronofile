@@ -6,7 +6,7 @@ import pydantic
 from rescuetime_to_gcal.config import RecordCategory  # noqa: TCH001
 
 
-class Event(pydantic.BaseModel):
+class GenericEvent(pydantic.BaseModel):
     title: str
     start: datetime.datetime
     end: datetime.datetime

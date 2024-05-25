@@ -1,34 +1,34 @@
-import datetime  # noqa: TCH003
+import datetime
+from abc import ABC
 from enum import Enum
 from typing import TYPE_CHECKING
 
 import pydantic
 
-from rescuetime_to_gcal.generic_event import Event
+from rescuetime_to_gcal.generic_event import GenericEvent
 
 
-class BareEvent(pydantic.BaseModel):
+class BaseEvent(pydantic.BaseModel, ABC):
     start: "datetime.datetime"
     duration: "datetime.timedelta"
 
-
-class AFKState(Enum):
-    AFK = "afk"
-    NOT_AFK = "not-afk"
-
-
-class AFKEvent(BareEvent):
-    state: AFKState
+    def __post_init__(self):
+        if self.start.tzinfo != datetime.timezone.utc:
+            raise ValueError("Start time must be in UTC to ensure correct timezone conversion")
 
 
-class URLEvent(BareEvent):
+class BareEvent(BaseEvent):
+    title: str
+
+
+class URLEvent(BaseEvent):
     url: str
     url_title: str
 
 
-class WindowTitleEvent(BareEvent):
+class WindowTitleEvent(BaseEvent):
     app: str
     window_title: str
 
 
-SourceEvent = BareEvent | URLEvent | WindowTitleEvent | AFKEvent
+SourceEvent = BaseEvent | URLEvent | WindowTitleEvent | BareEvent

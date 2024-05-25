@@ -3,27 +3,13 @@ import logging
 from typing import TYPE_CHECKING, Sequence
 
 import devtools
-import pydantic
 import pytz
 import requests
 
-from rescuetime_to_gcal.generic_event import Event
+from rescuetime_to_gcal.source_event import BareEvent
 
 if TYPE_CHECKING:
     import pytz.tzfile
-
-
-class RescuetimeEvent(pydantic.BaseModel):
-    title: str
-    start: datetime.datetime
-    duration: datetime.timedelta
-
-    def to_generic_event(self, timezone: "pytz.tzinfo.BaseTzInfo") -> Event:
-        return Event(
-            title=self.title,
-            start=timezone.localize(self.start),
-            end=timezone.localize(self.start + self.duration),
-        )
 
 
 def load(
@@ -31,7 +17,7 @@ def load(
     anchor_date: datetime.datetime,
     lookback_window: datetime.timedelta,
     timezone: "pytz.tzinfo.BaseTzInfo",
-) -> Sequence[Event]:
+) -> Sequence["BareEvent"]:
     params = {
         "key": api_key,
         "perspective": "interval",
@@ -46,10 +32,15 @@ def load(
     # Make the API request
     response = requests.get("https://www.rescuetime.com/anapi/data", params=params).json()
 
-    events = [
-        RescuetimeEvent(title=row[3], start=row[0], duration=datetime.timedelta(seconds=row[1]))
+    timezone_naive_events = [
+        BareEvent(title=row[3], start=row[0], duration=datetime.timedelta(seconds=row[1]))
         for row in response["rows"]
     ]
-    logging.debug(f"Rescuetime {devtools.debug.format(events)}")
 
-    return [e.to_generic_event(timezone) for e in events]
+    timezone_aware_events = [
+        BareEvent(title=e.title, start=timezone.localize(e.start), duration=e.duration)
+        for e in timezone_naive_events
+    ]
+    logging.debug(f"Rescuetime {devtools.debug.format(timezone_aware_events)}")
+
+    return timezone_aware_events

@@ -8,12 +8,12 @@ import pydantic
 import pytz
 import requests
 
-from rescuetime_to_gcal.source_event import AFKEvent, SourceEvent, URLEvent, WindowTitleEvent
+from rescuetime_to_gcal.source_event import BareEvent, SourceEvent, URLEvent, WindowTitleEvent
 
 if TYPE_CHECKING:
     import pytz.tzfile
 
-    from rescuetime_to_gcal.generic_event import Event
+    from rescuetime_to_gcal.generic_event import GenericEvent
 
 log = logging.getLogger(__name__)
 
@@ -69,11 +69,12 @@ def load_url_events(
 
 def load_afk_events(
     bucket_id: str, date: "datetime.datetime", base_url: str = "http://localhost:5600/api/"
-) -> Sequence[AFKEvent]:
+) -> Sequence[BareEvent]:
     response = _load_bucket_contents(bucket_id, date, base_url)
     events = [
-        AFKEvent(state=e["data"]["status"], start=e["timestamp"], duration=e["duration"])
+        BareEvent(title="AFK", start=e["timestamp"], duration=e["duration"])
         for e in response
+        if e["data"]["status"] != "not-afk"
     ]
     return events
 

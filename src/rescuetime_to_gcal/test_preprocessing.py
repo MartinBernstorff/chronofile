@@ -6,11 +6,12 @@ from dataclasses import dataclass
 import pytest
 from iterpy.arr import Arr
 
-from rescuetime_to_gcal._preprocessing import filter_by_title, merge_within_window
-from rescuetime_to_gcal.generic_event import Event
+from rescuetime_to_gcal.generic_event import GenericEvent
+from rescuetime_to_gcal.preprocessing import filter_by_title, merge_within_window, parse_url_event
+from rescuetime_to_gcal.source_event import URLEvent
 
 
-class FakeEvent(Event):
+class FakeEvent(GenericEvent):
     title: str = "fake title"
     start: datetime.datetime = datetime.datetime(2023, 1, 1, 0, 0)
     end: datetime.datetime = datetime.datetime(2023, 1, 1, 0, 0)
@@ -26,8 +27,8 @@ def test_filter_by_title():
 @dataclass
 class MergeTestCase:
     name: str
-    input: list[Event]
-    expected: list[Event]
+    input: list[GenericEvent]
+    expected: list[GenericEvent]
 
 
 @pytest.mark.parametrize(
