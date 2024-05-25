@@ -1,7 +1,8 @@
 import logging
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Protocol, Sequence
+from typing import Generic, Protocol, Sequence
+from xml.dom import ValidationErr
 
 import devtools
 import pytz
@@ -9,6 +10,7 @@ from gcsa.event import Event as GCSAEvent
 from gcsa.google_calendar import GoogleCalendar
 from google.oauth2.credentials import Credentials
 from iterpy.arr import Arr
+from pydantic import ValidationError
 
 import rescuetime_to_gcal.delta as delta
 from rescuetime_to_gcal.gcal._consts import required_scopes
@@ -26,13 +28,22 @@ def _to_gcsa_event(event: GenericEvent) -> GCSAEvent:
 
 
 def _to_generic_event(event: GCSAEvent) -> GenericEvent:
-    return GenericEvent(
-        title=event.summary,
-        start=event.start,  # type: ignore
-        end=event.end,  # type: ignore
-        timezone=event.timezone,
-        destination_event_id=event.event_id,
-    )
+    try:
+        return GenericEvent(
+            title=event.summary,
+            start=event.start,  # type: ignore
+            end=event.end,  # type: ignore
+            timezone=event.timezone,
+            destination_event_id=event.event_id,
+        )
+    except ValidationError as e:
+        logging.error(f"Failed to convert event: {e}")
+        return GenericEvent(
+            title=f"{event.summary}",
+            start=event.start,  # type: ignore
+            end=event.end,  # type: ignore
+            timezone="UTC",
+        )
 
 
 def _dt_to_utc(dt: datetime) -> datetime:
