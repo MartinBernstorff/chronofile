@@ -3,7 +3,7 @@ import importlib.metadata
 import logging
 from datetime import datetime
 from functools import partial
-from typing import TYPE_CHECKING, Annotated, Sequence
+from typing import TYPE_CHECKING, Annotated, Optional, Sequence
 
 import coloredlogs
 import devtools
@@ -37,10 +37,10 @@ def auth(
 
 @app.command(name="sync")
 def cli(
-    rescuetime_api_key: Annotated[
-        str, typer.Argument(envvar="RESCUETIME_API_KEY")
-    ],  # TD Make optional
-    activitywatch_base_url: Annotated[str, typer.Argument(envvar="ACTIVITYWATCH_BASE_URL")],
+    rescuetime_api_key: Annotated[Optional[str], typer.Argument(envvar="RESCUETIME_API_KEY")],
+    activitywatch_base_url: Annotated[
+        Optional[str], typer.Argument(envvar="ACTIVITYWATCH_BASE_URL")
+    ],
     gcal_email: Annotated[str, typer.Argument(envvar="GCAL_EMAIL")],
     gcal_client_id: Annotated[str, typer.Argument(envvar="GCAL_CLIENT_ID")],
     gcal_client_secret: Annotated[str, typer.Argument(envvar="GCAL_CLIENT_SECRET")],
@@ -73,7 +73,10 @@ def cli(
             )
         )
 
-    # TD Add activity watch as event source
+    if len(event_sources) == 0:
+        raise ValueError(
+            "No event sources provided. Specify either rescuetime_api_key or activitywatch_base_url"
+        )
 
     events = main(
         event_sources,
