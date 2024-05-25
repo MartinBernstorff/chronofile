@@ -1,8 +1,17 @@
 import datetime
 import os
+import sys
+
+import pytest
 
 from rescuetime_to_gcal import activitywatch
 from rescuetime_to_gcal.activitywatch import load_afk_events, load_window_titles
+
+
+@pytest.fixture(autouse=True)
+def _skip_if_no_base_url():  # type: ignore
+    if os.environ.get("ACTIVITYWATCH_BASE_URL") is None:
+        pytest.skip("No ACTIVITYWATCH_BASE_URL set")
 
 
 def test_load_window_titles():
