@@ -53,5 +53,7 @@ def changeset(
         else:
             changeset.append(NewEvent(event=new_event))
 
-    logging.info(f"Changeset: {devtools.debug.format(changeset)}")
+    sorted_changeset = sorted(changeset, key=lambda c: c.event.start)
+    logging.info(f"Changeset: {devtools.debug.format(sorted_changeset)}")
+
     return changeset

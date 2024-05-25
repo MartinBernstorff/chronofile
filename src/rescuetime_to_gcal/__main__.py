@@ -26,19 +26,22 @@ def main(
 ) -> Sequence["GenericEvent"]:
     input_data = Arr(input_sources).map(lambda f: f()).flatten()
 
-    events = (
-        input_data.filter(lambda e: e.duration > cfg.min_duration)
-        .map(
-            lambda e: apply_metadata(
-                event=e, metadata=cfg.metadata_enrichment, category2emoji=cfg.category2emoji
-            )
+    sufficient_length_events = input_data.filter(lambda e: e.duration > cfg.min_duration)
+
+    events_with_metadata = sufficient_length_events.map(
+        lambda e: apply_metadata(
+            event=e, metadata=cfg.metadata_enrichment, category2emoji=cfg.category2emoji
         )
-        .filter(
-            lambda e: not any(
-                e.title in cfg.exclude_titles for cfg.exclude_titles in cfg.exclude_titles
-            )
+    )
+
+    included_events = events_with_metadata.filter(
+        lambda e: not any(
+            excluded_title.lower() in e.title.lower() for excluded_title in cfg.exclude_titles
         )
-        .groupby(lambda e: e.title)
+    )
+
+    merged_events = (
+        included_events.groupby(lambda e: e.title)
         .map(lambda g: merge_within_window(g[1], merge_gap=cfg.merge_gap))
         .flatten()
         .to_list()
@@ -52,8 +55,8 @@ def main(
             client_secret=gcal_client_secret,
             refresh_token=gcal_refresh_token,
         ),
-        source_events=events,
+        source_events=merged_events,
         dry_run=dry_run,
     )
 
-    return events
+    return merged_events
