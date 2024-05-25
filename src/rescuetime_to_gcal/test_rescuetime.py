@@ -3,8 +3,9 @@ import os
 
 import pytz
 
-from rescuetime_to_gcal.sources import rescuetime
 from rescuetime_to_gcal.generic_event import GenericEvent
+from rescuetime_to_gcal.source_event import BareEvent
+from rescuetime_to_gcal.sources import rescuetime
 
 
 def test_get_data():
@@ -14,4 +15,4 @@ def test_get_data():
         lookback_window=datetime.timedelta(days=2),
         timezone=pytz.timezone("Europe/Copenhagen"),
     )
-    assert isinstance(result[0], GenericEvent)
+    assert isinstance(result[0], BareEvent)
