@@ -1,30 +1,46 @@
-name: semver
+name: release
 on:
   push:
-    branches:
-      - main
+    tags:
+      - 'v*'
   workflow_dispatch:
 
-      
 jobs:
-  semver:
+  release:
     runs-on: ubuntu-latest
-    concurrency: semver
-    permissions:
-      id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing using PyPI 
-      # A guide on how to set it up is available here: https://blog.pypi.org/posts/2023-04-20-introducing-trusted-publishers/
-      # You can add a new publisher here: https://pypi.org/manage/account/publishing/
-      contents: write
-
-    if: ${{ github.ref == 'refs/heads/main' }}
+    concurrency: docker-publish
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          token: ${{ secrets.RELEASE }}
 
-      - name: Python Semantic Release
-        id: release
-        uses: python-semantic-release/python-semantic-release@v9.1.0
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
         with:
-          github_token: ${{ secrets.RELEASE }}
+          registry: ghcr.io
+          username: ${{github.repository_owner }}
+          password: ${{secrets.GITHUB_TOKEN }}
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          # list of Docker images to use as base name for tags
+          images: |
+            ghcr.io/martinbernstorff/rescuetime-to-gcal
+          # generate Docker tags based on the following events/attributes
+          tags: |
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          tags: ${{steps.meta.outputs.tags }}

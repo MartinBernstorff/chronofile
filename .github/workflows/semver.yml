@@ -1,0 +1,30 @@
+name: semver
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+      
+jobs:
+  semver:
+    runs-on: ubuntu-latest
+    concurrency: semver
+    permissions:
+      id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing using PyPI 
+      # A guide on how to set it up is available here: https://blog.pypi.org/posts/2023-04-20-introducing-trusted-publishers/
+      # You can add a new publisher here: https://pypi.org/manage/account/publishing/
+      contents: write
+
+    if: ${{ github.ref == 'refs/heads/main' && }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.RELEASE }}
+
+      - name: Python Semantic Release
+        id: release
+        uses: python-semantic-release/python-semantic-release@v9.1.0
+        with:
+          github_token: ${{ secrets.RELEASE }}
