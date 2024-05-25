@@ -2,6 +2,17 @@
 
 
 
+## v0.3.0 (2024-05-25)
+
+### Chore
+
+* chore: remove egg info (#24) ([`5fb2736`](https://github.com/MartinBernstorff/rescuetime-to-gcal/commit/5fb2736921e435f3d5c87b6d352bf08d8bb7eb00))
+
+### Feature
+
+* feat: do not prettify github (#25) ([`d5bd887`](https://github.com/MartinBernstorff/rescuetime-to-gcal/commit/d5bd887eca72001e262f13d136035c04b20b7aee))
+
+
 ## v0.2.1 (2024-05-25)
 
 ### Fix
