@@ -65,6 +65,7 @@ config = Config(
         "finder",
         "google",
         "safari",
+        "branch: main",
     ],
     merge_gap=datetime.timedelta(minutes=15),
     min_duration=datetime.timedelta(seconds=5),
