@@ -67,7 +67,7 @@ config = Config(
         "safari",
     ],
     merge_gap=datetime.timedelta(minutes=15),
-    min_duration=datetime.timedelta(seconds=15),
+    min_duration=datetime.timedelta(seconds=10),
     category2emoji={
         RecordCategory.BROWSING: "🔥",
         RecordCategory.COMMUNICATING: "️☎️",
