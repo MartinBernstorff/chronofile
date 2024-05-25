@@ -108,6 +108,3 @@ def load_all_events(
     log.info(f"Activitywatch {devtools.debug.format(events)}")
 
     return events
-
-
-# TD Automatically get buckets from the API and initialise
