@@ -9,6 +9,20 @@ from rescuetime_to_gcal.gcal.client import DestinationClient, GcalClient
 from rescuetime_to_gcal.generic_event import GenericEvent
 
 
+@pytest.fixture(autouse=True)
+def _skip_if_no_gcal_credentials():  # type: ignore
+    if any(
+        os.environ.get(key) is None
+        for key in [
+            "GCAL_CLIENT_ID",
+            "GCAL_CLIENT_SECRET",
+            "GCAL_REFRESH_TOKEN",
+            "TEST_CALENDAR_ID",
+        ]
+    ):
+        pytest.skip("No Google Calendar credentials found")
+
+
 def _clean_test_interval(
     client: DestinationClient, start: datetime.datetime, end: datetime.datetime
 ):

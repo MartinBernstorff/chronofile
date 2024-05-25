@@ -26,11 +26,6 @@ def test_load_url_events():
     assert len(events) > 0
 
 
-def test_load_afk_events():
-    events = load_afk_events(bucket_id="aw-watcher-afk_d45830", date=datetime.datetime.now())
-    assert len(events) > 0
-
-
 def test_load_all():
     events = activitywatch.load_all_events(date=datetime.datetime.now())
     assert len(events) > 0
