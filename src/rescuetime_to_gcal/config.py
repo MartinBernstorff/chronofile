@@ -81,9 +81,7 @@ config = Config(
     },
     metadata_enrichment=[
         RecordMetadata(
-            title_matcher=["workflowy"],
-            prettified_title="Workflowy",
-            category=RecordCategory.PLANNING,
+            title_matcher=["workflowy"], prettified_title=None, category=RecordCategory.PLANNING
         ),
         RecordMetadata(
             title_matcher=["tldraw"], prettified_title="TLDraw", category=RecordCategory.PLANNING
