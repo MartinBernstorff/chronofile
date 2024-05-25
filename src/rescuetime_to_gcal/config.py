@@ -67,7 +67,7 @@ config = Config(
         "safari",
     ],
     merge_gap=datetime.timedelta(minutes=15),
-    min_duration=datetime.timedelta(seconds=5),
+    min_duration=datetime.timedelta(seconds=15),
     category2emoji={
         RecordCategory.BROWSING: "🔥",
         RecordCategory.COMMUNICATING: "️☎️",
@@ -106,7 +106,7 @@ config = Config(
             category=RecordCategory.BROWSING,
         ),
         RecordMetadata(
-            title_matcher=["github"], prettified_title="GitHub", category=RecordCategory.PROGRAMMING
+            title_matcher=["github"], prettified_title=None, category=RecordCategory.PROGRAMMING
         ),
         RecordMetadata(
             title_matcher=["hey"], prettified_title="Hey", category=RecordCategory.BROWSING
