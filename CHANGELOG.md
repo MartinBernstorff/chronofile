@@ -2,6 +2,13 @@
 
 
 
+## v0.2.1 (2024-05-25)
+
+### Fix
+
+* fix: robust event casting (#23) ([`0a8af45`](https://github.com/MartinBernstorff/rescuetime-to-gcal/commit/0a8af454579764a236c8820b5aa03d2490aaaf22))
+
+
 ## v0.2.0 (2024-05-25)
 
 ### Ci
