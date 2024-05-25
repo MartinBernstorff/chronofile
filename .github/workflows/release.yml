@@ -16,6 +16,7 @@ jobs:
       id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing using PyPI 
       # A guide on how to set it up is available here: https://blog.pypi.org/posts/2023-04-20-introducing-trusted-publishers/
       # You can add a new publisher here: https://pypi.org/manage/account/publishing/
+      contents: write
 
     if: ${{ github.ref == 'refs/heads/main' && github.event.workflow_run.conclusion == 'success'}}
     steps:
