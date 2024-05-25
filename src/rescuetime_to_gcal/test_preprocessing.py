@@ -7,8 +7,7 @@ import pytest
 from iterpy.arr import Arr
 
 from rescuetime_to_gcal.generic_event import GenericEvent
-from rescuetime_to_gcal.preprocessing import filter_by_title, merge_within_window, parse_url_event
-from rescuetime_to_gcal.source_event import URLEvent
+from rescuetime_to_gcal.preprocessing import filter_by_title, merge_within_window
 
 
 class FakeEvent(GenericEvent):

@@ -1,11 +1,9 @@
 import datetime
 import os
-import sys
 
 import pytest
-
-from rescuetime_to_gcal import activitywatch
-from rescuetime_to_gcal.activitywatch import load_afk_events, load_window_titles
+from rescuetime_to_gcal.sources import activitywatch
+from rescuetime_to_gcal.sources.activitywatch import load_afk_events
 
 
 @pytest.fixture(autouse=True)

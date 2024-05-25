@@ -1,11 +1,7 @@
 import datetime
 from abc import ABC
-from enum import Enum
-from typing import TYPE_CHECKING
 
 import pydantic
-
-from rescuetime_to_gcal.generic_event import GenericEvent
 
 
 class BaseEvent(pydantic.BaseModel, ABC):

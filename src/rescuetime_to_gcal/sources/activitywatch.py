@@ -1,19 +1,12 @@
 import datetime  # noqa: TCH003
 import logging
 from functools import partial
-from typing import TYPE_CHECKING, Any, Callable, Literal, Mapping, Sequence
+from typing import Any, Callable, Literal, Mapping, Sequence
 
 import devtools
 import pydantic
-import pytz
 import requests
-
 from rescuetime_to_gcal.source_event import BareEvent, SourceEvent, URLEvent, WindowTitleEvent
-
-if TYPE_CHECKING:
-    import pytz.tzfile
-
-    from rescuetime_to_gcal.generic_event import GenericEvent
 
 log = logging.getLogger(__name__)
 

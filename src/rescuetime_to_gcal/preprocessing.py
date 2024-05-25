@@ -1,5 +1,4 @@
-import re
-from typing import TYPE_CHECKING, Generic, Mapping, Sequence
+from typing import TYPE_CHECKING, Mapping, Sequence
 
 from rescuetime_to_gcal.generic_event import GenericEvent
 from rescuetime_to_gcal.source_event import BareEvent, BaseEvent, URLEvent, WindowTitleEvent
@@ -50,7 +49,6 @@ def parse_window_title_event(event: WindowTitleEvent) -> GenericEvent:
 
 
 def parse_url_event(event: URLEvent) -> GenericEvent:
-    # _, _, _ = re.findall(r"(.+)://(.+)\..+/(.+)", event.url)[0]
     return GenericEvent(
         title=f"Github · {event.url_title}", start=event.start, end=event.start + event.duration
     )
