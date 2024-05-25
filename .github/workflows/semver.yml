@@ -16,7 +16,7 @@ jobs:
       # You can add a new publisher here: https://pypi.org/manage/account/publishing/
       contents: write
 
-    if: ${{ github.ref == 'refs/heads/main' && }}
+    if: ${{ github.ref == 'refs/heads/main' }}
     steps:
       - uses: actions/checkout@v4
         with:
