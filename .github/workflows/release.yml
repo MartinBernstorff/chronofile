@@ -9,7 +9,7 @@ on:
 jobs:
   semver:
     runs-on: ubuntu-latest
-    concurrency: release
+    concurrency: semver
     permissions:
       id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing using PyPI 
       # A guide on how to set it up is available here: https://blog.pypi.org/posts/2023-04-20-introducing-trusted-publishers/
