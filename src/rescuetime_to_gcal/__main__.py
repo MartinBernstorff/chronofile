@@ -10,27 +10,24 @@ from rescuetime_to_gcal._preprocessing import apply_metadata, merge_within_windo
 from rescuetime_to_gcal.config import config as cfg
 
 if TYPE_CHECKING:
-    from rescuetime_to_gcal.event import Event
+    from rescuetime_to_gcal.generic_event import Event
+    from rescuetime_to_gcal.event_source import EventSource
 
 
 def main(
-    rescuetime_api_key: str,
+    input_sources: Sequence["EventSource"],
     gcal_email: str,
     gcal_client_id: str,
     gcal_client_secret: str,
     gcal_refresh_token: str,
     dry_run: bool,
 ) -> Sequence["Event"]:
-    rescuetime_data = rescuetime.load(
-        api_key=rescuetime_api_key,
-        anchor_date=datetime.datetime.now(),
-        lookback_window=cfg.sync_window,
-        timezone=cfg.rescuetime_timezone,
-    )
+    input_data = Arr(input_sources).map(lambda f: f()).flatten()
 
     events = (
-        Arr(rescuetime_data)
-        .filter(lambda e: not any(title.lower() in e.title for title in cfg.exclude_titles))
+        input_data.filter(
+            lambda e: not any(title.lower() in e.title for title in cfg.exclude_titles)
+        )
         .filter(lambda e: e.duration > cfg.min_duration)
         .map(
             lambda e: apply_metadata(

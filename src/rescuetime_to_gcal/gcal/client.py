@@ -11,7 +11,7 @@ from google.oauth2.credentials import Credentials
 from iterpy.arr import Arr
 
 import rescuetime_to_gcal.delta as delta
-from rescuetime_to_gcal.event import Event
+from rescuetime_to_gcal.generic_event import Event
 from rescuetime_to_gcal.gcal._consts import required_scopes
 
 

@@ -9,7 +9,7 @@ from rescuetime_to_gcal.delta import EventChange, NewEvent, UpdateEvent
 from rescuetime_to_gcal.test_preprocessing import FakeEvent
 
 if TYPE_CHECKING:
-    from rescuetime_to_gcal.event import Event
+    from rescuetime_to_gcal.generic_event import Event
 
 
 @dataclass(frozen=True)

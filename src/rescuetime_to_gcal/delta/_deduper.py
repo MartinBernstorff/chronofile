@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING, Sequence
 
 if TYPE_CHECKING:
-    from rescuetime_to_gcal.event import Event
+    from rescuetime_to_gcal.generic_event import Event
 
 
 def _event_hasher(event: "Event") -> str:

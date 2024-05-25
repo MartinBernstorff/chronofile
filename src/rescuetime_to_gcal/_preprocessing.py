@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING, Mapping, Sequence
 
-from rescuetime_to_gcal.event import Event
+from rescuetime_to_gcal.generic_event import Event
 
 if TYPE_CHECKING:
     import datetime

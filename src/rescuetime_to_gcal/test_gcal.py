@@ -5,7 +5,7 @@ import time
 import pytest
 import pytz
 
-from rescuetime_to_gcal.event import Event
+from rescuetime_to_gcal.generic_event import Event
 from rescuetime_to_gcal.gcal.client import DestinationClient, GcalClient
 
 
