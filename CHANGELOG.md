@@ -2,6 +2,13 @@
 
 
 
+## v0.1.4 (2024-05-25)
+
+### Ci
+
+* ci: update release.yml ([`30ac260`](https://github.com/MartinBernstorff/rescuetime-to-gcal/commit/30ac2602385830b0739332d00319fd313de88767))
+
+
 ## v0.1.3 (2024-05-25)
 
 
