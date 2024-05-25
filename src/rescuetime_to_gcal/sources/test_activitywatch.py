@@ -3,7 +3,6 @@ import os
 
 import pytest
 from rescuetime_to_gcal.sources import activitywatch
-from rescuetime_to_gcal.sources.activitywatch import load_afk_events
 
 
 @pytest.fixture(autouse=True)
