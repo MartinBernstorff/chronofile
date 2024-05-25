@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  release:
+  docker:
     runs-on: ubuntu-latest
     concurrency: docker-publish
     steps:
