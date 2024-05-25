@@ -64,6 +64,7 @@ config = Config(
         "localhost",
         "finder",
         "google",
+        "safari",
     ],
     merge_gap=datetime.timedelta(minutes=15),
     min_duration=datetime.timedelta(seconds=5),

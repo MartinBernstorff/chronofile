@@ -6,24 +6,24 @@ from typing import Sequence
 import devtools
 
 from rescuetime_to_gcal.delta._deduper import deduper
-from rescuetime_to_gcal.event import Event
+from rescuetime_to_gcal.generic_event import GenericEvent
 
 
 @dataclass(frozen=True)
 class NewEvent:
-    event: Event
+    event: GenericEvent
 
 
 @dataclass(frozen=True)
 class UpdateEvent:
-    event: Event
+    event: GenericEvent
 
 
 EventChange = NewEvent | UpdateEvent
 
 
 def changeset(
-    source_events: Sequence[Event], destination_events: Sequence[Event]
+    source_events: Sequence[GenericEvent], destination_events: Sequence[GenericEvent]
 ) -> Sequence[EventChange]:
     """Identify which changes are needed on destination for it to mirror source. Assumes all events are in the same timezone."""
     timezones = set(e.timezone for e in [*source_events, *destination_events])
@@ -53,5 +53,7 @@ def changeset(
         else:
             changeset.append(NewEvent(event=new_event))
 
-    logging.info(f"Changeset: {devtools.debug.format(changeset)}")
+    sorted_changeset = sorted(changeset, key=lambda c: c.event.start)
+    logging.info(f"Changeset: {devtools.debug.format(sorted_changeset)}")
+
     return changeset
