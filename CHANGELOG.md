@@ -2,6 +2,17 @@
 
 
 
+## v0.2.0 (2024-05-25)
+
+### Ci
+
+* ci: update semver.yml ([`d6e13de`](https://github.com/MartinBernstorff/rescuetime-to-gcal/commit/d6e13de8c2a8fd65220b24d40d15fbcf14eb5bb8))
+
+### Feature
+
+* feat: watch command (#22) ([`f81af23`](https://github.com/MartinBernstorff/rescuetime-to-gcal/commit/f81af23c0973670e5a73fcbf0184abe9564cc54d))
+
+
 ## v0.1.5 (2024-05-25)
 
 
