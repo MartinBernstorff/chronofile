@@ -1,4 +1,4 @@
-name: Bump version
+name: semver
 on:
   push:
     branches:
@@ -7,7 +7,7 @@ on:
 
       
 jobs:
-  bump-version:
+  semver:
     runs-on: ubuntu-latest
     concurrency: release
     permissions:
