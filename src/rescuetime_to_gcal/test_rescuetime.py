@@ -3,7 +3,7 @@ import os
 
 import pytz
 
-from rescuetime_to_gcal import rescuetime
+from rescuetime_to_gcal.sources import rescuetime
 from rescuetime_to_gcal.generic_event import GenericEvent
 
 
