@@ -33,7 +33,6 @@ def main(
                 event=e, metadata=cfg.metadata_enrichment, category2emoji=cfg.category2emoji
             )
         )
-        .flatten()
         .filter(
             lambda e: not any(
                 e.title in cfg.exclude_titles for cfg.exclude_titles in cfg.exclude_titles

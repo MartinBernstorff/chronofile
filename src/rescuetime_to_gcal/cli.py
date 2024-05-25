@@ -94,4 +94,8 @@ def cli(
 
 
 if __name__ == "__main__":
+    from typer.testing import CliRunner
+
+    CliRunner().invoke(app, ["sync", "--dry-run"])
+
     app()
