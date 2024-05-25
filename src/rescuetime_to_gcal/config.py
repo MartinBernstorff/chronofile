@@ -104,7 +104,7 @@ config = Config(
             category=RecordCategory.BROWSING,
         ),
         RecordMetadata(
-            title_matcher=["github"], prettified_title="GitHub", category=RecordCategory.PROGRAMMING
+            title_matcher=["github"], prettified_title=None, category=RecordCategory.PROGRAMMING
         ),
         RecordMetadata(
             title_matcher=["hey"], prettified_title="Hey", category=RecordCategory.BROWSING
@@ -143,11 +143,6 @@ config = Config(
         ),
         RecordMetadata(
             title_matcher=["twitter"], prettified_title="Browsing", category=RecordCategory.BROWSING
-        ),
-        RecordMetadata(
-            title_matcher=["Visual"],
-            prettified_title="Visual Studio Code",
-            category=RecordCategory.PROGRAMMING,
         ),
         RecordMetadata(
             title_matcher=["wandb.ai"],
