@@ -2,7 +2,6 @@ import logging
 from dataclasses import dataclass
 from datetime import datetime
 from typing import TYPE_CHECKING, Generic, Protocol, Sequence
-from xml.dom import ValidationErr
 
 import devtools
 import pytz
@@ -34,21 +33,17 @@ def _destination_to_gcsa_event(event: "DestinationEvent") -> GCSAEvent:
 
 
 def _to_destination_event(event: GCSAEvent) -> DestinationEvent:
+    # Unpack here, to avoid overzealous type ignore
+    start: datetime = event.start  # type: ignore
+    end: datetime = event.end  # type: ignore
     try:
         return DestinationEvent(
-            title=event.summary,
-            start=event.start,  # type: ignore
-            end=event.end,  # type: ignore
-            timezone=event.timezone,
-            id=event.event_id,
+            title=event.summary, start=start, end=end, timezone=event.timezone, id=event.event_id
         )
     except ValidationError as e:
         logging.error(f"Failed to convert event: {e}")
         return DestinationEvent(
-            title=f"{event.summary}",
-            start=event.start,  # type: ignore
-            end=event.end,  # type: ignore
-            timezone="UTC",
+            title="No title", start=start, end=end, timezone="UTC", id=event.event_id
         )
 
 
