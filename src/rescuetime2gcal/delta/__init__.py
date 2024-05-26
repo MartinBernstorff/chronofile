@@ -7,8 +7,8 @@ from typing import Sequence
 
 import devtools
 
-from rescuetime_to_gcal.source_event import event_identity
-from rescuetime_to_gcal.preprocessing import DestinationEvent, ParsedEvent, SourceEvent
+from rescuetime2gcal.source_event import event_identity
+from rescuetime2gcal.preprocessing import DestinationEvent, ParsedEvent, SourceEvent
 
 log = logging.getLogger(__name__)
 

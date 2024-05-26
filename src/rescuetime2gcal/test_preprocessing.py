@@ -6,7 +6,7 @@ from dataclasses import dataclass
 import pytest
 from iterpy.arr import Arr
 
-from rescuetime_to_gcal.preprocessing import (
+from rescuetime2gcal.preprocessing import (
     DestinationEvent,
     ParsedEvent,
     SourceEvent,
