@@ -28,6 +28,7 @@ lint: ## Format code
 		--extend-select F401 \
 		--extend-select F841
 	@echo "✅✅✅ Lint ✅✅✅"
+	# And some more changes
 
 types: ## Type-check code
 	@echo "––– Type-checking –––"

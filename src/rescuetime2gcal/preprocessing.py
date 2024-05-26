@@ -25,7 +25,6 @@ class ParsedEvent(pydantic.BaseModel):
     end: "datetime.datetime"
     category: Optional["RecordCategory"] = None
     timezone: str = "UTC"
-    # And some more changes here
 
     @pydantic.field_validator("title")
     def validate_title(cls, value: str) -> str:
@@ -47,7 +46,6 @@ class ParsedEvent(pydantic.BaseModel):
 
 class DestinationEvent(ParsedEvent):
     id: str
-    # Some changes here
 
 
 def _parse_event(event: "SourceEvent") -> ParsedEvent:
