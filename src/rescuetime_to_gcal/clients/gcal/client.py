@@ -125,6 +125,7 @@ def sync(source_events: Sequence[ParsedEvent], client: DestinationClient, dry_ru
         client.get_events(min([event.start for event in source_events]), datetime.today())
     ).to_list()
 
+    # TD Move changeset generation to the pipeline function
     changes = delta.changeset(source_events, destination_events)
     logging.info(f"Changes to be made: {devtools.debug.format(changes)}")
 

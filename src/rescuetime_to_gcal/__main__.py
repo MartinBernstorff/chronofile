@@ -1,28 +1,52 @@
+import datetime
 import logging
 from typing import TYPE_CHECKING, Sequence
 
+import devtools
 from iterpy.arr import Arr
 
+from rescuetime_to_gcal import delta
 from rescuetime_to_gcal.clients import gcal
 from rescuetime_to_gcal.config import config as cfg
 from rescuetime_to_gcal.preprocessing import apply_metadata, merge_within_window
 
 if TYPE_CHECKING:
     from rescuetime_to_gcal.clients.event_source import EventSource
+    from rescuetime_to_gcal.clients.gcal.client import DestinationClient
+    from rescuetime_to_gcal.event import SourceEvent
     from rescuetime_to_gcal.preprocessing import ParsedEvent
+
+log = logging.getLogger(__name__)
 
 
 def main(
-    input_sources: Sequence["EventSource"],
-    gcal_email: str,
-    gcal_client_id: str,
-    gcal_client_secret: str,
-    gcal_refresh_token: str,
-    dry_run: bool,
-) -> Sequence["ParsedEvent"]:
-    input_data = Arr(input_sources).map(lambda f: f()).flatten()
+    input_clients: Sequence["EventSource"], destination_client: "DestinationClient", dry_run: bool
+) -> None:
+    input_events = Arr(input_clients).map(lambda f: f()).flatten().to_list()
+    destination_events = destination_client.get_events(
+        start=min([event.start for event in input_events]), end=datetime.datetime.now()
+    )
 
-    sufficient_length_events = input_data.filter(lambda e: e.duration > cfg.min_duration)
+    changes = pipeline(source_events=input_events, presentation_events=destination_events)
+
+    logging.info(f"Changes to be made {devtools.debug.format(changes)}")
+
+    if not dry_run:
+        log.info("Dry-run is false, syncing changes")
+        for change in changes:
+            match change:
+                case delta.NewEvent():
+                    destination_client.add_event(change.event)
+                case delta.UpdateEvent():
+                    destination_client.update_event(change.event)
+    else:
+        log.info("Dry-run enabled, skipping sync")
+
+
+def pipeline(
+    source_events: Sequence["SourceEvent"], presentation_events: Sequence["ParsedEvent"]
+) -> Sequence[delta.EventChange]:
+    sufficient_length_events = Arr(source_events).filter(lambda e: e.duration > cfg.min_duration)
 
     events_with_metadata = sufficient_length_events.map(
         lambda e: apply_metadata(
@@ -30,29 +54,19 @@ def main(
         )
     )
 
-    included_events = events_with_metadata.filter(
+    filtered_by_title = events_with_metadata.filter(
         lambda e: not any(
             excluded_title.lower() in e.title.lower() for excluded_title in cfg.exclude_titles
         )
     )
 
-    merged_events = (
-        included_events.groupby(lambda e: e.title)
+    merged_source_events = (
+        filtered_by_title.groupby(lambda e: e.title)
         .map(lambda g: merge_within_window(g[1], merge_gap=cfg.merge_gap))
         .flatten()
         .to_list()
     )
 
-    logging.debug("Syncing events to calendar")
-    gcal.sync(
-        client=gcal.GcalClient(
-            calendar_id=gcal_email,
-            client_id=gcal_client_id,
-            client_secret=gcal_client_secret,
-            refresh_token=gcal_refresh_token,
-        ),
-        source_events=merged_events,
-        dry_run=dry_run,
-    )
+    changeset = delta.changeset(merged_source_events, presentation_events)
 
-    return merged_events
+    return changeset
