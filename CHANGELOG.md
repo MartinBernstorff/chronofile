@@ -2,6 +2,13 @@
 
 
 
+## v0.4.0 (2024-05-26)
+
+### Feature
+
+* feat: shrink docker image through multi-stage builds (#27) ([`8416c49`](https://github.com/MartinBernstorff/rescuetime-to-gcal/commit/8416c4937d7bdfbc6e3826392b323e875469d4e2))
+
+
 ## v0.3.1 (2024-05-26)
 
 ### Fix
