@@ -2,6 +2,17 @@
 
 
 
+## v0.6.0 (2024-05-26)
+
+### Feature
+
+* feat: guard against empty urls (#29) ([`fed7437`](https://github.com/MartinBernstorff/rescuetime-to-gcal/commit/fed7437bd0212294ea3636fdb37b228a0e1fc0f3))
+
+### Unknown
+
+* Initial commit ([`af84559`](https://github.com/MartinBernstorff/rescuetime-to-gcal/commit/af84559ac6e8e5d296ae3676260c355c9ff92a13))
+
+
 ## v0.5.0 (2024-05-26)
 
 ### Feature
