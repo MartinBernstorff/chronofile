@@ -23,11 +23,7 @@ RUN rye build --wheel --clean
 # Runner stage
 FROM python:3.11-slim as runner
 WORKDIR /app
-
-# Create a new user named "appuser"
 RUN useradd -m appuser
-
-# Copy the built artifacts from the builder stage and set the owner to "appuser"
 COPY --from=builder --chown=appuser:appuser /app/dist /app/dist
 
 # Install uv
