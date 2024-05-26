@@ -23,7 +23,7 @@ def _parsed_to_gcsa_event(event: ParsedEvent) -> GCSAEvent:
     return GCSAEvent(summary=event.title, start=event.start, end=event.end, timezone=event.timezone)
 
 
-def _source_to_gcsa_event(event: "DestinationEvent") -> GCSAEvent:
+def _destination_to_gcsa_event(event: "DestinationEvent") -> GCSAEvent:
     return GCSAEvent(
         summary=event.title,
         start=event.start,
@@ -120,11 +120,11 @@ class GcalClient(DestinationClient):
 
     def update_event(self, event: DestinationEvent) -> DestinationEvent:
         response = self._client.update_event(  # type: ignore
-            _source_to_gcsa_event(event)
+            _destination_to_gcsa_event(event)
         )
         return _to_destination_event(_timezone_to_utc(response))
 
     def delete_event(self, event: DestinationEvent) -> None:
         self._client.delete_event(  # type: ignore
-            _source_to_gcsa_event(event)
+            _destination_to_gcsa_event(event)
         )

@@ -9,7 +9,7 @@ def _event_hasher(event: "DestinationEvent | ParsedEvent") -> str:
 
 
 def deduper(
-    true_events: Sequence["ParsedEvent"], mirror_events: Sequence["DestinationEvent"]
+    parsed_events: Sequence["ParsedEvent"], destination_events: Sequence["DestinationEvent"]
 ) -> Sequence["ParsedEvent"]:
-    origin_hashes = {_event_hasher(e) for e in mirror_events}
-    return [e for e in true_events if _event_hasher(e) not in origin_hashes]
+    origin_hashes = {_event_hasher(e) for e in destination_events}
+    return [e for e in parsed_events if _event_hasher(e) not in origin_hashes]

@@ -21,4 +21,3 @@ class Ex:
 )
 def test_sync_with_destination_id(e: Ex):
     """To update events at the destination, we need to pass along the event ID on the destination. Otherwise, how would we know which event to update?"""
-    ...

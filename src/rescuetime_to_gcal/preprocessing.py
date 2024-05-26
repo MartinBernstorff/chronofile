@@ -35,7 +35,7 @@ class DestinationEvent(ParsedEvent):
     id: str
 
 
-def apply_metadata(
+def parse_events(
     event: "SourceEvent",
     metadata: Sequence["RecordMetadata"],
     category2emoji: Mapping["RecordCategory", str],

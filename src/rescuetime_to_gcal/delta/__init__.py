@@ -27,20 +27,20 @@ EventChange = NewEvent | UpdateEvent
 
 
 def changeset(
-    true_events: Sequence[ParsedEvent], mirror_events: Sequence[DestinationEvent]
+    parsed_events: Sequence[ParsedEvent], destination_events: Sequence[DestinationEvent]
 ) -> Sequence[EventChange]:
     """Identify which changes are needed on the mirror for it to match truth."""
-    timezones = set(e.timezone for e in [*true_events, *mirror_events])
+    timezones = set(e.timezone for e in [*parsed_events, *destination_events])
     if len(timezones) != 1:
         raise ValueError(f"All events must be in the same timezone. Found {timezones}")
 
-    deduped_events = deduper(mirror_events=mirror_events, true_events=true_events)
+    deduped_events = deduper(destination_events=destination_events, parsed_events=parsed_events)
 
     changeset: list[EventChange] = []
     for new_event in deduped_events:
         ancestor = [
             event
-            for event in mirror_events
+            for event in destination_events
             if event.title == new_event.title and event.start == new_event.start
         ]
 
