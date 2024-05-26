@@ -2,6 +2,13 @@
 
 
 
+## v0.3.1 (2024-05-26)
+
+### Fix
+
+* fix: update instead of duplicate events (#26) ([`563fe1a`](https://github.com/MartinBernstorff/rescuetime-to-gcal/commit/563fe1a93c27b0cee8fcfa3fcf0187d0806bac37))
+
+
 ## v0.3.0 (2024-05-25)
 
 ### Chore
