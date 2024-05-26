@@ -14,6 +14,7 @@ class FakeEvent(GenericEvent):
     title: str = "fake title"
     start: datetime.datetime = datetime.datetime(2023, 1, 1, 0, 0)
     end: datetime.datetime = datetime.datetime(2023, 1, 1, 0, 0)
+    id: int = 0
 
 
 def test_filter_by_title():
