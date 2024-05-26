@@ -51,9 +51,10 @@ class DestinationEvent(ParsedEvent):
 def _parse_event(event: "SourceEvent") -> ParsedEvent:
     match event:
         case URLEvent():
-            return ParsedEvent(
-                title=event.url_title, start=event.start, end=event.start + event.duration
-            )
+            title = event.url_title if len(event.url_title) != 0 else event.url
+            if title == "":
+                title = "No title"
+            return ParsedEvent(title=title, start=event.start, end=event.start + event.duration)
         case WindowTitleEvent():
             title = event.window_title if len(event.window_title) != 0 else event.app
             return ParsedEvent(title=title, start=event.start, end=event.start + event.duration)
