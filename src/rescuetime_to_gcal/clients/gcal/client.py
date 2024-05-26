@@ -80,7 +80,7 @@ class DestinationClient(Protocol):
     def update_event(self, event: DestinationEvent) -> DestinationEvent:
         ...
 
-    def delete_event(self, event: ParsedEvent) -> None:
+    def delete_event(self, event: DestinationEvent) -> None:
         ...
 
 
@@ -124,5 +124,7 @@ class GcalClient(DestinationClient):
         )
         return _to_destination_event(_timezone_to_utc(response))
 
-    def delete_event(self, event: ParsedEvent) -> None:
-        self._client.delete_event(_parsed_to_gcsa_event(event))  # type: ignore
+    def delete_event(self, event: DestinationEvent) -> None:
+        self._client.delete_event(  # type: ignore
+            _source_to_gcsa_event(event)
+        )
