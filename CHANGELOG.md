@@ -2,6 +2,13 @@
 
 
 
+## v0.5.0 (2024-05-26)
+
+### Feature
+
+* feat: align package version with semver (#28) ([`ae017e3`](https://github.com/MartinBernstorff/rescuetime-to-gcal/commit/ae017e3f8df80708219bfc88b27cc3ba3608ab4c))
+
+
 ## v0.4.0 (2024-05-26)
 
 ### Feature
