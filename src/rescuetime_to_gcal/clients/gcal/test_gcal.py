@@ -42,7 +42,7 @@ def _clean_test_interval(
 )
 @pytest.mark.parametrize(("system_timezone"), ["Europe/Copenhagen", "America/New_York"])
 @pytest.mark.parametrize(
-    ("event"),
+    ("base_event"),
     [
         ParsedEvent(
             title="🔥 Test",

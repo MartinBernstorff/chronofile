@@ -33,6 +33,11 @@ def deduper(
     return [e for e in parsed_events if event_identity(e) not in origin_hashes]
 
 
+def _ancestry_identity(event: "DestinationEvent | ParsedEvent") -> str:
+    string_format = "%d/%m/%Y, %H:%M:%S"
+    return f"{event.title} {event.start.strftime(string_format)}"
+
+
 def changeset(
     parsed_events: Sequence[ParsedEvent], destination_events: Sequence[DestinationEvent]
 ) -> Sequence[EventChange]:
@@ -48,7 +53,7 @@ def changeset(
         ancestor = [
             event
             for event in destination_events
-            if event_identity(event) == event_identity(new_event)
+            if _ancestry_identity(event) == _ancestry_identity(new_event)
         ]
 
         if len(ancestor) > 1:
@@ -57,6 +62,7 @@ def changeset(
             )
 
         sorted_ancestors = sorted(ancestor, key=lambda e: e.start)
+
         event_is_update = len(ancestor) != 0
         if event_is_update:
             existing_event = sorted_ancestors[-1]
