@@ -13,7 +13,7 @@ from rescuetime_to_gcal.preprocessing import DestinationEvent, merge_within_wind
 if TYPE_CHECKING:
     from rescuetime_to_gcal.clients.event_source import EventSource
     from rescuetime_to_gcal.clients.gcal.client import DestinationClient
-    from rescuetime_to_gcal.event import SourceEvent
+    from rescuetime_to_gcal.source_event import SourceEvent
 
 log = logging.getLogger(__name__)
 
