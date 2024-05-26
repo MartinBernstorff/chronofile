@@ -52,7 +52,7 @@ def cli(
     watch: bool = False,
 ):
     logging.info(
-        f"Running Rescuetime-to-gcal version {importlib.metadata.version('rescuetime-to-gcal')}"
+        f"Running Rescuetime-to-gcal version {importlib.metadata.version('rescuetime2gcal')}"
     )
     logging.info(devtools.debug.format(cfg))
     logging.info("Starting sync")
