@@ -54,10 +54,10 @@ pr: ## Submit a PR
 #########################
 
 docker_build:
-	docker build -t rescuetime-to-gcal:latest .
+	docker build -t ghcr.io/martinbernstorff/rescuetime-to-gcal:latest .
 
 docker_deploy: docker_build
-	docker run --env-file .env --network host rescuetime-to-gcal:latest 
+	docker run --env-file .env --network host ghcr.io/martinbernstorff/rescuetime-to-gcal:latest 
 
 docker_smoketest: docker_build
-	docker run --env-file .env --network host rescuetime-to-gcal:latest --dry-run 
+	docker run --env-file .env --network host ghcr.io/martinbernstorff/rescuetime-to-gcal:latest --dry-run 
