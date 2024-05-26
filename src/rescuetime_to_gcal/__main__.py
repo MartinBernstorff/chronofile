@@ -22,8 +22,10 @@ def main(
     input_clients: Sequence["EventSource"], destination_client: "DestinationClient", dry_run: bool
 ) -> None:
     input_events = Arr(input_clients).map(lambda f: f()).flatten().to_list()
+
     destination_events = destination_client.get_events(
-        start=min([event.start for event in input_events]), end=datetime.datetime.now()
+        start=min([event.start for event in input_events]),
+        end=datetime.datetime.now(tz=input_events[0].start.tzinfo),
     )
 
     changes = pipeline(source_events=input_events, destination_events=destination_events)

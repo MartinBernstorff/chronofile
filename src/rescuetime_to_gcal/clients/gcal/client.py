@@ -36,15 +36,9 @@ def _to_destination_event(event: GCSAEvent) -> DestinationEvent:
     # Unpack here, to avoid overzealous type ignore
     start: datetime = event.start  # type: ignore
     end: datetime = event.end  # type: ignore
-    try:
-        return DestinationEvent(
-            title=event.summary, start=start, end=end, timezone=event.timezone, id=event.event_id
-        )
-    except ValidationError as e:
-        logging.error(f"Failed to convert event: {e}")
-        return DestinationEvent(
-            title="No title", start=start, end=end, timezone="UTC", id=event.event_id
-        )
+    return DestinationEvent(
+        title=event.summary, start=start, end=end, timezone=event.timezone, id=event.event_id
+    )
 
 
 def _dt_to_utc(dt: datetime) -> datetime:
@@ -107,7 +101,11 @@ class GcalClient(DestinationClient):
 
     def get_events(self, start: datetime, end: datetime) -> Sequence[DestinationEvent]:
         events = (
-            Arr(self._client.get_events(start, end, order_by="updated", single_events=True))  # type: ignore
+            Arr(
+                self._client.get_events(  # type: ignore
+                    start, end, order_by="updated", single_events=True
+                )
+            )
             .map(_timezone_to_utc)
             .map(_to_destination_event)
             .to_list()

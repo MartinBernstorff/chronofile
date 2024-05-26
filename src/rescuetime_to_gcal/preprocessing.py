@@ -4,7 +4,14 @@ from typing import TYPE_CHECKING, Mapping, Optional, Sequence
 import pydantic
 
 from rescuetime_to_gcal.config import RecordCategory
-from rescuetime_to_gcal.event import BareEvent, BaseEvent, SourceEvent, URLEvent, WindowTitleEvent
+from rescuetime_to_gcal.event import (
+    BareEvent,
+    BaseEvent,
+    SourceEvent,
+    URLEvent,
+    WindowTitleEvent,
+    event_identity,
+)
 
 if TYPE_CHECKING:
     from rescuetime_to_gcal.config import RecordCategory, RecordMetadata
@@ -19,9 +26,15 @@ class ParsedEvent(pydantic.BaseModel):
     category: Optional["RecordCategory"] = None
     timezone: str = "UTC"
 
+    @pydantic.field_validator("title")
+    def validate_title(cls, value: str) -> str:
+        if len(value) < 1:
+            raise ValueError("Title must be at least one character long")
+        return value
+
     @property
     def identity(self) -> str:
-        return f"{self.title} {self.start} to {self.end}"
+        return event_identity(self)
 
     @property
     def duration(self) -> "datetime.timedelta":
@@ -68,9 +81,8 @@ def _parse_event(event: "SourceEvent") -> ParsedEvent:
 
 
 def parse_window_title_event(event: WindowTitleEvent) -> ParsedEvent:
-    return ParsedEvent(
-        title=event.window_title, start=event.start, end=event.start + event.duration
-    )
+    title = event.window_title if len(event.window_title) != 0 else event.app
+    return ParsedEvent(title=title, start=event.start, end=event.start + event.duration)
 
 
 def parse_url_event(event: URLEvent) -> ParsedEvent:

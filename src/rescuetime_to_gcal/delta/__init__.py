@@ -7,7 +7,7 @@ from typing import Sequence
 
 import devtools
 
-from rescuetime_to_gcal.delta._deduper import deduper
+from rescuetime_to_gcal.event import event_identity
 from rescuetime_to_gcal.preprocessing import DestinationEvent, ParsedEvent, SourceEvent
 
 log = logging.getLogger(__name__)
@@ -24,6 +24,13 @@ class UpdateEvent:
 
 
 EventChange = NewEvent | UpdateEvent
+
+
+def deduper(
+    parsed_events: Sequence["ParsedEvent"], destination_events: Sequence["DestinationEvent"]
+) -> Sequence["ParsedEvent"]:
+    origin_hashes = {event_identity(e) for e in destination_events}
+    return [e for e in parsed_events if event_identity(e) not in origin_hashes]
 
 
 def changeset(
