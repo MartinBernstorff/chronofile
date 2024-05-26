@@ -4,9 +4,8 @@ import time
 
 import pytest
 import pytz
-
 from rescuetime_to_gcal.gcal.client import DestinationClient, GcalClient
-from rescuetime_to_gcal.generic_event import GenericEvent
+from rescuetime_to_gcal.preprocessing import ParsedEvent
 
 
 @pytest.fixture(autouse=True)
@@ -47,7 +46,7 @@ def test_client_sync(client: DestinationClient, system_timezone: pytz.BaseTzInfo
     os.environ["TZ"] = system_timezone  # type: ignore
     time.tzset()
 
-    base_event = GenericEvent(
+    base_event = ParsedEvent(
         title="🔥 Test",
         start=datetime.datetime(2023, 1, 1, 0, 0),
         end=datetime.datetime(2023, 1, 1, 0, 0),

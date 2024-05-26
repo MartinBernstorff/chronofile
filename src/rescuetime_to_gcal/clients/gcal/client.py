@@ -6,18 +6,17 @@ from xml.dom import ValidationErr
 
 import devtools
 import pytz
+import rescuetime_to_gcal.delta as delta
 from gcsa.event import Event as GCSAEvent
 from gcsa.google_calendar import GoogleCalendar
 from google.oauth2.credentials import Credentials
 from iterpy.arr import Arr
 from pydantic import ValidationError
-
-import rescuetime_to_gcal.delta as delta
 from rescuetime_to_gcal.gcal._consts import required_scopes
-from rescuetime_to_gcal.generic_event import GenericEvent
+from rescuetime_to_gcal.preprocessing import ParsedEvent
 
 
-def _to_gcsa_event(event: GenericEvent) -> GCSAEvent:
+def _to_gcsa_event(event: ParsedEvent) -> GCSAEvent:
     return GCSAEvent(
         summary=event.title,
         start=event.start,  # type: ignore
@@ -27,9 +26,9 @@ def _to_gcsa_event(event: GenericEvent) -> GCSAEvent:
     )
 
 
-def _to_generic_event(event: GCSAEvent) -> GenericEvent:
+def _to_generic_event(event: GCSAEvent) -> ParsedEvent:
     try:
-        return GenericEvent(
+        return ParsedEvent(
             title=event.summary,
             start=event.start,  # type: ignore
             end=event.end,  # type: ignore
@@ -38,7 +37,7 @@ def _to_generic_event(event: GCSAEvent) -> GenericEvent:
         )
     except ValidationError as e:
         logging.error(f"Failed to convert event: {e}")
-        return GenericEvent(
+        return ParsedEvent(
             title=f"{event.summary}",
             start=event.start,  # type: ignore
             end=event.end,  # type: ignore
@@ -65,16 +64,16 @@ def _timezone_to_utc(event: GCSAEvent) -> GCSAEvent:
 class DestinationClient(Protocol):
     """Interface for a client that can add, get, update, and delete events. All responsese must be in UTC."""
 
-    def add_event(self, event: GenericEvent) -> GenericEvent:
+    def add_event(self, event: ParsedEvent) -> ParsedEvent:
         ...
 
-    def get_events(self, start: datetime, end: datetime) -> Sequence[GenericEvent]:
+    def get_events(self, start: datetime, end: datetime) -> Sequence[ParsedEvent]:
         ...
 
-    def update_event(self, event: GenericEvent) -> GenericEvent:
+    def update_event(self, event: ParsedEvent) -> ParsedEvent:
         ...
 
-    def delete_event(self, event: GenericEvent) -> GenericEvent:
+    def delete_event(self, event: ParsedEvent) -> ParsedEvent:
         ...
 
 
@@ -98,11 +97,11 @@ class GcalClient(DestinationClient):
             ),
         )
 
-    def add_event(self, event: GenericEvent) -> GenericEvent:
+    def add_event(self, event: ParsedEvent) -> ParsedEvent:
         val = self._client.add_event(_to_gcsa_event(event))  # type: ignore
         return _to_generic_event(_timezone_to_utc(val))
 
-    def get_events(self, start: datetime, end: datetime) -> Sequence[GenericEvent]:
+    def get_events(self, start: datetime, end: datetime) -> Sequence[ParsedEvent]:
         events = (
             Arr(self._client.get_events(start, end, order_by="updated", single_events=True))  # type: ignore
             .map(_timezone_to_utc)
@@ -112,16 +111,16 @@ class GcalClient(DestinationClient):
         logging.debug(f"Destination events: {devtools.debug.format(events)}")
         return events
 
-    def update_event(self, event: GenericEvent) -> GenericEvent:
+    def update_event(self, event: ParsedEvent) -> ParsedEvent:
         response = self._client.update_event(_to_gcsa_event(event))  # type: ignore
         return _to_generic_event(_timezone_to_utc(response))
 
-    def delete_event(self, event: GenericEvent) -> GenericEvent:
+    def delete_event(self, event: ParsedEvent) -> ParsedEvent:
         self._client.delete_event(_to_gcsa_event(event))  # type: ignore
         return event
 
 
-def sync(source_events: Sequence[GenericEvent], client: DestinationClient, dry_run: bool) -> None:
+def sync(source_events: Sequence[ParsedEvent], client: DestinationClient, dry_run: bool) -> None:
     destination_events = Arr(
         client.get_events(min([event.start for event in source_events]), datetime.today())
     ).to_list()

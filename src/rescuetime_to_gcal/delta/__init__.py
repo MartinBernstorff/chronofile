@@ -8,26 +8,26 @@ from typing import Sequence
 import devtools
 
 from rescuetime_to_gcal.delta._deduper import deduper
-from rescuetime_to_gcal.generic_event import GenericEvent
+from rescuetime_to_gcal.preprocessing import ParsedEvent
 
 log = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)
 class NewEvent:
-    event: GenericEvent
+    event: ParsedEvent
 
 
 @dataclass(frozen=True)
 class UpdateEvent:
-    event: GenericEvent
+    event: ParsedEvent
 
 
 EventChange = NewEvent | UpdateEvent
 
 
 def changeset(
-    true_events: Sequence[GenericEvent], mirror_events: Sequence[GenericEvent]
+    true_events: Sequence[ParsedEvent], mirror_events: Sequence[ParsedEvent]
 ) -> Sequence[EventChange]:
     """Identify which changes are needed on the mirror for it to match truth."""
     timezones = set(e.timezone for e in [*true_events, *mirror_events])

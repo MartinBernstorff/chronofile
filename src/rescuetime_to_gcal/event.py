@@ -1,5 +1,6 @@
 import datetime
 from abc import ABC
+from typing import TYPE_CHECKING, Optional
 
 import pydantic
 
@@ -28,3 +29,4 @@ class WindowTitleEvent(BaseEvent):
 
 
 SourceEvent = BaseEvent | URLEvent | WindowTitleEvent | BareEvent
+"""A source event, i.e. right after ingest."""

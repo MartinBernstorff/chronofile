@@ -8,7 +8,7 @@ from rescuetime_to_gcal.config import config as cfg
 from rescuetime_to_gcal.preprocessing import apply_metadata, merge_within_window
 
 if TYPE_CHECKING:
-    from rescuetime_to_gcal.generic_event import GenericEvent
+    from rescuetime_to_gcal.preprocessing import ParsedEvent
     from rescuetime_to_gcal.sources.event_source import EventSource
 
 
@@ -19,7 +19,7 @@ def main(
     gcal_client_secret: str,
     gcal_refresh_token: str,
     dry_run: bool,
-) -> Sequence["GenericEvent"]:
+) -> Sequence["ParsedEvent"]:
     input_data = Arr(input_sources).map(lambda f: f()).flatten()
 
     sufficient_length_events = input_data.filter(lambda e: e.duration > cfg.min_duration)
