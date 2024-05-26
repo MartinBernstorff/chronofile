@@ -4,7 +4,7 @@ import time
 
 import pytest
 import pytz
-from rescuetime_to_gcal.gcal.client import DestinationClient, GcalClient
+from rescuetime_to_gcal.clients.gcal.client import DestinationClient, GcalClient
 from rescuetime_to_gcal.preprocessing import ParsedEvent
 
 

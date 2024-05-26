@@ -3,13 +3,13 @@ from typing import TYPE_CHECKING, Sequence
 
 from iterpy.arr import Arr
 
-from rescuetime_to_gcal import gcal
+from rescuetime_to_gcal.clients import gcal
 from rescuetime_to_gcal.config import config as cfg
 from rescuetime_to_gcal.preprocessing import apply_metadata, merge_within_window
 
 if TYPE_CHECKING:
+    from rescuetime_to_gcal.clients.event_source import EventSource
     from rescuetime_to_gcal.preprocessing import ParsedEvent
-    from rescuetime_to_gcal.sources.event_source import EventSource
 
 
 def main(

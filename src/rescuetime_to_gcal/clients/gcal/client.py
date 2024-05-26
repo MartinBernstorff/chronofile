@@ -12,7 +12,7 @@ from gcsa.google_calendar import GoogleCalendar
 from google.oauth2.credentials import Credentials
 from iterpy.arr import Arr
 from pydantic import ValidationError
-from rescuetime_to_gcal.gcal._consts import required_scopes
+from rescuetime_to_gcal.clients.gcal._consts import required_scopes
 from rescuetime_to_gcal.preprocessing import ParsedEvent
 
 
