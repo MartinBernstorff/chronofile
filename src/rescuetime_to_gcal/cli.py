@@ -11,18 +11,20 @@ import devtools
 import typer
 
 from rescuetime_to_gcal.__main__ import main
+from rescuetime_to_gcal.clients import activitywatch, gcal, rescuetime
+from rescuetime_to_gcal.clients.gcal.auth import print_refresh_token
 from rescuetime_to_gcal.config import config as cfg
-from rescuetime_to_gcal.gcal.auth import print_refresh_token
-from rescuetime_to_gcal.sources import activitywatch, rescuetime
 
 if TYPE_CHECKING:
-    from rescuetime_to_gcal.sources.event_source import EventSource
+    from rescuetime_to_gcal.clients.event_source import EventSource
 
-log = coloredlogs.install(  # type: ignore
+coloredlogs.install(  # type: ignore
     level="INFO",
     format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
     datefmt="%Y/%m/%d %H:%M:%S",
 )
+
+log = logging.getLogger(__name__)
 
 app = typer.Typer()
 
@@ -80,22 +82,21 @@ def cli(
             "No event sources provided. Specify either rescuetime_api_key or activitywatch_base_url"
         )
 
-    events = main(
+    main(
         event_sources,
-        gcal_email,
-        gcal_client_id,
-        gcal_client_secret,
-        gcal_refresh_token,
+        destination_client=gcal.GcalClient(
+            calendar_id=gcal_email,
+            client_id=gcal_client_id,
+            client_secret=gcal_client_secret,
+            refresh_token=gcal_refresh_token,
+        ),
         dry_run=dry_run,
     )
 
-    if not dry_run:
-        logging.info(f"Sync complete, synced {len(events)} events")
-    else:
-        logging.info("Dry run, not syncing")
-
     if watch:
-        time.sleep(5 * 60)
+        sleep_minutes = 5
+        log.info(f"Watch is {watch}, sleeping for {sleep_minutes} minutes")
+        time.sleep(sleep_minutes * 60)
         cli(
             rescuetime_api_key=rescuetime_api_key,
             activitywatch_base_url=activitywatch_base_url,

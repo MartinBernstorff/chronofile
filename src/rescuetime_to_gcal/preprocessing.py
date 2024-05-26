@@ -1,79 +1,90 @@
-from typing import TYPE_CHECKING, Mapping, Sequence
+import datetime  # noqa: TCH003
+from typing import TYPE_CHECKING, Mapping, Optional, Sequence
 
-from rescuetime_to_gcal.generic_event import GenericEvent
-from rescuetime_to_gcal.source_event import BareEvent, BaseEvent, URLEvent, WindowTitleEvent
+import pydantic
+
+from rescuetime_to_gcal.config import RecordCategory
+from rescuetime_to_gcal.source_event import (
+    BareEvent,
+    BaseEvent,
+    SourceEvent,
+    URLEvent,
+    WindowTitleEvent,
+    event_identity,
+)
 
 if TYPE_CHECKING:
-    import datetime
-
     from rescuetime_to_gcal.config import RecordCategory, RecordMetadata
-    from rescuetime_to_gcal.source_event import SourceEvent
 
 
-def apply_metadata(
-    event: "SourceEvent",
-    metadata: Sequence["RecordMetadata"],
-    category2emoji: Mapping["RecordCategory", str],
-) -> GenericEvent:
-    generic_event = _parse_event(event)
+class ParsedEvent(pydantic.BaseModel):
+    """Represents an event across the stack, when the information has been parsed for presentation."""
 
-    # Apply category and emoji
-    for meta in metadata:
-        if any(title.lower() in generic_event.title.lower() for title in meta.title_matcher):
-            generic_event.category = meta.category
-            if meta.prettified_title is not None:
-                generic_event.title = meta.prettified_title
-            generic_event.title = f"{category2emoji[meta.category]} {generic_event.title}"
+    title: str
+    start: "datetime.datetime"
+    end: "datetime.datetime"
+    category: Optional["RecordCategory"] = None
+    timezone: str = "UTC"
 
-    return generic_event
+    @pydantic.field_validator("title")
+    def validate_title(cls, value: str) -> str:
+        if len(value) < 1:
+            raise ValueError("Title must be at least one character long")
+        return value
+
+    @property
+    def identity(self) -> str:
+        return event_identity(self)
+
+    @property
+    def duration(self) -> "datetime.timedelta":
+        return self.end - self.start
+
+    def __repr__(self) -> str:
+        return f"Event(title={self.title}, {self.start} to {self.end}, {self.timezone})"
 
 
-def _parse_event(event: "SourceEvent") -> GenericEvent:
+class DestinationEvent(ParsedEvent):
+    id: str
+
+
+def _parse_event(event: "SourceEvent") -> ParsedEvent:
     match event:
         case URLEvent():
-            return parse_url_event(event)
+            return ParsedEvent(
+                title=event.url_title, start=event.start, end=event.start + event.duration
+            )
         case WindowTitleEvent():
-            return parse_window_title_event(event)
+            title = event.window_title if len(event.window_title) != 0 else event.app
+            return ParsedEvent(title=title, start=event.start, end=event.start + event.duration)
         case BareEvent():
-            return GenericEvent(
+            return ParsedEvent(
                 title=event.title, start=event.start, end=event.start + event.duration
             )
         case BaseEvent():
             raise ValueError(f"Event type {type(event)} not supported")
 
 
-def parse_window_title_event(event: WindowTitleEvent) -> GenericEvent:
-    return GenericEvent(
-        title=event.window_title, start=event.start, end=event.start + event.duration
-    )
-
-
-def parse_url_event(event: URLEvent) -> GenericEvent:
-    return GenericEvent(
-        title=f"Github · {event.url_title}", start=event.start, end=event.start + event.duration
-    )
-
-
 def filter_by_title(
-    data: Sequence[GenericEvent], strs_to_match: Sequence[str]
-) -> Sequence[GenericEvent]:
+    data: Sequence[ParsedEvent], strs_to_match: Sequence[str]
+) -> Sequence[ParsedEvent]:
     return [
         event for event in data if not any(title.lower() in event.title for title in strs_to_match)
     ]
 
 
-def _new_event(event: GenericEvent, end_time: "datetime.datetime") -> GenericEvent:
-    return GenericEvent(title=event.title, start=event.start, end=end_time)
+def _new_event(event: ParsedEvent, end_time: "datetime.datetime") -> ParsedEvent:
+    return ParsedEvent(title=event.title, start=event.start, end=end_time)
 
 
 def merge_within_window(
-    events: Sequence[GenericEvent], merge_gap: "datetime.timedelta"
-) -> Sequence[GenericEvent]:
+    events: Sequence[ParsedEvent], merge_gap: "datetime.timedelta"
+) -> Sequence[ParsedEvent]:
     """Combine rows if end time is within merge_gap of the next event within groups by the group_by function."""
     if len(events) < 2:
         return events
 
-    processed_events: list[GenericEvent] = []
+    processed_events: list[ParsedEvent] = []
     sorted_events = sorted(events, key=lambda e: e.start)
 
     cur_event = sorted_events[0]
@@ -96,3 +107,21 @@ def merge_within_window(
                 processed_events.append(candidate)
 
     return processed_events
+
+
+def parse_events(
+    event: "SourceEvent",
+    metadata: Sequence["RecordMetadata"],
+    category2emoji: Mapping["RecordCategory", str],
+) -> ParsedEvent:
+    generic_event = _parse_event(event)
+
+    # Apply category and emoji
+    for meta in metadata:
+        if any(title.lower() in generic_event.title.lower() for title in meta.title_matcher):
+            generic_event.category = meta.category
+            if meta.prettified_title is not None:
+                generic_event.title = meta.prettified_title
+            generic_event.title = f"{category2emoji[meta.category]} {generic_event.title}"
+
+    return generic_event

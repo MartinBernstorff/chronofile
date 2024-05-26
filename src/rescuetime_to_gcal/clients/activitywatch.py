@@ -14,7 +14,7 @@ log = logging.getLogger(__name__)
 class AwBucket(pydantic.BaseModel):
     id: str
     created: "datetime.datetime"
-    type: Literal["currentwindow", "web.tab.current", "afkstatus"]
+    type: Literal["currentwindow", "web.tab.current"]
     client: str
     hostname: str
     last_updated: "datetime.datetime"
@@ -60,18 +60,6 @@ def load_url_events(
     return events
 
 
-def load_afk_events(
-    bucket_id: str, date: "datetime.datetime", base_url: str = "http://localhost:5600/api/"
-) -> Sequence[BareEvent]:
-    response = _load_bucket_contents(bucket_id, date, base_url)
-    events = [
-        BareEvent(title="AFK", start=e["timestamp"], duration=e["duration"])
-        for e in response
-        if e["data"]["status"] != "not-afk"
-    ]
-    return events
-
-
 def _initialise_bucket_loader(
     bucket: AwBucket, date: "datetime.datetime"
 ) -> Callable[[], Sequence[SourceEvent]]:
@@ -80,8 +68,6 @@ def _initialise_bucket_loader(
             return partial(load_window_titles, bucket.id, date)
         case "web.tab.current":
             return partial(load_url_events, bucket.id, date)
-        case "afkstatus":
-            return partial(load_afk_events, bucket.id, date)
 
 
 def load_all_events(
@@ -91,7 +77,7 @@ def load_all_events(
 
     supported_buckets: Sequence[Mapping[str, Any]] = []
     for b in bucket_data.values():
-        if b["type"] not in ["currentwindow", "web.tab.current", "afkstatus"]:
+        if b["type"] not in ["currentwindow", "web.tab.current"]:
             log.warning(f"Unknown bucket type {b['type']}")
             continue
         supported_buckets.append(b)
