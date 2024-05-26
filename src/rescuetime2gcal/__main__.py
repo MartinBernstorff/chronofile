@@ -5,15 +5,15 @@ from typing import TYPE_CHECKING, Sequence
 import devtools
 from iterpy.arr import Arr
 
-from rescuetime_to_gcal import delta
-from rescuetime_to_gcal.clients import gcal
-from rescuetime_to_gcal.config import config as cfg
-from rescuetime_to_gcal.preprocessing import DestinationEvent, merge_within_window, parse_events
+from rescuetime2gcal import delta
+from rescuetime2gcal.clients import gcal
+from rescuetime2gcal.config import config as cfg
+from rescuetime2gcal.preprocessing import DestinationEvent, merge_within_window, parse_events
 
 if TYPE_CHECKING:
-    from rescuetime_to_gcal.clients.event_source import EventSource
-    from rescuetime_to_gcal.clients.gcal.client import DestinationClient
-    from rescuetime_to_gcal.source_event import SourceEvent
+    from rescuetime2gcal.clients.event_source import EventSource
+    from rescuetime2gcal.clients.gcal.client import DestinationClient
+    from rescuetime2gcal.source_event import SourceEvent
 
 log = logging.getLogger(__name__)
 

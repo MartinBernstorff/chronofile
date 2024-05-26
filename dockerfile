@@ -28,6 +28,5 @@ COPY --from=builder --chown=appuser:appuser /app/dist /app/dist
 
 # USER appuser
 RUN PYTHONDONTWRITEBYTECODE=1 pip install --no-cache-dir /app/dist/*.whl
-CMD 
 
 # Add any additional commands for the runner stage, such as setting the entrypoint or command
