@@ -105,7 +105,9 @@ class GcalClient(DestinationClient):
         )
 
     def add_event(self, event: ParsedEvent) -> DestinationEvent:
-        val = self._client.add_event(_parsed_to_gcsa_event(event))  # type: ignore
+        val = self._client.add_event(  # type: ignore
+            _parsed_to_gcsa_event(event)
+        )
         return _to_destination_event(_timezone_to_utc(val))
 
     def get_events(self, start: datetime, end: datetime) -> Sequence[DestinationEvent]:
