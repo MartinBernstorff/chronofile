@@ -15,7 +15,7 @@ from rescuetime_to_gcal.clients.gcal._consts import required_scopes
 from rescuetime_to_gcal.preprocessing import DestinationEvent, ParsedEvent
 
 if TYPE_CHECKING:
-    from rescuetime_to_gcal.event import SourceEvent
+    from rescuetime_to_gcal.source_event import SourceEvent
 
 
 def _parsed_to_gcsa_event(event: ParsedEvent) -> GCSAEvent:

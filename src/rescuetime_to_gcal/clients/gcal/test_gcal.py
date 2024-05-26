@@ -41,16 +41,22 @@ def _clean_test_interval(
     ],
 )
 @pytest.mark.parametrize(("system_timezone"), ["Europe/Copenhagen", "America/New_York"])
-def test_client_sync(client: DestinationClient, system_timezone: pytz.BaseTzInfo):
+@pytest.mark.parametrize(
+    ("event"),
+    [
+        ParsedEvent(
+            title="🔥 Test",
+            start=datetime.datetime(2023, 1, 1, 0, 0),
+            end=datetime.datetime(2023, 1, 1, 0, 0),
+        )
+    ],
+)
+def test_client_sync(
+    client: DestinationClient, system_timezone: pytz.BaseTzInfo, base_event: ParsedEvent
+):
     # Update the system timezone
     os.environ["TZ"] = system_timezone  # type: ignore
     time.tzset()
-
-    base_event = ParsedEvent(
-        title="🔥 Test",
-        start=datetime.datetime(2023, 1, 1, 0, 0),
-        end=datetime.datetime(2023, 1, 1, 0, 0),
-    )
 
     _clean_test_interval(client, base_event.start, base_event.end + datetime.timedelta(days=1))
 

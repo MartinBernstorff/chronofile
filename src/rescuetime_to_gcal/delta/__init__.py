@@ -7,7 +7,7 @@ from typing import Sequence
 
 import devtools
 
-from rescuetime_to_gcal.event import event_identity
+from rescuetime_to_gcal.source_event import event_identity
 from rescuetime_to_gcal.preprocessing import DestinationEvent, ParsedEvent, SourceEvent
 
 log = logging.getLogger(__name__)
@@ -48,7 +48,7 @@ def changeset(
         ancestor = [
             event
             for event in destination_events
-            if event.title == new_event.title and event.start == new_event.start
+            if event_identity(event) == event_identity(new_event)
         ]
 
         if len(ancestor) > 1:

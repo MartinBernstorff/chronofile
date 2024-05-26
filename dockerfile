@@ -18,5 +18,8 @@ RUN rye config --set-bool behavior.use-uv=true
 RUN rye config --set-bool behavior.global-python=true
 RUN rye config --set default.dependency-operator="~="
 
-COPY . /app
-RUN make quicksync
+COPY pyproject.toml requirements.lock requirements-dev.lock ./
+RUN rye sync --no-lock
+
+COPY . /app/
+RUN rye sync --no-lock
