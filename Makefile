@@ -57,7 +57,7 @@ docker_build:
 	docker build -t rescuetime-to-gcal:latest .
 
 docker_deploy: docker_build
-	docker run --env-file .env --network host rescuetime-to-gcal:latest rye run r2s sync
+	docker run --env-file .env --network host rescuetime-to-gcal:latest r2s sync
 
 docker_smoketest: docker_build
-	docker run --env-file .env --network host rescuetime-to-gcal:latest rye run r2s sync --dry-run 
+	docker run --env-file .env --network host rescuetime-to-gcal:latest r2s sync --dry-run 
