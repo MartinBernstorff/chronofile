@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 import pydantic
 
 if TYPE_CHECKING:
-    from rescuetime_to_gcal.preprocessing import DestinationEvent, ParsedEvent
+    from rescuetime2gcal.preprocessing import DestinationEvent, ParsedEvent
 
 
 class BaseEvent(pydantic.BaseModel, ABC):

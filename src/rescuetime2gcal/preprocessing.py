@@ -3,8 +3,8 @@ from typing import TYPE_CHECKING, Mapping, Optional, Sequence
 
 import pydantic
 
-from rescuetime_to_gcal.config import RecordCategory
-from rescuetime_to_gcal.source_event import (
+from rescuetime2gcal.config import RecordCategory
+from rescuetime2gcal.source_event import (
     BareEvent,
     BaseEvent,
     SourceEvent,
@@ -14,7 +14,7 @@ from rescuetime_to_gcal.source_event import (
 )
 
 if TYPE_CHECKING:
-    from rescuetime_to_gcal.config import RecordCategory, RecordMetadata
+    from rescuetime2gcal.config import RecordCategory, RecordMetadata
 
 
 class ParsedEvent(pydantic.BaseModel):

@@ -16,7 +16,8 @@ RUN curl -sSf https://rye.astral.sh/get > /tmp/get-rye.sh && \
 RUN rye config --set-bool behavior.use-uv=true && \
     rye config --set-bool behavior.global-python=true
 
-COPY /src/ pyproject.toml requirements.lock /app/
+COPY pyproject.toml requirements.lock /app/
+COPY /src/ /app/src
 RUN rye build --wheel --clean
 
 # Runner stage
@@ -27,6 +28,7 @@ WORKDIR /app
 COPY --from=builder --chown=appuser:appuser /app/dist /app/dist
 
 # USER appuser
-RUN PYTHONDONTWRITEBYTECODE=1 pip install --no-cache-dir /app/dist/*.whl
+RUN pip install uv
+RUN PYTHONDONTWRITEBYTECODE=1 uv pip install --system --no-cache-dir /app/dist/*.whl
 
 # Add any additional commands for the runner stage, such as setting the entrypoint or command

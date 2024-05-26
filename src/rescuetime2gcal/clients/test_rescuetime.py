@@ -2,8 +2,8 @@ import datetime
 import os
 
 import pytz
-from rescuetime_to_gcal.clients import rescuetime
-from rescuetime_to_gcal.source_event import BareEvent
+from rescuetime2gcal.clients import rescuetime
+from rescuetime2gcal.source_event import BareEvent
 
 
 def test_get_data():
