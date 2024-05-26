@@ -24,11 +24,15 @@ RUN rye build --wheel --clean
 FROM python:3.11-slim as runner
 WORKDIR /app
 
-# RUN useradd -m appuser
+# Create a new user named "appuser"
+RUN useradd -m appuser
+
+# Copy the built artifacts from the builder stage and set the owner to "appuser"
 COPY --from=builder --chown=appuser:appuser /app/dist /app/dist
 
-# USER appuser
+# Install uv
 RUN pip install uv
 RUN PYTHONDONTWRITEBYTECODE=1 uv pip install --system --no-cache-dir /app/dist/*.whl
 
-# Add any additional commands for the runner stage, such as setting the entrypoint or command
+USER appuser
+ENTRYPOINT [ "r2s", "sync" ]
