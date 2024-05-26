@@ -10,13 +10,13 @@ import coloredlogs
 import devtools
 import typer
 
-from rescuetime_to_gcal.__main__ import main
-from rescuetime_to_gcal.clients import activitywatch, gcal, rescuetime
-from rescuetime_to_gcal.clients.gcal.auth import print_refresh_token
-from rescuetime_to_gcal.config import config as cfg
+from rescuetime2gcal.__main__ import main
+from rescuetime2gcal.clients import activitywatch, gcal, rescuetime
+from rescuetime2gcal.clients.gcal.auth import print_refresh_token
+from rescuetime2gcal.config import config as cfg
 
 if TYPE_CHECKING:
-    from rescuetime_to_gcal.clients.event_source import EventSource
+    from rescuetime2gcal.clients.event_source import EventSource
 
 coloredlogs.install(  # type: ignore
     level="INFO",
