@@ -2,6 +2,13 @@
 
 
 
+## v0.7.0 (2024-05-26)
+
+### Feature
+
+* feat: makefile to correct tag (#30) ([`aabbaf9`](https://github.com/MartinBernstorff/rescuetime-to-gcal/commit/aabbaf96acf40fe0d348ce7be2ef6e3df6bcb316))
+
+
 ## v0.6.0 (2024-05-26)
 
 ### Feature
