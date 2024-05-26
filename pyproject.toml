@@ -54,3 +54,6 @@ include-package-data = true
 
 [project.scripts]
 r2s = "rescuetime2gcal.cli:app"
+
+[tool.semantic_release]
+version_toml = ["pyproject.toml:project.version"]
