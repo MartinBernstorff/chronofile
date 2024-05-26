@@ -8,7 +8,7 @@ from typing import Sequence
 import devtools
 
 from rescuetime_to_gcal.delta._deduper import deduper
-from rescuetime_to_gcal.preprocessing import ParsedEvent
+from rescuetime_to_gcal.preprocessing import DestinationEvent, ParsedEvent, SourceEvent
 
 log = logging.getLogger(__name__)
 
@@ -20,14 +20,14 @@ class NewEvent:
 
 @dataclass(frozen=True)
 class UpdateEvent:
-    event: ParsedEvent
+    event: DestinationEvent
 
 
 EventChange = NewEvent | UpdateEvent
 
 
 def changeset(
-    true_events: Sequence[ParsedEvent], mirror_events: Sequence[ParsedEvent]
+    true_events: Sequence[ParsedEvent], mirror_events: Sequence[DestinationEvent]
 ) -> Sequence[EventChange]:
     """Identify which changes are needed on the mirror for it to match truth."""
     timezones = set(e.timezone for e in [*true_events, *mirror_events])

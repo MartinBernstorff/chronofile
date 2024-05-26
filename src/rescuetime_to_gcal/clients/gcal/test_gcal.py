@@ -5,7 +5,7 @@ import time
 import pytest
 import pytz
 from rescuetime_to_gcal.clients.gcal.client import DestinationClient, GcalClient
-from rescuetime_to_gcal.preprocessing import ParsedEvent
+from rescuetime_to_gcal.preprocessing import ParsedEvent, SourceEvent
 
 
 @pytest.fixture(autouse=True)
@@ -71,8 +71,7 @@ def test_client_sync(client: DestinationClient, system_timezone: pytz.BaseTzInfo
     assert response.identity == payload.identity
 
     # Delete the event
-    delete_response = client.delete_event(payload)
-    assert delete_response.identity == payload.identity
+    client.delete_event(payload)
     assert (
         len(client.get_events(base_event.start, base_event.end + datetime.timedelta(days=1))) == 0
     )

@@ -4,11 +4,10 @@ from typing import TYPE_CHECKING, Mapping, Optional, Sequence
 import pydantic
 
 from rescuetime_to_gcal.config import RecordCategory
-from rescuetime_to_gcal.event import BareEvent, BaseEvent, URLEvent, WindowTitleEvent
+from rescuetime_to_gcal.event import BareEvent, BaseEvent, SourceEvent, URLEvent, WindowTitleEvent
 
 if TYPE_CHECKING:
     from rescuetime_to_gcal.config import RecordCategory, RecordMetadata
-    from rescuetime_to_gcal.event import SourceEvent
 
 
 class ParsedEvent(pydantic.BaseModel):
@@ -19,7 +18,6 @@ class ParsedEvent(pydantic.BaseModel):
     end: "datetime.datetime"
     category: Optional["RecordCategory"] = None
     timezone: str = "UTC"
-    destination_event_id: Optional[str] = None
 
     @property
     def identity(self) -> str:
@@ -31,6 +29,10 @@ class ParsedEvent(pydantic.BaseModel):
 
     def __repr__(self) -> str:
         return f"Event(title={self.title}, {self.start} to {self.end}, {self.timezone})"
+
+
+class DestinationEvent(ParsedEvent):
+    id: str
 
 
 def apply_metadata(

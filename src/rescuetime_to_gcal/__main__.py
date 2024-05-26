@@ -8,13 +8,12 @@ from iterpy.arr import Arr
 from rescuetime_to_gcal import delta
 from rescuetime_to_gcal.clients import gcal
 from rescuetime_to_gcal.config import config as cfg
-from rescuetime_to_gcal.preprocessing import apply_metadata, merge_within_window
+from rescuetime_to_gcal.preprocessing import DestinationEvent, apply_metadata, merge_within_window
 
 if TYPE_CHECKING:
     from rescuetime_to_gcal.clients.event_source import EventSource
     from rescuetime_to_gcal.clients.gcal.client import DestinationClient
     from rescuetime_to_gcal.event import SourceEvent
-    from rescuetime_to_gcal.preprocessing import ParsedEvent
 
 log = logging.getLogger(__name__)
 
@@ -44,7 +43,7 @@ def main(
 
 
 def pipeline(
-    source_events: Sequence["SourceEvent"], presentation_events: Sequence["ParsedEvent"]
+    source_events: Sequence["SourceEvent"], presentation_events: Sequence["DestinationEvent"]
 ) -> Sequence[delta.EventChange]:
     sufficient_length_events = Arr(source_events).filter(lambda e: e.duration > cfg.min_duration)
 

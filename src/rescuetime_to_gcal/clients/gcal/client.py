@@ -1,7 +1,7 @@
 import logging
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Generic, Protocol, Sequence
+from typing import TYPE_CHECKING, Generic, Protocol, Sequence
 from xml.dom import ValidationErr
 
 import devtools
@@ -13,31 +13,38 @@ from google.oauth2.credentials import Credentials
 from iterpy.arr import Arr
 from pydantic import ValidationError
 from rescuetime_to_gcal.clients.gcal._consts import required_scopes
-from rescuetime_to_gcal.preprocessing import ParsedEvent
+from rescuetime_to_gcal.preprocessing import DestinationEvent, ParsedEvent
+
+if TYPE_CHECKING:
+    from rescuetime_to_gcal.event import SourceEvent
 
 
-def _to_gcsa_event(event: ParsedEvent) -> GCSAEvent:
+def _parsed_to_gcsa_event(event: ParsedEvent) -> GCSAEvent:
+    return GCSAEvent(summary=event.title, start=event.start, end=event.end, timezone=event.timezone)
+
+
+def _source_to_gcsa_event(event: "DestinationEvent") -> GCSAEvent:
     return GCSAEvent(
         summary=event.title,
-        start=event.start,  # type: ignore
-        end=event.end,  # type: ignore
+        start=event.start,
+        end=event.end,
         timezone=event.timezone,
-        event_id=event.destination_event_id,  # type: ignore
+        event_id=event.id,
     )
 
 
-def _to_generic_event(event: GCSAEvent) -> ParsedEvent:
+def _to_destination_event(event: GCSAEvent) -> DestinationEvent:
     try:
-        return ParsedEvent(
+        return DestinationEvent(
             title=event.summary,
             start=event.start,  # type: ignore
             end=event.end,  # type: ignore
             timezone=event.timezone,
-            destination_event_id=event.event_id,
+            id=event.event_id,
         )
     except ValidationError as e:
         logging.error(f"Failed to convert event: {e}")
-        return ParsedEvent(
+        return DestinationEvent(
             title=f"{event.summary}",
             start=event.start,  # type: ignore
             end=event.end,  # type: ignore
@@ -64,16 +71,16 @@ def _timezone_to_utc(event: GCSAEvent) -> GCSAEvent:
 class DestinationClient(Protocol):
     """Interface for a client that can add, get, update, and delete events. All responsese must be in UTC."""
 
-    def add_event(self, event: ParsedEvent) -> ParsedEvent:
+    def add_event(self, event: ParsedEvent) -> DestinationEvent:
         ...
 
-    def get_events(self, start: datetime, end: datetime) -> Sequence[ParsedEvent]:
+    def get_events(self, start: datetime, end: datetime) -> Sequence[DestinationEvent]:
         ...
 
-    def update_event(self, event: ParsedEvent) -> ParsedEvent:
+    def update_event(self, event: DestinationEvent) -> DestinationEvent:
         ...
 
-    def delete_event(self, event: ParsedEvent) -> ParsedEvent:
+    def delete_event(self, event: ParsedEvent) -> None:
         ...
 
 
@@ -97,45 +104,25 @@ class GcalClient(DestinationClient):
             ),
         )
 
-    def add_event(self, event: ParsedEvent) -> ParsedEvent:
-        val = self._client.add_event(_to_gcsa_event(event))  # type: ignore
-        return _to_generic_event(_timezone_to_utc(val))
+    def add_event(self, event: ParsedEvent) -> DestinationEvent:
+        val = self._client.add_event(_parsed_to_gcsa_event(event))  # type: ignore
+        return _to_destination_event(_timezone_to_utc(val))
 
-    def get_events(self, start: datetime, end: datetime) -> Sequence[ParsedEvent]:
+    def get_events(self, start: datetime, end: datetime) -> Sequence[DestinationEvent]:
         events = (
             Arr(self._client.get_events(start, end, order_by="updated", single_events=True))  # type: ignore
             .map(_timezone_to_utc)
-            .map(_to_generic_event)
+            .map(_to_destination_event)
             .to_list()
         )
         logging.debug(f"Destination events: {devtools.debug.format(events)}")
         return events
 
-    def update_event(self, event: ParsedEvent) -> ParsedEvent:
-        response = self._client.update_event(_to_gcsa_event(event))  # type: ignore
-        return _to_generic_event(_timezone_to_utc(response))
+    def update_event(self, event: DestinationEvent) -> DestinationEvent:
+        response = self._client.update_event(  # type: ignore
+            _source_to_gcsa_event(event)
+        )
+        return _to_destination_event(_timezone_to_utc(response))
 
-    def delete_event(self, event: ParsedEvent) -> ParsedEvent:
-        self._client.delete_event(_to_gcsa_event(event))  # type: ignore
-        return event
-
-
-def sync(source_events: Sequence[ParsedEvent], client: DestinationClient, dry_run: bool) -> None:
-    destination_events = Arr(
-        client.get_events(min([event.start for event in source_events]), datetime.today())
-    ).to_list()
-
-    # TD Move changeset generation to the pipeline function
-    changes = delta.changeset(source_events, destination_events)
-    logging.info(f"Changes to be made: {devtools.debug.format(changes)}")
-
-    if dry_run:
-        logging.info("Dry run, not syncing")
-        return
-
-    for change in changes:
-        match change:
-            case delta.NewEvent():
-                client.add_event(change.event)
-            case delta.UpdateEvent():
-                client.update_event(change.event)
+    def delete_event(self, event: ParsedEvent) -> None:
+        self._client.delete_event(_parsed_to_gcsa_event(event))  # type: ignore

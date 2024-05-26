@@ -6,18 +6,34 @@ from dataclasses import dataclass
 import pytest
 from iterpy.arr import Arr
 
-from rescuetime_to_gcal.preprocessing import ParsedEvent, filter_by_title, merge_within_window
+from rescuetime_to_gcal.preprocessing import (
+    DestinationEvent,
+    ParsedEvent,
+    SourceEvent,
+    filter_by_title,
+    merge_within_window,
+)
 
 
-class FakeEvent(ParsedEvent):
+class FakeParsedEvent(ParsedEvent):
     title: str = "fake title"
     start: datetime.datetime = datetime.datetime(2023, 1, 1, 0, 0)
     end: datetime.datetime = datetime.datetime(2023, 1, 1, 0, 0)
-    id: int = 0
+
+
+class FakeDestinationEvent(DestinationEvent):
+    title: str = "fake title"
+    start: datetime.datetime = datetime.datetime(2023, 1, 1, 0, 0)
+    end: datetime.datetime = datetime.datetime(2023, 1, 1, 0, 0)
+    id: str = "0"
 
 
 def test_filter_by_title():
-    events = [FakeEvent(title="tes"), FakeEvent(title="test2"), FakeEvent(title="test3")]
+    events = [
+        FakeParsedEvent(title="tes"),
+        FakeParsedEvent(title="test2"),
+        FakeParsedEvent(title="test3"),
+    ]
     filtered_events = filter_by_title(data=events, strs_to_match=["test"])
     assert len(filtered_events) == 1
     assert filtered_events[0].title == "tes"
@@ -37,29 +53,29 @@ class MergeTestCase:
         (
             MergeTestCase(
                 name="Single event",
-                input=[FakeEvent(title="test")],
-                expected=[FakeEvent(title="test")],
+                input=[FakeParsedEvent(title="test")],
+                expected=[FakeParsedEvent(title="test")],
             )
         ),
         (
             MergeTestCase(
                 name="Dependent overlap",
                 input=[
-                    FakeEvent(  # Event 1 start
+                    FakeParsedEvent(  # Event 1 start
                         start=datetime.datetime(2023, 1, 1, 0, 0),
                         end=datetime.datetime(2023, 1, 2, 0, 0),
                     ),
-                    FakeEvent(  # Merge with previous event
+                    FakeParsedEvent(  # Merge with previous event
                         start=datetime.datetime(2023, 1, 2, 0, 0),
                         end=datetime.datetime(2023, 1, 3, 0, 0),
                     ),
-                    FakeEvent(  # Merge with previous event
+                    FakeParsedEvent(  # Merge with previous event
                         start=datetime.datetime(2023, 1, 3, 0, 0, 0),
                         end=datetime.datetime(2023, 1, 4, 0, 0, 0),
                     ),
                 ],
                 expected=[
-                    FakeEvent(
+                    FakeParsedEvent(
                         start=datetime.datetime(2023, 1, 1, 0, 0),
                         end=datetime.datetime(2023, 1, 4, 0, 0, 0),
                     )
@@ -70,21 +86,21 @@ class MergeTestCase:
             MergeTestCase(
                 name="No overlap",
                 input=[
-                    FakeEvent(  # Event 1 start
+                    FakeParsedEvent(  # Event 1 start
                         start=datetime.datetime(2023, 1, 1, 0, 0),
                         end=datetime.datetime(2023, 1, 1, 0, 0),
                     ),
-                    FakeEvent(  # Merge with previous event
+                    FakeParsedEvent(  # Merge with previous event
                         start=datetime.datetime(2024, 2, 1, 0, 0),
                         end=datetime.datetime(2025, 1, 1, 0, 0),
                     ),
                 ],
                 expected=[
-                    FakeEvent(
+                    FakeParsedEvent(
                         start=datetime.datetime(2023, 1, 1, 0, 0),
                         end=datetime.datetime(2023, 1, 1, 0, 0),
                     ),
-                    FakeEvent(
+                    FakeParsedEvent(
                         start=datetime.datetime(2024, 2, 1, 0, 0),
                         end=datetime.datetime(2025, 1, 1, 0, 0),
                     ),
