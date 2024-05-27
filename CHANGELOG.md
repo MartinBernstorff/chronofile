@@ -2,6 +2,13 @@
 
 
 
+## v0.8.0 (2024-05-27)
+
+### Feature
+
+* feat: exclude loginwindow ([`b58cffe`](https://github.com/MartinBernstorff/rescuetime-to-gcal/commit/b58cffe4ee4e27cc64eada9ced91c0056e83aa8f))
+
+
 ## v0.7.0 (2024-05-26)
 
 ### Feature
