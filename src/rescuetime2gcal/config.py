@@ -66,6 +66,7 @@ config = Config(
         "google",
         "safari",
         "branch: main",
+        "loginwindow",
     ],
     merge_gap=datetime.timedelta(minutes=15),
     min_duration=datetime.timedelta(seconds=5),
