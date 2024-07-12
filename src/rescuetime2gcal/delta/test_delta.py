@@ -9,7 +9,7 @@ from rescuetime2gcal.delta import EventChange, NewEvent, UpdateEvent
 from rescuetime2gcal.test_preprocessing import FakeDestinationEvent, FakeParsedEvent
 
 if TYPE_CHECKING:
-    from rescuetime2gcal.preprocessing import DestinationEvent, ParsedEvent, SourceEvent
+    from rescuetime2gcal.preprocessing import DestinationEvent, ParsedEvent
 
 
 @dataclass(frozen=True)
