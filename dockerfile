@@ -1,6 +1,5 @@
-FROM python:3.11
-
-# Set the working directory to /app
+# Builder stage
+FROM python:3.11 as builder
 WORKDIR /app
 
 ENV RYE_HOME="/opt/rye"
@@ -17,8 +16,19 @@ RUN echo 'source "$HOME/.rye/env"' >> ~/.bashrc
 RUN rye config --set-bool behavior.use-uv=true
 RUN rye config --set-bool behavior.global-python=true
 
-COPY pyproject.toml requirements.lock requirements-dev.lock ./
-RUN rye sync --no-lock
+COPY pyproject.toml requirements.lock /app/
+COPY /src/ /app/src
+RUN rye build --wheel --clean
 
-COPY . /app/
-RUN rye sync --no-lock
+# Runner stage
+FROM python:3.11-slim as runner
+WORKDIR /app
+RUN useradd -m appuser
+COPY --from=builder --chown=appuser:appuser /app/dist /app/dist
+
+# Install uv
+RUN pip install uv
+RUN PYTHONDONTWRITEBYTECODE=1 uv pip install --system --no-cache-dir /app/dist/*.whl
+
+USER appuser
+ENTRYPOINT [ "r2s", "sync" ]
