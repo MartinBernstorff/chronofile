@@ -16,7 +16,6 @@ RUN echo 'source "$HOME/.rye/env"' >> ~/.bashrc
 
 RUN rye config --set-bool behavior.use-uv=true
 RUN rye config --set-bool behavior.global-python=true
-RUN rye config --set default.dependency-operator="~="
 
 COPY Makefile ./
 COPY pyproject.toml ./
