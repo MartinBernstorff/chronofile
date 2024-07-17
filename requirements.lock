@@ -102,6 +102,8 @@ shellingham==1.5.4
 six==1.16.0
     # via asttokens
     # via python-dateutil
+toml==0.10.2
+    # via rescuetime2gcal
 typer==0.12.3
     # via rescuetime2gcal
 typing-extensions==4.11.0

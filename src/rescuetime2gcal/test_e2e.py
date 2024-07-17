@@ -4,6 +4,7 @@ from typing import Sequence
 
 from rescuetime2gcal.__main__ import main
 from rescuetime2gcal.clients import gcal
+from rescuetime2gcal.config import Config
 from rescuetime2gcal.source_event import BareEvent, SourceEvent
 
 
@@ -43,13 +44,18 @@ def test_e2e():
         destination_client.delete_event(event)
 
     # First sync, to create new event
-    main(input_clients=[input_client], destination_client=destination_client, dry_run=False)
+    cfg = Config.from_toml("config.toml")
+    main(
+        input_clients=[input_client], destination_client=destination_client, dry_run=False, cfg=cfg
+    )
 
     # Check that event exists
     events = destination_client.get_events(start=start_window, end=end_window)
     assert len(events) == 2
 
     # Run again, should not create a duplicate
-    main(input_clients=[input_client], destination_client=destination_client, dry_run=False)
+    main(
+        input_clients=[input_client], destination_client=destination_client, dry_run=False, cfg=cfg
+    )
     events = destination_client.get_events(start=start_window, end=end_window)
     assert len(events) == 2

@@ -1,10 +1,12 @@
 import datetime
+import pathlib
 from dataclasses import dataclass
 from enum import Enum
 from typing import Mapping, Sequence
 
 import pydantic
 import pytz
+import toml
 
 
 class RecordCategory(Enum):
@@ -18,6 +20,9 @@ class RecordCategory(Enum):
     SOUND = "Sound"
     WRITING = "Writing"
 
+    def __repr__(self) -> str:
+        return self.value
+
 
 @dataclass(frozen=True)
 class RecordMetadata:
@@ -26,6 +31,9 @@ class RecordMetadata:
     ]  # If a title has a substring matching any of these strings, it will have the metadata applied
     prettified_title: str | None
     category: RecordCategory
+
+    def __repr__(self) -> str:
+        return f"{self.category}: {self.title_matcher} -> {self.prettified_title}"
 
 
 class Config(pydantic.BaseModel):
@@ -52,137 +60,18 @@ class Config(pydantic.BaseModel):
     category2emoji: Mapping[RecordCategory, str]
     # Map categories to emoji
 
+    @staticmethod
+    def from_toml(path: str) -> "Config":
+        values = toml.load(pathlib.Path(path))
 
-config = Config(
-    rescuetime_timezone=pytz.timezone("Europe/Copenhagen"),
-    sync_window=datetime.timedelta(days=0.5),
-    exclude_titles=[
-        "newtab",
-        "raycast",
-        "chrome",
-        "system settings",
-        "localhost",
-        "finder",
-        "google",
-        "safari",
-        "branch: main",
-        "loginwindow",
-    ],
-    merge_gap=datetime.timedelta(minutes=15),
-    min_duration=datetime.timedelta(seconds=5),
-    category2emoji={
-        RecordCategory.BROWSING: "🔥",
-        RecordCategory.COMMUNICATING: "️☎️",
-        RecordCategory.GAMING: "🎮",
-        RecordCategory.PROGRAMMING: "🤖",
-        RecordCategory.PLANNING: "🗺️",
-        RecordCategory.SOUND: "🎵",
-        RecordCategory.READING: "📗",
-        RecordCategory.REFERENCE: "📚",
-        RecordCategory.WRITING: "✍️",
-    },
-    metadata_enrichment=[
-        RecordMetadata(
-            title_matcher=["workflowy"], prettified_title=None, category=RecordCategory.PLANNING
-        ),
-        RecordMetadata(
-            title_matcher=["tldraw"], prettified_title="TLDraw", category=RecordCategory.PLANNING
-        ),
-        RecordMetadata(
-            title_matcher=["2718"], prettified_title="Marimo", category=RecordCategory.PROGRAMMING
-        ),
-        RecordMetadata(
-            title_matcher=["skim"], prettified_title="Skim", category=RecordCategory.READING
-        ),
-        RecordMetadata(
-            title_matcher=["dr.dk"], prettified_title="DR", category=RecordCategory.BROWSING
-        ),
-        RecordMetadata(
-            title_matcher=["citrix"], prettified_title="Citrix", category=RecordCategory.PROGRAMMING
-        ),
-        RecordMetadata(
-            title_matcher=["facebook"],
-            prettified_title="Facebook",
-            category=RecordCategory.BROWSING,
-        ),
-        RecordMetadata(
-            title_matcher=["github"], prettified_title=None, category=RecordCategory.PROGRAMMING
-        ),
-        RecordMetadata(
-            title_matcher=["hey"], prettified_title="Hey", category=RecordCategory.BROWSING
-        ),
-        RecordMetadata(
-            title_matcher=["linkedin"],
-            prettified_title="LinkedIn",
-            category=RecordCategory.BROWSING,
-        ),
-        RecordMetadata(
-            title_matcher=["Notes"], prettified_title="Notes", category=RecordCategory.PLANNING
-        ),
-        RecordMetadata(
-            title_matcher=["mail"], prettified_title="Mail", category=RecordCategory.COMMUNICATING
-        ),
-        RecordMetadata(
-            title_matcher=["macrumors"],
-            prettified_title="Browsing",
-            category=RecordCategory.BROWSING,
-        ),
-        RecordMetadata(
-            title_matcher=["reddit"], prettified_title="Reddit", category=RecordCategory.BROWSING
-        ),
-        RecordMetadata(
-            title_matcher=["slack"], prettified_title="Slack", category=RecordCategory.COMMUNICATING
-        ),
-        RecordMetadata(
-            title_matcher=["star realms"],
-            prettified_title="Star Realms",
-            category=RecordCategory.GAMING,
-        ),
-        RecordMetadata(
-            title_matcher=["stackoverflow"],
-            prettified_title="Stack Overflow",
-            category=RecordCategory.PROGRAMMING,
-        ),
-        RecordMetadata(
-            title_matcher=["twitter"], prettified_title="Browsing", category=RecordCategory.BROWSING
-        ),
-        RecordMetadata(
-            title_matcher=["wandb.ai"],
-            prettified_title="Programming",
-            category=RecordCategory.PROGRAMMING,
-        ),
-        RecordMetadata(
-            title_matcher=["spotify"], prettified_title="Spotify", category=RecordCategory.SOUND
-        ),
-        RecordMetadata(
-            title_matcher=["omnivore"], prettified_title="Omnivore", category=RecordCategory.READING
-        ),
-        RecordMetadata(
-            title_matcher=["twitter"], prettified_title="Twitter", category=RecordCategory.BROWSING
-        ),
-        RecordMetadata(
-            title_matcher=["Word"], prettified_title="Word", category=RecordCategory.WRITING
-        ),
-        RecordMetadata(
-            title_matcher=["Calendar"],
-            prettified_title="Calendar",
-            category=RecordCategory.PLANNING,
-        ),
-        RecordMetadata(
-            title_matcher=["Obsidian"], prettified_title="Obsidian", category=RecordCategory.WRITING
-        ),
-        RecordMetadata(
-            title_matcher=["Docs"], prettified_title=None, category=RecordCategory.PROGRAMMING
-        ),
-        RecordMetadata(
-            title_matcher=["Alacritty"],
-            prettified_title="Alacritty",
-            category=RecordCategory.PROGRAMMING,
-        ),
-        RecordMetadata(
-            title_matcher=["Orbstack"],
-            prettified_title="Orbstack",
-            category=RecordCategory.PROGRAMMING,
-        ),
-    ],
-)
+        return Config(
+            rescuetime_timezone=pytz.timezone(values.get("rescuetime_timezone", "")),
+            sync_window=datetime.timedelta(seconds=values.get("sync_window", 60 * 60 * 5)),
+            exclude_titles=values.get("exclude_titles", ""),
+            merge_gap=datetime.timedelta(seconds=values.get("merge_gap", 60 * 10)),
+            min_duration=datetime.timedelta(seconds=values.get("min_duration", 60 * 5)),
+            category2emoji={
+                RecordCategory(k): v for k, v in values.get("category2emoji", "").items()
+            },
+            metadata_enrichment=values.get("metadata_enrichment", ""),
+        )

@@ -16,6 +16,9 @@ class BaseEvent(pydantic.BaseModel, ABC):
         if self.start.tzinfo != datetime.timezone.utc:
             raise ValueError("Start time must be in UTC to ensure correct timezone conversion")
 
+    def duration_str(self) -> str:
+        return f"[{self.start.isoformat(timespec='seconds')}, {self.duration}]"
+
 
 class BareEvent(BaseEvent):
     title: str
@@ -26,15 +29,24 @@ class BareEvent(BaseEvent):
             raise ValueError("Title must contain content")
         return value
 
+    def __str__(self) -> str:
+        return super().duration_str() + f"{self.title}"
+
 
 class URLEvent(BaseEvent):
     url: str
     url_title: str
 
+    def __repr__(self) -> str:
+        return super().duration_str() + f"{self.url_title}"
+
 
 class WindowTitleEvent(BaseEvent):
     app: str
     window_title: str
+
+    def __str__(self) -> str:
+        return super().duration_str() + f"{self.app}: {self.window_title}"
 
 
 SourceEvent = BaseEvent | URLEvent | WindowTitleEvent | BareEvent

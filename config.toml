@@ -1,0 +1,169 @@
+rescuetime_timezone = "Europe/Copenhagen"
+sync_window = 43200                       # 0.5 days in seconds
+
+exclude_titles = [
+    "newtab",
+    "raycast",
+    "chrome",
+    "system settings",
+    "localhost",
+    "finder",
+    "google",
+    "safari",
+    "branch: main",
+    "loginwindow",
+]
+
+merge_gap = 900  # 15 minutes in seconds
+min_duration = 5 # 5 seconds
+
+[category2emoji]
+Browsing = "🔥"
+Communicating = "️☎️"
+Gaming = "🎮"
+Programming = "🤖"
+Planning = "🗺️"
+Sound = "🎵"
+Reading = "📗"
+Reference = "📚"
+Writing = "✍️"
+
+[[metadata_enrichment]]
+title_matcher = ["workflowy"]
+prettified_title = ""
+category = "Planning"
+
+[[metadata_enrichment]]
+title_matcher = ["tldraw"]
+prettified_title = "TLDraw"
+category = "Planning"
+
+[[metadata_enrichment]]
+title_matcher = ["2718"]
+prettified_title = "Marimo"
+category = "Programming"
+
+[[metadata_enrichment]]
+title_matcher = ["skim"]
+prettified_title = "Skim"
+category = "Reading"
+
+[[metadata_enrichment]]
+title_matcher = ["dr.dk"]
+prettified_title = "DR"
+category = "Browsing"
+
+[[metadata_enrichment]]
+title_matcher = ["citrix"]
+prettified_title = "Citrix"
+category = "Programming"
+
+[[metadata_enrichment]]
+title_matcher = ["facebook"]
+prettified_title = "Facebook"
+category = "Browsing"
+
+[[metadata_enrichment]]
+title_matcher = ["github"]
+prettified_title = ""
+category = "Programming"
+
+[[metadata_enrichment]]
+title_matcher = ["hey"]
+prettified_title = "Hey"
+category = "Browsing"
+
+[[metadata_enrichment]]
+title_matcher = ["linkedin"]
+prettified_title = "LinkedIn"
+category = "Browsing"
+
+[[metadata_enrichment]]
+title_matcher = ["Notes"]
+prettified_title = "Notes"
+category = "Planning"
+
+[[metadata_enrichment]]
+title_matcher = ["mail"]
+prettified_title = "Mail"
+category = "Communicating"
+
+[[metadata_enrichment]]
+title_matcher = ["macrumors"]
+prettified_title = "Browsing"
+category = "Browsing"
+
+[[metadata_enrichment]]
+title_matcher = ["reddit"]
+prettified_title = "Reddit"
+category = "Browsing"
+
+[[metadata_enrichment]]
+title_matcher = ["slack"]
+prettified_title = "Slack"
+category = "Communicating"
+
+[[metadata_enrichment]]
+title_matcher = ["star realms"]
+prettified_title = "Star Realms"
+category = "Gaming"
+
+[[metadata_enrichment]]
+title_matcher = ["stackoverflow"]
+prettified_title = "Stack Overflow"
+category = "Programming"
+
+[[metadata_enrichment]]
+title_matcher = ["twitter"]
+prettified_title = "Browsing"
+category = "Browsing"
+
+[[metadata_enrichment]]
+title_matcher = ["wandb.ai"]
+prettified_title = "Programming"
+category = "Programming"
+
+[[metadata_enrichment]]
+title_matcher = ["spotify"]
+prettified_title = "Spotify"
+category = "Sound"
+
+[[metadata_enrichment]]
+title_matcher = ["omnivore"]
+prettified_title = "Omnivore"
+category = "Reading"
+
+[[metadata_enrichment]]
+title_matcher = ["twitter"]
+prettified_title = "Twitter"
+category = "Browsing"
+
+[[metadata_enrichment]]
+title_matcher = ["Word"]
+prettified_title = "Word"
+category = "Writing"
+
+[[metadata_enrichment]]
+title_matcher = ["Calendar"]
+prettified_title = "Calendar"
+category = "Planning"
+
+[[metadata_enrichment]]
+title_matcher = ["Obsidian"]
+prettified_title = "Obsidian"
+category = "Writing"
+
+[[metadata_enrichment]]
+title_matcher = ["Docs"]
+prettified_title = ""
+category = "Programming"
+
+[[metadata_enrichment]]
+title_matcher = ["Alacritty"]
+prettified_title = "Alacritty"
+category = "Programming"
+
+[[metadata_enrichment]]
+title_matcher = ["Orbstack"]
+prettified_title = "Orbstack"
+category = "Programming"

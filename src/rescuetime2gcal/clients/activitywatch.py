@@ -3,7 +3,6 @@ import logging
 from functools import partial
 from typing import Any, Callable, Literal, Mapping, Sequence
 
-import devtools
 import pydantic
 import requests
 from rescuetime2gcal.source_event import SourceEvent, URLEvent, WindowTitleEvent
@@ -85,6 +84,5 @@ def load_all_events(
     buckets = [AwBucket(**b) for b in supported_buckets]
     loaders = [_initialise_bucket_loader(bucket=b, date=date) for b in buckets]
     events = [event for loader in loaders for event in loader()]
-    log.info(f"Activitywatch {devtools.debug.format(events)}")
 
     return events
