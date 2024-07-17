@@ -2,6 +2,13 @@
 
 
 
+## v0.9.0 (2024-07-17)
+
+### Feature
+
+* feat: delete duplicates in destination on sync (#34) ([`c0f7360`](https://github.com/MartinBernstorff/rescuetime-to-gcal/commit/c0f73608a21f43f074db4ca6dabee34f70e4b4a5))
+
+
 ## v0.8.1 (2024-07-17)
 
 ### Fix
