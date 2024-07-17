@@ -20,11 +20,15 @@ def mock_input_client(input_events: Sequence[SourceEvent]) -> Sequence["SourceEv
 
 
 def test_e2e():
-    start = datetime.datetime(2010, 1, 1, 0, 0, 0, 1, tzinfo=datetime.timezone.utc)
+    start_window = datetime.datetime(2010, 1, 1, 0, 0, 0, 1, tzinfo=datetime.timezone.utc)
     duration = datetime.timedelta(hours=1)
+    end_window = start_window + 5 * duration
 
     def input_client() -> Sequence[SourceEvent]:
-        return [FakeBareEvent(start=start, duration=duration)]
+        return [
+            FakeBareEvent(start=start_window, duration=duration),
+            FakeBareEvent(start=start_window + duration * 2, duration=duration),
+        ]
 
     destination_client = gcal.GcalClient(
         calendar_id=os.environ["GCAL_EMAIL"],
@@ -34,7 +38,7 @@ def test_e2e():
     )
 
     # Clear calendar in interval
-    events = destination_client.get_events(start=start, end=start + 2 * duration)
+    events = destination_client.get_events(start=start_window, end=end_window)
     for event in events:
         destination_client.delete_event(event)
 
@@ -42,10 +46,10 @@ def test_e2e():
     main(input_clients=[input_client], destination_client=destination_client, dry_run=False)
 
     # Check that event exists
-    events = destination_client.get_events(start=start, end=start + 2 * duration)
-    assert len(events) == 1
+    events = destination_client.get_events(start=start_window, end=end_window)
+    assert len(events) == 2
 
     # Run again, should not create a duplicate
     main(input_clients=[input_client], destination_client=destination_client, dry_run=False)
-    events = destination_client.get_events(start=start, end=start + 2 * duration)
-    assert len(events) == 1
+    events = destination_client.get_events(start=start_window, end=end_window)
+    assert len(events) == 2
