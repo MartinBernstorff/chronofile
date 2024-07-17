@@ -2,6 +2,19 @@
 
 
 
+## v0.8.1 (2024-07-17)
+
+### Fix
+
+* fix: invalid window for destination event requisition (#33) ([`7463bfb`](https://github.com/MartinBernstorff/rescuetime-to-gcal/commit/7463bfbc765a23953940a76efa4c986319ea634f))
+
+### Unknown
+
+* tests: add e2e-test (#32) ([`475c381`](https://github.com/MartinBernstorff/rescuetime-to-gcal/commit/475c381883fb0980f6b79c5f98a793d9dac6a114))
+
+* update .ruff.toml, requirements-dev.lock, requirements.lock and test_delta.py ([`52a8719`](https://github.com/MartinBernstorff/rescuetime-to-gcal/commit/52a87196d9365c1d741f3cfbfc48ef93cf9f851d))
+
+
 ## v0.8.0 (2024-05-27)
 
 ### Feature
