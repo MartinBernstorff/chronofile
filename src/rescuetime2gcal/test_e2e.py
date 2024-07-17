@@ -32,6 +32,7 @@ def test_e2e():
 
     destination_client = gcal.GcalClient(
         calendar_id=os.environ["GCAL_EMAIL"],
+        fjdiosajfosd
         client_id=os.environ["GCAL_CLIENT_ID"],
         client_secret=os.environ["GCAL_CLIENT_SECRET"],
         refresh_token=os.environ["GCAL_REFRESH_TOKEN"],
