@@ -6,7 +6,7 @@ from typing import Any, Callable, Literal, Mapping, Sequence
 import devtools
 import pydantic
 import requests
-from rescuetime2gcal.source_event import BareEvent, SourceEvent, URLEvent, WindowTitleEvent
+from rescuetime2gcal.source_event import SourceEvent, URLEvent, WindowTitleEvent
 
 log = logging.getLogger(__name__)
 
@@ -21,15 +21,21 @@ class AwBucket(pydantic.BaseModel):
 
 
 def _load_bucket_contents(
-    bucket_id: str, date: "datetime.datetime", base_url: str = "http://localhost:5600/api/"
+    bucket_id: str,
+    date: "datetime.datetime",
+    base_url: str = "http://localhost:5600/api/",
 ) -> Sequence[Mapping[str, Any]]:
     params = {"bucket_id": bucket_id, "start": date.strftime("%Y-%m-%d")}
-    response = requests.get(f"{base_url}/0/buckets/{bucket_id}/events", params=params).json()
+    response = requests.get(
+        f"{base_url}/0/buckets/{bucket_id}/events", params=params
+    ).json()
     return response
 
 
 def load_window_titles(
-    bucket_id: str, date: "datetime.datetime", base_url: str = "http://localhost:5600/api/"
+    bucket_id: str,
+    date: "datetime.datetime",
+    base_url: str = "http://localhost:5600/api/",
 ) -> Sequence[WindowTitleEvent]:
     response = _load_bucket_contents(bucket_id, date, base_url)
     events = [
@@ -45,7 +51,9 @@ def load_window_titles(
 
 
 def load_url_events(
-    bucket_id: str, date: "datetime.datetime", base_url: str = "http://localhost:5600/api/"
+    bucket_id: str,
+    date: "datetime.datetime",
+    base_url: str = "http://localhost:5600/api/",
 ) -> Sequence[URLEvent]:
     response = _load_bucket_contents(bucket_id, date, base_url)
     events = [
