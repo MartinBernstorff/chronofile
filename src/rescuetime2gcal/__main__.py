@@ -22,11 +22,11 @@ class DeduplicatedGroup:
     keeper: DestinationEvent
     duplicates: Sequence[DestinationEvent]
 
-
-def _remove_duplicates_in_destination(event_group: Sequence[DestinationEvent]) -> DeduplicatedGroup:
-    if len(event_group) > 1:
-        return DeduplicatedGroup(keeper=event_group[0], duplicates=event_group[1:])
-    return DeduplicatedGroup(keeper=event_group[0], duplicates=[])
+    @staticmethod
+    def _from_event_group(event_group: Sequence[DestinationEvent]) -> "DeduplicatedGroup":
+        if len(event_group) > 1:
+            return DeduplicatedGroup(keeper=event_group[0], duplicates=event_group[1:])
+        return DeduplicatedGroup(keeper=event_group[0], duplicates=[])
 
 
 def main(
@@ -41,9 +41,7 @@ def main(
         start=first_start, end=last_start + max([event.duration for event in input_events])
     )
 
-    # Deduplicate destination events
-
-    changes = pipeline(source_events=input_events, destination_events=destination_events)
+    changes = _pipeline(source_events=input_events, destination_events=destination_events)
 
     logging.info(f"Changes to be made {devtools.debug.format(changes)}")
 
@@ -61,9 +59,11 @@ def main(
         log.info("Dry-run enabled, skipping sync")
 
 
-def pipeline(
+def _pipeline(
     source_events: Sequence["SourceEvent"], destination_events: Sequence["DestinationEvent"]
 ) -> Sequence[delta.EventChange]:
+    """Event processing without I/O. Separating this from I/O makes debugging and testing easier."""
+
     # Preprocess the source events
     sufficient_length_events = Arr(source_events).filter(lambda e: e.duration > cfg.min_duration)
 
@@ -90,7 +90,7 @@ def pipeline(
     deduplicated_destination_events = (
         Arr(destination_events)
         .groupby(lambda e: e.identity)
-        .map(lambda g: _remove_duplicates_in_destination(g[1]))
+        .map(lambda g: DeduplicatedGroup._from_event_group(g[1]))
     )
     destination_keepers = deduplicated_destination_events.map(lambda g: g.keeper).to_list()
     destination_duplicates = (
