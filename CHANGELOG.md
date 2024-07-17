@@ -2,6 +2,23 @@
 
 
 
+## v0.11.0 (2024-07-17)
+
+### Feature
+
+* feat: add config file support (#38) ([`7917142`](https://github.com/MartinBernstorff/rescuetime2gcal/commit/791714228be6bc1bf971ed760891bdfd6d44fe01))
+
+### Refactor
+
+* refactor: simplify parsedevent (#37) ([`30f7f1c`](https://github.com/MartinBernstorff/rescuetime2gcal/commit/30f7f1ccaae3875637c1b03b54a5c7b4d14c16b8))
+
+### Unknown
+
+* Initial commit ([`c1ea45b`](https://github.com/MartinBernstorff/rescuetime2gcal/commit/c1ea45bb1b9a262a9094f70cf5b3320815113051))
+
+* refactor_pipeline_for_explicit_args (#36) ([`ef35882`](https://github.com/MartinBernstorff/rescuetime2gcal/commit/ef35882ae27a6054d4cf01ec7376760864d29f7d))
+
+
 ## v0.10.0 (2024-07-17)
 
 ### Chore
