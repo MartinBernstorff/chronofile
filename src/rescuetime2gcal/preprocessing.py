@@ -1,4 +1,4 @@
-import datetime  # noqa: TCH003
+import datetime
 from typing import TYPE_CHECKING, Mapping, Optional, Sequence
 
 import pydantic
@@ -24,13 +24,28 @@ class ParsedEvent(pydantic.BaseModel):
     start: "datetime.datetime"
     end: "datetime.datetime"
     category: Optional["RecordCategory"] = None
-    timezone: str = "UTC"
 
     @pydantic.field_validator("title")
     def validate_title(cls, value: str) -> str:
         if len(value) < 1:
             raise ValueError("Title must be at least one character long")
         return value
+
+    @pydantic.field_validator("start")
+    def validate_start(cls, value: "datetime.datetime") -> "datetime.datetime":
+        if value.tzinfo != datetime.timezone.utc:
+            raise ValueError("Timezone must be UTC")
+        return value
+
+    @pydantic.field_validator("end")
+    def validate_end(cls, value: "datetime.datetime") -> "datetime.datetime":
+        if value.tzinfo != datetime.timezone.utc:
+            raise ValueError("Timezone must be UTC")
+        return value
+
+    @property
+    def timezone(self) -> str:
+        return "UTC"
 
     @property
     def identity(self) -> str:
