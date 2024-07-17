@@ -4,6 +4,7 @@ import random
 from dataclasses import dataclass
 
 import pytest
+import pytz
 from iterpy.arr import Arr
 
 from rescuetime2gcal.preprocessing import (
@@ -18,6 +19,10 @@ class FakeParsedEvent(ParsedEvent):
     title: str = "fake title"
     start: datetime.datetime = datetime.datetime(2023, 1, 1, 0, 0, tzinfo=datetime.timezone.utc)
     end: datetime.datetime = datetime.datetime(2023, 1, 1, 0, 0, tzinfo=datetime.timezone.utc)
+
+    def __post_init__(self):
+        self.start = self.start.astimezone(pytz.UTC)
+        self.end = self.end.astimezone(pytz.UTC)
 
 
 class FakeDestinationEvent(DestinationEvent):
@@ -61,22 +66,22 @@ class MergeTestCase:
                 name="Dependent overlap",
                 input=[
                     FakeParsedEvent(  # Event 1 start
-                        start=datetime.datetime(2023, 1, 1, 0, 0),
-                        end=datetime.datetime(2023, 1, 2, 0, 0),
+                        start=datetime.datetime(2023, 1, 1, 0, 0, tzinfo=pytz.UTC),
+                        end=datetime.datetime(2023, 1, 2, 0, 0, tzinfo=pytz.UTC),
                     ),
                     FakeParsedEvent(  # Merge with previous event
-                        start=datetime.datetime(2023, 1, 2, 0, 0),
-                        end=datetime.datetime(2023, 1, 3, 0, 0),
+                        start=datetime.datetime(2023, 1, 2, 0, 0, tzinfo=pytz.UTC),
+                        end=datetime.datetime(2023, 1, 3, 0, 0, tzinfo=pytz.UTC),
                     ),
                     FakeParsedEvent(  # Merge with previous event
-                        start=datetime.datetime(2023, 1, 3, 0, 0, 0),
-                        end=datetime.datetime(2023, 1, 4, 0, 0, 0),
+                        start=datetime.datetime(2023, 1, 3, 0, 0, 0, tzinfo=pytz.UTC),
+                        end=datetime.datetime(2023, 1, 4, 0, 0, 0, tzinfo=pytz.UTC),
                     ),
                 ],
                 expected=[
                     FakeParsedEvent(
-                        start=datetime.datetime(2023, 1, 1, 0, 0),
-                        end=datetime.datetime(2023, 1, 4, 0, 0, 0),
+                        start=datetime.datetime(2023, 1, 1, 0, 0, tzinfo=pytz.UTC),
+                        end=datetime.datetime(2023, 1, 4, 0, 0, 0, tzinfo=pytz.UTC),
                     )
                 ],
             )
@@ -86,22 +91,22 @@ class MergeTestCase:
                 name="No overlap",
                 input=[
                     FakeParsedEvent(  # Event 1 start
-                        start=datetime.datetime(2023, 1, 1, 0, 0),
-                        end=datetime.datetime(2023, 1, 1, 0, 0),
+                        start=datetime.datetime(2023, 1, 1, 0, 0, tzinfo=pytz.UTC),
+                        end=datetime.datetime(2023, 1, 1, 0, 0, tzinfo=pytz.UTC),
                     ),
                     FakeParsedEvent(  # Merge with previous event
-                        start=datetime.datetime(2024, 2, 1, 0, 0),
-                        end=datetime.datetime(2025, 1, 1, 0, 0),
+                        start=datetime.datetime(2024, 2, 1, 0, 0, tzinfo=pytz.UTC),
+                        end=datetime.datetime(2025, 1, 1, 0, 0, tzinfo=pytz.UTC),
                     ),
                 ],
                 expected=[
                     FakeParsedEvent(
-                        start=datetime.datetime(2023, 1, 1, 0, 0),
-                        end=datetime.datetime(2023, 1, 1, 0, 0),
+                        start=datetime.datetime(2023, 1, 1, 0, 0, tzinfo=pytz.UTC),
+                        end=datetime.datetime(2023, 1, 1, 0, 0, tzinfo=pytz.UTC),
                     ),
                     FakeParsedEvent(
-                        start=datetime.datetime(2024, 2, 1, 0, 0),
-                        end=datetime.datetime(2025, 1, 1, 0, 0),
+                        start=datetime.datetime(2024, 2, 1, 0, 0, tzinfo=pytz.UTC),
+                        end=datetime.datetime(2025, 1, 1, 0, 0, tzinfo=pytz.UTC),
                     ),
                 ],
             )
@@ -124,3 +129,8 @@ def test_merge_events_within_window(testcase: MergeTestCase):
 
         output = sorted(combined, key=lambda e: e.start)
         assert "\n".join(str(e) for e in output) == "\n".join(str(e) for e in testcase.expected)
+
+
+if __name__ == "__main__":
+    event = FakeParsedEvent()
+    pass

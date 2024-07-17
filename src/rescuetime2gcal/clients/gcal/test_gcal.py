@@ -46,8 +46,8 @@ def _clean_test_interval(
     [
         ParsedEvent(
             title="🔥 Test",
-            start=datetime.datetime(2023, 1, 1, 0, 0),
-            end=datetime.datetime(2023, 1, 1, 0, 0),
+            start=datetime.datetime(2023, 1, 1, 0, 0, tzinfo=pytz.UTC),
+            end=datetime.datetime(2023, 1, 1, 0, 0, tzinfo=pytz.UTC),
         )
     ],
 )

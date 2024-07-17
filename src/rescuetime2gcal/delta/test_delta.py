@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING, Sequence
 
 import pytest
+import pytz
 
 from rescuetime2gcal import delta
 from rescuetime2gcal.delta import EventChange, NewEvent, UpdateEvent
@@ -33,21 +34,21 @@ class ChangesetExample:
             "Same start time but different end time result in update",
             parsed_events=[
                 FakeParsedEvent(
-                    start=datetime.datetime(2023, 1, 1, 0, 0),
-                    end=datetime.datetime(2023, 1, 1, 0, 1),
+                    start=datetime.datetime(2023, 1, 1, 0, 0, tzinfo=pytz.UTC),
+                    end=datetime.datetime(2023, 1, 1, 0, 1, tzinfo=pytz.UTC),
                 )
             ],
             destination_events=[
                 FakeDestinationEvent(
-                    start=datetime.datetime(2023, 1, 1, 0, 0),
-                    end=datetime.datetime(2023, 1, 1, 0, 0),
+                    start=datetime.datetime(2023, 1, 1, 0, 0, tzinfo=pytz.UTC),
+                    end=datetime.datetime(2023, 1, 1, 0, 0, tzinfo=pytz.UTC),
                 )
             ],
             then=[
                 UpdateEvent(
                     FakeDestinationEvent(
-                        start=datetime.datetime(2023, 1, 1, 0, 0),
-                        end=datetime.datetime(2023, 1, 1, 0, 1),
+                        start=datetime.datetime(2023, 1, 1, 0, 0, tzinfo=pytz.UTC),
+                        end=datetime.datetime(2023, 1, 1, 0, 1, tzinfo=pytz.UTC),
                     )
                 )
             ],
@@ -60,17 +61,29 @@ class ChangesetExample:
         ),
         ChangesetExample(
             "Multiple existing events that match, updates final event by end time",
-            parsed_events=[FakeParsedEvent(end=datetime.datetime(2024, 1, 1, 0, 0))],
+            parsed_events=[
+                FakeParsedEvent(end=datetime.datetime(2024, 1, 1, 0, 0, tzinfo=pytz.UTC))
+            ],
             destination_events=[
                 FakeDestinationEvent(id="0"),
-                FakeDestinationEvent(id="1", end=datetime.datetime(2021, 1, 1, 0, 1)),
+                FakeDestinationEvent(
+                    id="1", end=datetime.datetime(2021, 1, 1, 0, 1, tzinfo=pytz.UTC)
+                ),
             ],
             then=[
-                UpdateEvent(FakeDestinationEvent(end=datetime.datetime(2024, 1, 1, 0, 0), id="1"))
+                UpdateEvent(
+                    FakeDestinationEvent(
+                        end=datetime.datetime(2024, 1, 1, 0, 0, tzinfo=pytz.UTC), id="1"
+                    )
+                )
             ],
         ),
     ],
     ids=lambda e: e.intention,
-)  # TD Update ptp snippet to write a function with the right arguments, as well as dynamically generate the example name
+)
 def test_changeset(e: ChangesetExample):
     assert e.then == delta.changeset(e.parsed_events, e.destination_events)
+
+
+if __name__ == "__main__":
+    pass
