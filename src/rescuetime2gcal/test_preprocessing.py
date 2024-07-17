@@ -129,8 +129,3 @@ def test_merge_events_within_window(testcase: MergeTestCase):
 
         output = sorted(combined, key=lambda e: e.start)
         assert "\n".join(str(e) for e in output) == "\n".join(str(e) for e in testcase.expected)
-
-
-if __name__ == "__main__":
-    event = FakeParsedEvent()
-    pass
