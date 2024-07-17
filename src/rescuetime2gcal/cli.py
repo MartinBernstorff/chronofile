@@ -7,7 +7,8 @@ from functools import partial
 from typing import TYPE_CHECKING, Annotated, Optional, Sequence
 
 import coloredlogs
-import devtools
+import rich
+import rich.pretty
 import typer
 
 from rescuetime2gcal.__main__ import main
@@ -57,7 +58,7 @@ def cli(
     logging.info(
         f"Running Rescuetime-to-gcal version {importlib.metadata.version('rescuetime2gcal')}"
     )
-    logging.info(devtools.debug.format(cfg))
+    logging.info(rich.pretty.pprint(cfg))
     logging.info("Starting sync")
 
     event_sources: Sequence[EventSource] = []

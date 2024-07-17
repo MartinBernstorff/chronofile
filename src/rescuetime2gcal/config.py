@@ -20,6 +20,9 @@ class RecordCategory(Enum):
     SOUND = "Sound"
     WRITING = "Writing"
 
+    def __repr__(self) -> str:
+        return self.value
+
 
 @dataclass(frozen=True)
 class RecordMetadata:
@@ -28,6 +31,9 @@ class RecordMetadata:
     ]  # If a title has a substring matching any of these strings, it will have the metadata applied
     prettified_title: str | None
     category: RecordCategory
+
+    def __repr__(self) -> str:
+        return f"{self.category}: {self.title_matcher} -> {self.prettified_title}"
 
 
 class Config(pydantic.BaseModel):
@@ -60,10 +66,10 @@ class Config(pydantic.BaseModel):
 
         return Config(
             rescuetime_timezone=pytz.timezone(values.get("rescuetime_timezone", "")),
-            sync_window=datetime.timedelta(seconds=values.get("sync_window", 0)),
+            sync_window=datetime.timedelta(seconds=values.get("sync_window", 60 * 60 * 5)),
             exclude_titles=values.get("exclude_titles", ""),
-            merge_gap=datetime.timedelta(seconds=values.get("merge_gap", 0)),
-            min_duration=datetime.timedelta(seconds=values.get("min_duration", 0)),
+            merge_gap=datetime.timedelta(seconds=values.get("merge_gap", 60 * 10)),
+            min_duration=datetime.timedelta(seconds=values.get("min_duration", 60 * 5)),
             category2emoji={
                 RecordCategory(k): v for k, v in values.get("category2emoji", "").items()
             },
