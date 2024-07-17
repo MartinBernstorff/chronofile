@@ -16,14 +16,14 @@ from rescuetime2gcal.preprocessing import (
 
 class FakeParsedEvent(ParsedEvent):
     title: str = "fake title"
-    start: datetime.datetime = datetime.datetime(2023, 1, 1, 0, 0)
-    end: datetime.datetime = datetime.datetime(2023, 1, 1, 0, 0)
+    start: datetime.datetime = datetime.datetime(2023, 1, 1, 0, 0, tzinfo=datetime.timezone.utc)
+    end: datetime.datetime = datetime.datetime(2023, 1, 1, 0, 0, tzinfo=datetime.timezone.utc)
 
 
 class FakeDestinationEvent(DestinationEvent):
     title: str = "fake title"
-    start: datetime.datetime = datetime.datetime(2023, 1, 1, 0, 0)
-    end: datetime.datetime = datetime.datetime(2023, 1, 1, 0, 0)
+    start: datetime.datetime = datetime.datetime(2023, 1, 1, 0, 0, tzinfo=datetime.timezone.utc)
+    end: datetime.datetime = datetime.datetime(2023, 1, 1, 0, 0, tzinfo=datetime.timezone.utc)
     id: str = "0"
 
 
