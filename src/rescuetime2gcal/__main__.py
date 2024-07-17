@@ -71,7 +71,7 @@ def main(
         log.info("Dry-run enabled, skipping sync")
 
 
-def _pipeline(
+def _pipeline(  # noqa: D417
     source_events: Sequence["SourceEvent"],
     destination_events: Sequence["DestinationEvent"],
     min_duration: "datetime.timedelta",
