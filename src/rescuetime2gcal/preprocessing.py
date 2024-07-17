@@ -2,6 +2,7 @@ import datetime
 from typing import TYPE_CHECKING, Mapping, Optional, Sequence
 
 import pydantic
+import pytz
 
 from rescuetime2gcal.config import RecordCategory
 from rescuetime2gcal.source_event import (
@@ -15,6 +16,10 @@ from rescuetime2gcal.source_event import (
 
 if TYPE_CHECKING:
     from rescuetime2gcal.config import RecordCategory, RecordMetadata
+
+
+def _is_utc(value: "datetime.datetime") -> bool:
+    return value.tzinfo in (pytz.UTC, datetime.timezone.utc)
 
 
 class ParsedEvent(pydantic.BaseModel):
@@ -33,13 +38,13 @@ class ParsedEvent(pydantic.BaseModel):
 
     @pydantic.field_validator("start")
     def validate_start(cls, value: "datetime.datetime") -> "datetime.datetime":
-        if value.tzinfo != datetime.timezone.utc:
+        if not _is_utc(value):
             raise ValueError("Timezone must be UTC")
         return value
 
     @pydantic.field_validator("end")
     def validate_end(cls, value: "datetime.datetime") -> "datetime.datetime":
-        if value.tzinfo != datetime.timezone.utc:
+        if not _is_utc(value):
             raise ValueError("Timezone must be UTC")
         return value
 
