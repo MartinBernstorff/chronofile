@@ -9,7 +9,6 @@ from iterpy.arr import Arr
 from rescuetime2gcal.preprocessing import (
     DestinationEvent,
     ParsedEvent,
-    SourceEvent,
     filter_by_title,
     merge_within_window,
 )

@@ -1,21 +1,16 @@
 import logging
 from dataclasses import dataclass
 from datetime import datetime
-from typing import TYPE_CHECKING, Generic, Protocol, Sequence
+from typing import Protocol, Sequence
 
 import devtools
 import pytz
-import rescuetime2gcal.delta as delta
 from gcsa.event import Event as GCSAEvent
 from gcsa.google_calendar import GoogleCalendar
 from google.oauth2.credentials import Credentials
 from iterpy.arr import Arr
-from pydantic import ValidationError
 from rescuetime2gcal.clients.gcal._consts import required_scopes
 from rescuetime2gcal.preprocessing import DestinationEvent, ParsedEvent
-
-if TYPE_CHECKING:
-    from rescuetime2gcal.source_event import SourceEvent
 
 
 def _parsed_to_gcsa_event(event: ParsedEvent) -> GCSAEvent:

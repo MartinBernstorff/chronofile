@@ -42,6 +42,9 @@ def changeset(
     parsed_events: Sequence[ParsedEvent], destination_events: Sequence[DestinationEvent]
 ) -> Sequence[EventChange]:
     """Identify which changes are needed on the mirror for it to match truth."""
+    if len(destination_events) == 0:
+        return [NewEvent(event=e) for e in parsed_events]
+
     timezones = set(e.timezone for e in [*parsed_events, *destination_events])
     if len(timezones) != 1:
         raise ValueError(f"All events must be in the same timezone. Found {timezones}")

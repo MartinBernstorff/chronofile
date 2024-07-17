@@ -3,7 +3,6 @@ import os
 
 import pytz
 from rescuetime2gcal.clients import rescuetime
-from rescuetime2gcal.source_event import BareEvent
 
 
 def test_get_data():

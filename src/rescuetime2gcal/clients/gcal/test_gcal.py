@@ -5,7 +5,7 @@ import time
 import pytest
 import pytz
 from rescuetime2gcal.clients.gcal.client import DestinationClient, GcalClient
-from rescuetime2gcal.preprocessing import ParsedEvent, SourceEvent
+from rescuetime2gcal.preprocessing import ParsedEvent
 
 
 @pytest.fixture(autouse=True)
