@@ -23,7 +23,12 @@ class UpdateEvent:
     event: DestinationEvent
 
 
-EventChange = NewEvent | UpdateEvent
+@dataclass(frozen=True)
+class DeleteEvent:
+    event: DestinationEvent
+
+
+EventChange = NewEvent | UpdateEvent | DeleteEvent
 
 
 def deduper(
