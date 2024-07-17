@@ -1,3 +1,4 @@
+import datetime
 from typing import TYPE_CHECKING, Sequence
 
 from rescuetime2gcal import delta
@@ -12,5 +13,13 @@ def test_pipeline_should_remove_duplicates():
     def destination_client() -> Sequence["DestinationEvent"]:
         return [FakeDestinationEvent(id="0"), FakeDestinationEvent(id="1")]
 
-    changes = _pipeline(source_events=[], destination_events=destination_client())
+    changes = _pipeline(
+        source_events=[],
+        destination_events=destination_client(),
+        exclude_titles=[],
+        metadata_enrichment=[],
+        category2emoji={},
+        min_duration=datetime.timedelta(days=1),
+        merge_gap=datetime.timedelta(days=1),
+    )
     assert changes == [delta.DeleteEvent(event=FakeDestinationEvent(id="1"))]
