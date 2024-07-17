@@ -22,8 +22,9 @@ def main(
     input_events = Arr(input_clients).map(lambda f: f()).flatten().to_list()
 
     first_start = min([event.start for event in input_events])
+    last_start = max([event.start for event in input_events])
     destination_events = destination_client.get_events(
-        start=first_start, end=first_start + max([event.duration for event in input_events])
+        start=first_start, end=last_start + max([event.duration for event in input_events])
     )
 
     changes = pipeline(source_events=input_events, destination_events=destination_events)
