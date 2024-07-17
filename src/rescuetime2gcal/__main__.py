@@ -8,14 +8,12 @@ from iterpy.arr import Arr
 from rescuetime2gcal import delta
 from rescuetime2gcal.preprocessing import DestinationEvent, merge_within_window, parse_events
 
-from .config import config as cfg
-
 if TYPE_CHECKING:
     import datetime
 
     from rescuetime2gcal.clients.event_source import EventSource
     from rescuetime2gcal.clients.gcal.client import DestinationClient
-    from rescuetime2gcal.config import RecordCategory, RecordMetadata
+    from rescuetime2gcal.config import Config, RecordCategory, RecordMetadata
     from rescuetime2gcal.source_event import SourceEvent
 
 log = logging.getLogger(__name__)
@@ -34,7 +32,10 @@ class DeduplicatedGroup:
 
 
 def main(
-    input_clients: Sequence["EventSource"], destination_client: "DestinationClient", dry_run: bool
+    input_clients: Sequence["EventSource"],
+    destination_client: "DestinationClient",
+    dry_run: bool,
+    cfg: "Config",
 ) -> None:
     input_events = Arr(input_clients).map(lambda f: f()).flatten().to_list()
 

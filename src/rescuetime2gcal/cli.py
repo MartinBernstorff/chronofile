@@ -13,7 +13,7 @@ import typer
 from rescuetime2gcal.__main__ import main
 from rescuetime2gcal.clients import activitywatch, gcal, rescuetime
 from rescuetime2gcal.clients.gcal.auth import print_refresh_token
-from rescuetime2gcal.config import config as cfg
+from rescuetime2gcal.config import Config
 
 if TYPE_CHECKING:
     from rescuetime2gcal.clients.event_source import EventSource
@@ -48,9 +48,12 @@ def cli(
     gcal_client_id: Annotated[str, typer.Argument(envvar="GCAL_CLIENT_ID")],
     gcal_client_secret: Annotated[str, typer.Argument(envvar="GCAL_CLIENT_SECRET")],
     gcal_refresh_token: Annotated[str, typer.Argument(envvar="GCAL_REFRESH_TOKEN")],
+    config_path: Annotated[str, typer.Argument(envvar="CONFIG_PATH")] = "config.toml",
     dry_run: bool = False,
     watch: bool = False,
 ):
+    cfg = Config.from_toml(config_path)
+
     logging.info(
         f"Running Rescuetime-to-gcal version {importlib.metadata.version('rescuetime2gcal')}"
     )
@@ -91,6 +94,7 @@ def cli(
             refresh_token=gcal_refresh_token,
         ),
         dry_run=dry_run,
+        cfg=cfg,
     )
 
     if watch:

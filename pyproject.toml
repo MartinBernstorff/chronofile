@@ -4,13 +4,14 @@ requires-python = ">=3.11"
 name = "rescuetime2gcal"
 description = "Rescuetime2Gcal"
 dependencies = [
-  "coloredlogs>=15.0.1",
-  "devtools>=0.12.2",
-  "gcsa>=2.3.0",
-  "iterpy>=1.9.0",
-  "pydantic>=2.7.1",
-  "pytz>=2024.1",
-  "typer>=0.12.3",
+    "coloredlogs>=15.0.1",
+    "devtools>=0.12.2",
+    "gcsa>=2.3.0",
+    "iterpy>=1.9.0",
+    "pydantic>=2.7.1",
+    "pytz>=2024.1",
+    "typer>=0.12.3",
+    "toml>=0.10.2",
 ]
 authors = [{ name = "Martin Bernstorff", email = "martinbernstorff@gmail.com" }]
 classifiers = ["Programming Language :: Python :: 3.11"]
