@@ -39,17 +39,13 @@ def test_e2e():
         destination_client.delete_event(event)
 
     # First sync, to create new event
-    main(
-        input_clients=[input_client], destination_client=destination_client, dry_run=False
-    )
+    main(input_clients=[input_client], destination_client=destination_client, dry_run=False)
 
     # Check that event exists
     events = destination_client.get_events(start=start, end=start + 2 * duration)
     assert len(events) == 1
 
     # Run again, should not create a duplicate
-    main(
-        input_clients=[input_client], destination_client=destination_client, dry_run=False
-    )
+    main(input_clients=[input_client], destination_client=destination_client, dry_run=False)
     events = destination_client.get_events(start=start, end=start + 2 * duration)
     assert len(events) == 1

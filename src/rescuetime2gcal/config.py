@@ -83,34 +83,22 @@ config = Config(
     },
     metadata_enrichment=[
         RecordMetadata(
-            title_matcher=["workflowy"],
-            prettified_title=None,
-            category=RecordCategory.PLANNING,
+            title_matcher=["workflowy"], prettified_title=None, category=RecordCategory.PLANNING
         ),
         RecordMetadata(
-            title_matcher=["tldraw"],
-            prettified_title="TLDraw",
-            category=RecordCategory.PLANNING,
+            title_matcher=["tldraw"], prettified_title="TLDraw", category=RecordCategory.PLANNING
         ),
         RecordMetadata(
-            title_matcher=["2718"],
-            prettified_title="Marimo",
-            category=RecordCategory.PROGRAMMING,
+            title_matcher=["2718"], prettified_title="Marimo", category=RecordCategory.PROGRAMMING
         ),
         RecordMetadata(
-            title_matcher=["skim"],
-            prettified_title="Skim",
-            category=RecordCategory.READING,
+            title_matcher=["skim"], prettified_title="Skim", category=RecordCategory.READING
         ),
         RecordMetadata(
-            title_matcher=["dr.dk"],
-            prettified_title="DR",
-            category=RecordCategory.BROWSING,
+            title_matcher=["dr.dk"], prettified_title="DR", category=RecordCategory.BROWSING
         ),
         RecordMetadata(
-            title_matcher=["citrix"],
-            prettified_title="Citrix",
-            category=RecordCategory.PROGRAMMING,
+            title_matcher=["citrix"], prettified_title="Citrix", category=RecordCategory.PROGRAMMING
         ),
         RecordMetadata(
             title_matcher=["facebook"],
@@ -118,14 +106,10 @@ config = Config(
             category=RecordCategory.BROWSING,
         ),
         RecordMetadata(
-            title_matcher=["github"],
-            prettified_title=None,
-            category=RecordCategory.PROGRAMMING,
+            title_matcher=["github"], prettified_title=None, category=RecordCategory.PROGRAMMING
         ),
         RecordMetadata(
-            title_matcher=["hey"],
-            prettified_title="Hey",
-            category=RecordCategory.BROWSING,
+            title_matcher=["hey"], prettified_title="Hey", category=RecordCategory.BROWSING
         ),
         RecordMetadata(
             title_matcher=["linkedin"],
@@ -133,14 +117,10 @@ config = Config(
             category=RecordCategory.BROWSING,
         ),
         RecordMetadata(
-            title_matcher=["Notes"],
-            prettified_title="Notes",
-            category=RecordCategory.PLANNING,
+            title_matcher=["Notes"], prettified_title="Notes", category=RecordCategory.PLANNING
         ),
         RecordMetadata(
-            title_matcher=["mail"],
-            prettified_title="Mail",
-            category=RecordCategory.COMMUNICATING,
+            title_matcher=["mail"], prettified_title="Mail", category=RecordCategory.COMMUNICATING
         ),
         RecordMetadata(
             title_matcher=["macrumors"],
@@ -148,14 +128,10 @@ config = Config(
             category=RecordCategory.BROWSING,
         ),
         RecordMetadata(
-            title_matcher=["reddit"],
-            prettified_title="Reddit",
-            category=RecordCategory.BROWSING,
+            title_matcher=["reddit"], prettified_title="Reddit", category=RecordCategory.BROWSING
         ),
         RecordMetadata(
-            title_matcher=["slack"],
-            prettified_title="Slack",
-            category=RecordCategory.COMMUNICATING,
+            title_matcher=["slack"], prettified_title="Slack", category=RecordCategory.COMMUNICATING
         ),
         RecordMetadata(
             title_matcher=["star realms"],
@@ -168,9 +144,7 @@ config = Config(
             category=RecordCategory.PROGRAMMING,
         ),
         RecordMetadata(
-            title_matcher=["twitter"],
-            prettified_title="Browsing",
-            category=RecordCategory.BROWSING,
+            title_matcher=["twitter"], prettified_title="Browsing", category=RecordCategory.BROWSING
         ),
         RecordMetadata(
             title_matcher=["wandb.ai"],
@@ -178,24 +152,16 @@ config = Config(
             category=RecordCategory.PROGRAMMING,
         ),
         RecordMetadata(
-            title_matcher=["spotify"],
-            prettified_title="Spotify",
-            category=RecordCategory.SOUND,
+            title_matcher=["spotify"], prettified_title="Spotify", category=RecordCategory.SOUND
         ),
         RecordMetadata(
-            title_matcher=["omnivore"],
-            prettified_title="Omnivore",
-            category=RecordCategory.READING,
+            title_matcher=["omnivore"], prettified_title="Omnivore", category=RecordCategory.READING
         ),
         RecordMetadata(
-            title_matcher=["twitter"],
-            prettified_title="Twitter",
-            category=RecordCategory.BROWSING,
+            title_matcher=["twitter"], prettified_title="Twitter", category=RecordCategory.BROWSING
         ),
         RecordMetadata(
-            title_matcher=["Word"],
-            prettified_title="Word",
-            category=RecordCategory.WRITING,
+            title_matcher=["Word"], prettified_title="Word", category=RecordCategory.WRITING
         ),
         RecordMetadata(
             title_matcher=["Calendar"],
@@ -203,14 +169,10 @@ config = Config(
             category=RecordCategory.PLANNING,
         ),
         RecordMetadata(
-            title_matcher=["Obsidian"],
-            prettified_title="Obsidian",
-            category=RecordCategory.WRITING,
+            title_matcher=["Obsidian"], prettified_title="Obsidian", category=RecordCategory.WRITING
         ),
         RecordMetadata(
-            title_matcher=["Docs"],
-            prettified_title=None,
-            category=RecordCategory.PROGRAMMING,
+            title_matcher=["Docs"], prettified_title=None, category=RecordCategory.PROGRAMMING
         ),
         RecordMetadata(
             title_matcher=["Alacritty"],

@@ -58,16 +58,14 @@ def test_client_sync(
     os.environ["TZ"] = system_timezone  # type: ignore
     time.tzset()
 
-    _clean_test_interval(
-        client, base_event.start, base_event.end + datetime.timedelta(days=1)
-    )
+    _clean_test_interval(client, base_event.start, base_event.end + datetime.timedelta(days=1))
 
     # Create an event
     add_response = client.add_event(base_event)
     # Get the event back
-    loaded_event = client.get_events(
-        base_event.start, base_event.end + datetime.timedelta(days=1)
-    )[0]
+    loaded_event = client.get_events(base_event.start, base_event.end + datetime.timedelta(days=1))[
+        0
+    ]
 
     # Check identity is unchanged
     assert add_response.identity == loaded_event.identity
@@ -81,10 +79,5 @@ def test_client_sync(
     # Delete the event
     client.delete_event(payload)
     assert (
-        len(
-            client.get_events(
-                base_event.start, base_event.end + datetime.timedelta(days=1)
-            )
-        )
-        == 0
+        len(client.get_events(base_event.start, base_event.end + datetime.timedelta(days=1))) == 0
     )

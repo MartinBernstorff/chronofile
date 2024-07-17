@@ -14,9 +14,7 @@ from rescuetime2gcal.preprocessing import DestinationEvent, ParsedEvent
 
 
 def _parsed_to_gcsa_event(event: ParsedEvent) -> GCSAEvent:
-    return GCSAEvent(
-        summary=event.title, start=event.start, end=event.end, timezone=event.timezone
-    )
+    return GCSAEvent(summary=event.title, start=event.start, end=event.end, timezone=event.timezone)
 
 
 def _destination_to_gcsa_event(event: "DestinationEvent") -> GCSAEvent:
@@ -34,11 +32,7 @@ def _to_destination_event(event: GCSAEvent) -> DestinationEvent:
     start: datetime = event.start  # type: ignore
     end: datetime = event.end  # type: ignore
     return DestinationEvent(
-        title=event.summary,
-        start=start,
-        end=end,
-        timezone=event.timezone,
-        id=event.event_id,
+        title=event.summary, start=start, end=end, timezone=event.timezone, id=event.event_id
     )
 
 

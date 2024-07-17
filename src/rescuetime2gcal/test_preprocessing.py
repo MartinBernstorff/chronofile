@@ -118,13 +118,9 @@ def test_merge_events_within_window(testcase: MergeTestCase):
         combined = (
             Arr(shuffled_events)
             .groupby(lambda e: e.title)
-            .map(
-                lambda g: merge_within_window(g[1], merge_gap=datetime.timedelta(days=1))
-            )
+            .map(lambda g: merge_within_window(g[1], merge_gap=datetime.timedelta(days=1)))
             .flatten()
         ).to_list()
 
         output = sorted(combined, key=lambda e: e.start)
-        assert "\n".join(str(e) for e in output) == "\n".join(
-            str(e) for e in testcase.expected
-        )
+        assert "\n".join(str(e) for e in output) == "\n".join(str(e) for e in testcase.expected)

@@ -40,9 +40,7 @@ def auth(
 
 @app.command(name="sync")
 def cli(
-    rescuetime_api_key: Annotated[
-        Optional[str], typer.Argument(envvar="RESCUETIME_API_KEY")
-    ],
+    rescuetime_api_key: Annotated[Optional[str], typer.Argument(envvar="RESCUETIME_API_KEY")],
     activitywatch_base_url: Annotated[
         Optional[str], typer.Argument(envvar="ACTIVITYWATCH_BASE_URL")
     ],
@@ -75,9 +73,7 @@ def cli(
     if activitywatch_base_url:
         event_sources.append(
             partial(
-                activitywatch.load_all_events,
-                date=datetime.now(),
-                base_url=activitywatch_base_url,
+                activitywatch.load_all_events, date=datetime.now(), base_url=activitywatch_base_url
             )
         )
 

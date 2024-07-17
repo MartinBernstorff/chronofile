@@ -54,14 +54,10 @@ def _parse_event(event: "SourceEvent") -> ParsedEvent:
             title = event.url_title if len(event.url_title) != 0 else event.url
             if title == "":
                 title = "No title"
-            return ParsedEvent(
-                title=title, start=event.start, end=event.start + event.duration
-            )
+            return ParsedEvent(title=title, start=event.start, end=event.start + event.duration)
         case WindowTitleEvent():
             title = event.window_title if len(event.window_title) != 0 else event.app
-            return ParsedEvent(
-                title=title, start=event.start, end=event.start + event.duration
-            )
+            return ParsedEvent(title=title, start=event.start, end=event.start + event.duration)
         case BareEvent():
             return ParsedEvent(
                 title=event.title, start=event.start, end=event.start + event.duration
@@ -74,9 +70,7 @@ def filter_by_title(
     data: Sequence[ParsedEvent], strs_to_match: Sequence[str]
 ) -> Sequence[ParsedEvent]:
     return [
-        event
-        for event in data
-        if not any(title.lower() in event.title for title in strs_to_match)
+        event for event in data if not any(title.lower() in event.title for title in strs_to_match)
     ]
 
 
@@ -125,9 +119,7 @@ def parse_events(
 
     # Apply category and emoji
     for meta in metadata:
-        if any(
-            title.lower() in generic_event.title.lower() for title in meta.title_matcher
-        ):
+        if any(title.lower() in generic_event.title.lower() for title in meta.title_matcher):
             generic_event.category = meta.category
             if meta.prettified_title is not None:
                 generic_event.title = meta.prettified_title

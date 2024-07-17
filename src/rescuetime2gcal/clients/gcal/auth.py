@@ -11,9 +11,7 @@ def print_refresh_token(client_id: str, client_secret: str):
         client=client, scope=required_scopes, redirect_uri="http://localhost:8080"
     )
 
-    authorization_url, _ = session.authorization_url(
-        "https://accounts.google.com/o/oauth2/auth"
-    )  # type: ignore
+    authorization_url, _ = session.authorization_url("https://accounts.google.com/o/oauth2/auth")  # type: ignore
     print(
         f"""Please visit the following URL to authorize the application. Once you reach the localhost URL, the code will be after the `code=` section.
 

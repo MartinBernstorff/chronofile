@@ -66,9 +66,7 @@ class ChangesetExample:
                 FakeDestinationEvent(id="1", end=datetime.datetime(2021, 1, 1, 0, 1)),
             ],
             then=[
-                UpdateEvent(
-                    FakeDestinationEvent(end=datetime.datetime(2024, 1, 1, 0, 0), id="1")
-                )
+                UpdateEvent(FakeDestinationEvent(end=datetime.datetime(2024, 1, 1, 0, 0), id="1"))
             ],
         ),
     ],
