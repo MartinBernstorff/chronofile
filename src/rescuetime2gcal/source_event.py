@@ -14,7 +14,9 @@ class BaseEvent(pydantic.BaseModel, ABC):
 
     def __post_init__(self):
         if self.start.tzinfo != datetime.timezone.utc:
-            raise ValueError("Start time must be in UTC to ensure correct timezone conversion")
+            raise ValueError(
+                "Start time must be in UTC to ensure correct timezone conversion"
+            )
 
 
 class BareEvent(BaseEvent):

@@ -4,10 +4,10 @@ from typing import Sequence
 
 from rescuetime2gcal.__main__ import main
 from rescuetime2gcal.clients import gcal
-from rescuetime2gcal.source_event import BaseEvent, SourceEvent
+from rescuetime2gcal.source_event import BareEvent, SourceEvent
 
 
-class FakeBareEvent(BaseEvent):
+class FakeBareEvent(BareEvent):
     title: str = "fake title"
     start: datetime.datetime = datetime.datetime(
         2010, 1, 1, 0, 0, 0, 1, tzinfo=datetime.timezone.utc
@@ -21,7 +21,7 @@ def mock_input_client(input_events: Sequence[SourceEvent]) -> Sequence["SourceEv
 
 def test_e2e():
     start = datetime.datetime(2010, 1, 1, 0, 0, 0, 1, tzinfo=datetime.timezone.utc)
-    duration = datetime.timedelta(seconds=1)
+    duration = datetime.timedelta(hours=1)
 
     def input_client() -> Sequence[SourceEvent]:
         return [FakeBareEvent(start=start, duration=duration)]
@@ -38,7 +38,7 @@ def test_e2e():
     for event in events:
         destination_client.delete_event(event)
 
-    # TD: Sync here takes way too long, because it syncs all events from start to now
+    # First sync, to create new event
     main(
         input_clients=[input_client], destination_client=destination_client, dry_run=False
     )

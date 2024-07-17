@@ -1,4 +1,3 @@
-import datetime
 import logging
 from typing import TYPE_CHECKING, Sequence
 
@@ -28,9 +27,10 @@ def main(
 ) -> None:
     input_events = Arr(input_clients).map(lambda f: f()).flatten().to_list()
 
+    first_start = min([event.start for event in input_events])
     destination_events = destination_client.get_events(
-        start=min([event.start for event in input_events]),
-        end=datetime.datetime.now(tz=input_events[0].start.tzinfo),
+        start=first_start,
+        end=first_start + max([event.duration for event in input_events]),
     )
 
     changes = pipeline(source_events=input_events, destination_events=destination_events)

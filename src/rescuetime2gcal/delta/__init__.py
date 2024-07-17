@@ -27,7 +27,8 @@ EventChange = NewEvent | UpdateEvent
 
 
 def deduper(
-    parsed_events: Sequence["ParsedEvent"], destination_events: Sequence["DestinationEvent"]
+    parsed_events: Sequence["ParsedEvent"],
+    destination_events: Sequence["DestinationEvent"],
 ) -> Sequence["ParsedEvent"]:
     origin_hashes = {event_identity(e) for e in destination_events}
     return [e for e in parsed_events if event_identity(e) not in origin_hashes]
@@ -42,11 +43,16 @@ def changeset(
     parsed_events: Sequence[ParsedEvent], destination_events: Sequence[DestinationEvent]
 ) -> Sequence[EventChange]:
     """Identify which changes are needed on the mirror for it to match truth."""
+    if len(destination_events) == 0:
+        return [NewEvent(event=e) for e in parsed_events]
+
     timezones = set(e.timezone for e in [*parsed_events, *destination_events])
     if len(timezones) != 1:
         raise ValueError(f"All events must be in the same timezone. Found {timezones}")
 
-    deduped_events = deduper(destination_events=destination_events, parsed_events=parsed_events)
+    deduped_events = deduper(
+        destination_events=destination_events, parsed_events=parsed_events
+    )
 
     changeset: list[EventChange] = []
     for new_event in deduped_events:
