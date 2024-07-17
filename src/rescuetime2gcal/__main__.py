@@ -1,17 +1,21 @@
 import logging
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Sequence
+from typing import TYPE_CHECKING, Mapping, Sequence
 
 import devtools
 from iterpy.arr import Arr
 
 from rescuetime2gcal import delta
-from rescuetime2gcal.config import config as cfg
 from rescuetime2gcal.preprocessing import DestinationEvent, merge_within_window, parse_events
 
+from .config import config as cfg
+
 if TYPE_CHECKING:
+    import datetime
+
     from rescuetime2gcal.clients.event_source import EventSource
     from rescuetime2gcal.clients.gcal.client import DestinationClient
+    from rescuetime2gcal.config import RecordCategory, RecordMetadata
     from rescuetime2gcal.source_event import SourceEvent
 
 log = logging.getLogger(__name__)
@@ -41,7 +45,15 @@ def main(
         start=first_start, end=last_start + max([event.duration for event in input_events])
     )
 
-    changes = _pipeline(source_events=input_events, destination_events=destination_events)
+    changes = _pipeline(
+        source_events=input_events,
+        destination_events=destination_events,
+        min_duration=cfg.min_duration,
+        category2emoji=cfg.category2emoji,
+        exclude_titles=cfg.exclude_titles,
+        merge_gap=cfg.merge_gap,
+        metadata_enrichment=cfg.metadata_enrichment,
+    )
 
     logging.info(f"Changes to be made {devtools.debug.format(changes)}")
 
@@ -59,29 +71,39 @@ def main(
         log.info("Dry-run enabled, skipping sync")
 
 
-def _pipeline(
-    source_events: Sequence["SourceEvent"], destination_events: Sequence["DestinationEvent"]
+def _pipeline(  # noqa: D417
+    source_events: Sequence["SourceEvent"],
+    destination_events: Sequence["DestinationEvent"],
+    min_duration: "datetime.timedelta",
+    category2emoji: Mapping["RecordCategory", str],
+    exclude_titles: Sequence[str],
+    merge_gap: "datetime.timedelta",
+    metadata_enrichment: Sequence["RecordMetadata"],
 ) -> Sequence[delta.EventChange]:
-    """Event processing without I/O. Separating this from I/O makes debugging and testing easier."""
+    """Event processing without I/O. Separating this from I/O makes debugging and testing easier.
+
+    Args:
+        source_events: Source events to process
+        destination_events: Destination events to process
+        ... [See the Config object for the rest of the arguments]
+    """
 
     # Preprocess the source events
-    sufficient_length_events = Arr(source_events).filter(lambda e: e.duration > cfg.min_duration)
+    sufficient_length_events = Arr(source_events).filter(lambda e: e.duration > min_duration)
 
     parsed_events = sufficient_length_events.map(
-        lambda e: parse_events(
-            event=e, metadata=cfg.metadata_enrichment, category2emoji=cfg.category2emoji
-        )
+        lambda e: parse_events(event=e, metadata=metadata_enrichment, category2emoji=category2emoji)
     )
 
     filtered_by_title = parsed_events.filter(
         lambda e: not any(
-            excluded_title.lower() in e.title.lower() for excluded_title in cfg.exclude_titles
+            excluded_title.lower() in e.title.lower() for excluded_title in exclude_titles
         )
     )
 
     merged_within_gap = (
         filtered_by_title.groupby(lambda e: e.title)
-        .map(lambda g: merge_within_window(g[1], merge_gap=cfg.merge_gap))
+        .map(lambda g: merge_within_window(g[1], merge_gap=merge_gap))
         .flatten()
         .to_list()
     )
