@@ -8,13 +8,13 @@ ENV RYE_INSTALL_OPTION="--yes"
 ENV RYE_TOOLCHAIN="/usr/local/bin/python"
 ENV RYE_VERSION=0.33.0
 
-RUN curl -sSf https://rye.astral.sh/get > /tmp/get-rye.sh && \
-    bash /tmp/get-rye.sh && \
-    rm /tmp/get-rye.sh && \
-    echo 'source "$HOME/.rye/env"' >> ~/.bashrc
+RUN curl -sSf https://rye.astral.sh/get > /tmp/get-rye.sh
+RUN bash /tmp/get-rye.sh
+RUN rm /tmp/get-rye.sh
+RUN echo 'source "$HOME/.rye/env"' >> ~/.bashrc
 
-RUN rye config --set-bool behavior.use-uv=true && \
-    rye config --set-bool behavior.global-python=true
+RUN rye config --set-bool behavior.use-uv=true
+RUN rye config --set-bool behavior.global-python=true
 
 COPY pyproject.toml requirements.lock /app/
 COPY /src/ /app/src

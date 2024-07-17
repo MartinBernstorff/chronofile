@@ -24,9 +24,7 @@ test-with-coverage:
 lint: ## Format code
 	@echo "––– Linting –––"
 	@rye run ruff format .
-	@rye run ruff . --fix --unsafe-fixes \
-		--extend-select F401 \
-		--extend-select F841
+	@rye run ruff . --fix --unsafe-fixes
 	@echo "✅✅✅ Lint ✅✅✅"
 
 types: ## Type-check code
@@ -45,9 +43,6 @@ docker_ci: ## Run all checks in docker
 	@echo "––– Running all checks in docker –––"
 	docker build -t rescuetime2gcal_ci  -f .github/Dockerfile.dev .
 	docker run --env-file .env rescuetime2gcal_ci make validate_ci
-
-pr: ## Submit a PR
-	@lumberman sync --squash --automerge
 
 #########################
 # End template makefile #

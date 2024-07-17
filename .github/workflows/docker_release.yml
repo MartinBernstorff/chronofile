@@ -1,12 +1,15 @@
-name: release
+name: docker-publish
 on:
   push:
     tags:
-      - 'v*'
+      - "v*"
   workflow_dispatch:
 
 jobs:
   release:
+    permissions:
+      contents: write
+      packages: write
     runs-on: ubuntu-latest
     concurrency: docker-publish
     steps:
@@ -31,7 +34,7 @@ jobs:
         with:
           # list of Docker images to use as base name for tags
           images: |
-            ghcr.io/martinbernstorff/rescuetime-to-gcal
+            ghcr.io/martinbernstorff/rescuetime2gcal
           # generate Docker tags based on the following events/attributes
           tags: |
             type=semver,pattern={{version}}
@@ -42,6 +45,6 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          platforms: linux/amd64,linux/arm64
-          tags: ${{steps.meta.outputs.tags }}
           push: true
+          platforms: linux/amd64,linux/arm64
+          tags: ${{ steps.meta.outputs.tags }}
