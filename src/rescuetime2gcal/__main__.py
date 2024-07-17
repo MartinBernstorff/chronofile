@@ -1,4 +1,5 @@
 import logging
+from dataclasses import dataclass
 from typing import TYPE_CHECKING, Sequence
 
 import devtools
@@ -16,6 +17,18 @@ if TYPE_CHECKING:
 log = logging.getLogger(__name__)
 
 
+@dataclass(frozen=True)
+class DeduplicatedGroup:
+    keeper: DestinationEvent
+    duplicates: Sequence[DestinationEvent]
+
+
+def _remove_duplicates_in_destination(event_group: Sequence[DestinationEvent]) -> DeduplicatedGroup:
+    if len(event_group) > 1:
+        return DeduplicatedGroup(keeper=event_group[0], duplicates=event_group[1:])
+    return DeduplicatedGroup(keeper=event_group[0], duplicates=[])
+
+
 def main(
     input_clients: Sequence["EventSource"], destination_client: "DestinationClient", dry_run: bool
 ) -> None:
@@ -23,9 +36,12 @@ def main(
 
     first_start = min([event.start for event in input_events])
     last_start = max([event.start for event in input_events])
+
     destination_events = destination_client.get_events(
         start=first_start, end=last_start + max([event.duration for event in input_events])
     )
+
+    # Deduplicate destination events
 
     changes = pipeline(source_events=input_events, destination_events=destination_events)
 
@@ -39,6 +55,8 @@ def main(
                     destination_client.add_event(change.event)
                 case delta.UpdateEvent():
                     destination_client.update_event(change.event)
+                case delta.DeleteEvent():
+                    destination_client.delete_event(change.event)
     else:
         log.info("Dry-run enabled, skipping sync")
 
@@ -46,6 +64,7 @@ def main(
 def pipeline(
     source_events: Sequence["SourceEvent"], destination_events: Sequence["DestinationEvent"]
 ) -> Sequence[delta.EventChange]:
+    # Preprocess the source events
     sufficient_length_events = Arr(source_events).filter(lambda e: e.duration > cfg.min_duration)
 
     parsed_events = sufficient_length_events.map(
@@ -67,6 +86,18 @@ def pipeline(
         .to_list()
     )
 
-    changeset = delta.changeset(merged_within_gap, destination_events)
+    # Deduplicate destination events
+    deduplicated_destination_events = (
+        Arr(destination_events)
+        .groupby(lambda e: e.identity)
+        .map(lambda g: _remove_duplicates_in_destination(g[1]))
+    )
+    destination_keepers = deduplicated_destination_events.map(lambda g: g.keeper).to_list()
+    destination_duplicates = (
+        deduplicated_destination_events.map(lambda g: list(g.duplicates)).flatten().to_list()
+    )
 
-    return changeset
+    # Calculate the delta
+    changeset = delta.changeset(merged_within_gap, destination_keepers)
+
+    return [*changeset, *[delta.DeleteEvent(event=e) for e in destination_duplicates]]
