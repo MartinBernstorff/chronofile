@@ -1,7 +1,8 @@
-import datetime  # noqa: TCH003
+import datetime
 from typing import TYPE_CHECKING, Mapping, Optional, Sequence
 
 import pydantic
+import pytz
 
 from rescuetime2gcal.config import RecordCategory
 from rescuetime2gcal.source_event import (
@@ -17,6 +18,10 @@ if TYPE_CHECKING:
     from rescuetime2gcal.config import RecordCategory, RecordMetadata
 
 
+def _is_utc(value: "datetime.datetime") -> bool:
+    return value.tzinfo in (pytz.UTC, datetime.timezone.utc)
+
+
 class ParsedEvent(pydantic.BaseModel):
     """Represents an event across the stack, when the information has been parsed for presentation."""
 
@@ -24,13 +29,28 @@ class ParsedEvent(pydantic.BaseModel):
     start: "datetime.datetime"
     end: "datetime.datetime"
     category: Optional["RecordCategory"] = None
-    timezone: str = "UTC"
 
     @pydantic.field_validator("title")
     def validate_title(cls, value: str) -> str:
         if len(value) < 1:
             raise ValueError("Title must be at least one character long")
         return value
+
+    @pydantic.field_validator("start")
+    def validate_start(cls, value: "datetime.datetime") -> "datetime.datetime":
+        if not _is_utc(value):
+            raise ValueError("Timezone must be UTC")
+        return value
+
+    @pydantic.field_validator("end")
+    def validate_end(cls, value: "datetime.datetime") -> "datetime.datetime":
+        if not _is_utc(value):
+            raise ValueError("Timezone must be UTC")
+        return value
+
+    @property
+    def timezone(self) -> str:
+        return "UTC"
 
     @property
     def identity(self) -> str:
