@@ -1,6 +1,6 @@
 services:
   app:
-    build: .
+    image: ghcr.io/martinbernstorff/rescuetime2gcal:latest
     volumes:
       - ./config.toml:/app/config.toml
     environment:
@@ -12,3 +12,7 @@ services:
       - GCAL_CLIENT_SECRET
       - GCAL_REFRESH_TOKEN
       - TEST_CALENDAR_ID
+    restart: unless-stopped
+    network_mode: host
+    env_file:
+      - .env

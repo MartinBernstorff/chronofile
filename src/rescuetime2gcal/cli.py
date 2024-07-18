@@ -55,9 +55,7 @@ def cli(
 ):
     cfg = Config.from_toml(config_path)
 
-    logging.info(
-        f"Running Rescuetime-to-gcal version {importlib.metadata.version('rescuetime2gcal')}"
-    )
+    logging.info(f"Running rescuetime2gcal version {importlib.metadata.version('rescuetime2gcal')}")
     logging.info(rich.pretty.pprint(cfg))
     logging.info("Starting sync")
 
