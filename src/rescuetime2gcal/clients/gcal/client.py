@@ -50,6 +50,10 @@ def _timezone_to_utc(event: GCSAEvent) -> GCSAEvent:
     return event
 
 
+def _event_is_all_day(event: GCSAEvent) -> bool:
+    return not isinstance(event.start, datetime) or not isinstance(event.end, datetime)
+
+
 class DestinationClient(Protocol):
     """Interface for a client that can add, get, update, and delete events. All responsese must be in UTC."""
 
@@ -99,6 +103,7 @@ class GcalClient(DestinationClient):
                     start, end, order_by="updated", single_events=True
                 )
             )
+            .filter(lambda e: not _event_is_all_day(e))
             .map(_timezone_to_utc)
             .map(_to_destination_event)
             .to_list()
