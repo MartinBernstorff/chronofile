@@ -2,6 +2,13 @@
 
 
 
+## v0.13.0 (2024-07-18)
+
+### Feature
+
+* feat: exclude by app (#43) ([`9f7f89c`](https://github.com/MartinBernstorff/rescuetime2gcal/commit/9f7f89c70ae86ff95fc5e6c241960312e66738ec))
+
+
 ## v0.12.1 (2024-07-18)
 
 ### Fix
