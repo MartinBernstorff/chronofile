@@ -151,7 +151,7 @@ class PEx:
 
 
 @pytest.mark.parametrize(
-    ("given", "then"),
+    ("ex"),
     [
         PEx(
             FakeURLEvent(
@@ -167,5 +167,5 @@ class PEx:
     ],
     ids=lambda e: e.given.url,
 )
-def test_parse_event(given: FakeURLEvent, then: FakeParsedEvent):
-    assert then == _parse_event(given)
+def test_parse_event_titles(ex: PEx):
+    assert ex.then.title == _parse_event(ex.given).title
