@@ -21,5 +21,6 @@ def test_pipeline_should_remove_duplicates():
         category2emoji={},
         min_duration=datetime.timedelta(days=1),
         merge_gap=datetime.timedelta(days=1),
+        exclude_apps=[],
     )
     assert changes == [delta.DeleteEvent(event=FakeDestinationEvent(id="1"))]

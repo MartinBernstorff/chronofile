@@ -1,11 +1,15 @@
 import datetime
 import os
 import time
+from typing import TYPE_CHECKING
 
 import pytest
 import pytz
 from rescuetime2gcal.clients.gcal.client import DestinationClient, GcalClient
-from rescuetime2gcal.preprocessing import ParsedEvent
+from rescuetime2gcal.test_preprocessing import FakeParsedEvent
+
+if TYPE_CHECKING:
+    from rescuetime2gcal.preprocessing import ParsedEvent
 
 
 @pytest.fixture(autouse=True)
@@ -44,7 +48,7 @@ def _clean_test_interval(
 @pytest.mark.parametrize(
     ("base_event"),
     [
-        ParsedEvent(
+        FakeParsedEvent(
             title="🔥 Test",
             start=datetime.datetime(2023, 1, 1, 0, 0, tzinfo=pytz.UTC),
             end=datetime.datetime(2023, 1, 1, 0, 0, tzinfo=pytz.UTC),
@@ -52,7 +56,7 @@ def _clean_test_interval(
     ],
 )
 def test_client_sync(
-    client: DestinationClient, system_timezone: pytz.BaseTzInfo, base_event: ParsedEvent
+    client: DestinationClient, system_timezone: pytz.BaseTzInfo, base_event: "ParsedEvent"
 ):
     # Update the system timezone
     os.environ["TZ"] = system_timezone  # type: ignore
