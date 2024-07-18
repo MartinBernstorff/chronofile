@@ -147,10 +147,7 @@ class FakeURLEvent(URLEvent):
 @dataclass(frozen=True)
 class PEx:
     given: "SourceEvent"
-    # Required setup
-
     then: ParsedEvent
-    # What the expected result is
 
 
 @pytest.mark.parametrize(
