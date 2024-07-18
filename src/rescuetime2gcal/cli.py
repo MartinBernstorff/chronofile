@@ -51,7 +51,7 @@ def cli(
     gcal_refresh_token: Annotated[str, typer.Argument(envvar="GCAL_REFRESH_TOKEN")],
     config_path: Annotated[str, typer.Argument(envvar="CONFIG_PATH")] = "config.toml",
     dry_run: bool = False,
-    watch: bool = False,
+    watch: Annotated[bool, typer.Option(envvar="WATCH")] = False,
 ):
     cfg = Config.from_toml(config_path)
 
