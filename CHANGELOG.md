@@ -2,6 +2,21 @@
 
 
 
+## v0.12.0 (2024-07-18)
+
+### Feature
+
+* feat: bump version ([`6f47189`](https://github.com/MartinBernstorff/rescuetime2gcal/commit/6f47189aed33e9dc7968e9c494b22544738032c2))
+
+### Unknown
+
+* deploy_from_compose (#41) ([`2434698`](https://github.com/MartinBernstorff/rescuetime2gcal/commit/24346986f4574d5a21af8ef08b3c71604f1a01d7))
+
+* exclude_all_day_events (#40) ([`e505a11`](https://github.com/MartinBernstorff/rescuetime2gcal/commit/e505a11725b7805d33017cf46293f0441537d131))
+
+* github_url_parsing (#39) ([`9660ffd`](https://github.com/MartinBernstorff/rescuetime2gcal/commit/9660ffd1a4422241c5c80638a72bf07c8578611f))
+
+
 ## v0.11.0 (2024-07-17)
 
 ### Feature
