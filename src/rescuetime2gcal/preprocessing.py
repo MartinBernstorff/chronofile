@@ -1,4 +1,6 @@
 import datetime
+import re
+from dataclasses import dataclass
 from typing import TYPE_CHECKING, Mapping, Optional, Sequence
 
 import pydantic
@@ -68,13 +70,48 @@ class DestinationEvent(ParsedEvent):
     id: str
 
 
+@dataclass(frozen=True)
+class URLParseRule:
+    apply_to: str
+    extract_regex: str
+    format_result: str
+
+
+def _parse_url_event(event: "URLEvent") -> ParsedEvent:
+    parsers = [
+        URLParseRule(
+            apply_to=".*github.com.*",
+            extract_regex=r".*github.com\/([^\/]*)\/([^\/]*)",
+            format_result="GitHub: {0}/{1}",
+        )
+    ]
+
+    for p in parsers:
+        if re.match(p.apply_to, event.url):
+            try:
+                extraction = re.match(p.extract_regex, event.url)
+
+                if not extraction:
+                    continue
+
+                title = p.format_result.format(*extraction.groups())
+            except Exception:
+                continue
+
+            return ParsedEvent(title=title, start=event.start, end=event.start + event.duration)
+
+    title = event.url_title if len(event.url_title) != 0 else event.url
+
+    if title == "":
+        title = "No title"
+
+    return ParsedEvent(title=title, start=event.start, end=event.start + event.duration)
+
+
 def _parse_event(event: "SourceEvent") -> ParsedEvent:
     match event:
         case URLEvent():
-            title = event.url_title if len(event.url_title) != 0 else event.url
-            if title == "":
-                title = "No title"
-            return ParsedEvent(title=title, start=event.start, end=event.start + event.duration)
+            return _parse_url_event(event)
         case WindowTitleEvent():
             title = event.window_title if len(event.window_title) != 0 else event.app
             return ParsedEvent(title=title, start=event.start, end=event.start + event.duration)

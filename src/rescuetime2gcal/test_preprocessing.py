@@ -2,6 +2,7 @@ import copy
 import datetime
 import random
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
 import pytest
 import pytz
@@ -10,9 +11,14 @@ from iterpy.arr import Arr
 from rescuetime2gcal.preprocessing import (
     DestinationEvent,
     ParsedEvent,
+    _parse_event,
     filter_by_title,
     merge_within_window,
 )
+from rescuetime2gcal.source_event import URLEvent
+
+if TYPE_CHECKING:
+    from rescuetime2gcal.source_event import SourceEvent
 
 
 class FakeParsedEvent(ParsedEvent):
@@ -129,3 +135,40 @@ def test_merge_events_within_window(testcase: MergeTestCase):
 
         output = sorted(combined, key=lambda e: e.start)
         assert "\n".join(str(e) for e in output) == "\n".join(str(e) for e in testcase.expected)
+
+
+class FakeURLEvent(URLEvent):
+    url: str = "https://github.com/MartinBernstorff/rescuetime2gcal/pull/39"
+    url_title: str
+    start: datetime.datetime = datetime.datetime(2023, 1, 1, 0, 0, tzinfo=datetime.timezone.utc)
+    duration: datetime.timedelta = datetime.timedelta(seconds=0)
+
+
+@dataclass(frozen=True)
+class PEx:
+    given: "SourceEvent"
+    # Required setup
+
+    then: ParsedEvent
+    # What the expected result is
+
+
+@pytest.mark.parametrize(
+    ("given", "then"),
+    [
+        PEx(
+            FakeURLEvent(
+                url="https://github.com/MartinBernstorff/rescuetime2gcal/pull/39",
+                url_title="github_with_subdomain.com",
+            ),
+            FakeParsedEvent(title="GitHub: MartinBernstorff/rescuetime2gcal"),
+        ),
+        PEx(
+            FakeURLEvent(url="https://github.com/", url_title="GitHub without subdomain"),
+            FakeParsedEvent(title="GitHub without subdomain"),
+        ),
+    ],
+    ids=lambda e: e.given.url,
+)
+def test_parse_event(given: FakeURLEvent, then: FakeParsedEvent):
+    assert then == _parse_event(given)

@@ -85,4 +85,4 @@ def load_all_events(
     loaders = [_initialise_bucket_loader(bucket=b, date=date) for b in buckets]
     events = [event for loader in loaders for event in loader()]
 
-    return events
+    return sorted(events, key=lambda e: e.start)
