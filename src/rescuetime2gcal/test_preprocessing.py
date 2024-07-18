@@ -2,7 +2,6 @@ import copy
 import datetime
 import random
 from dataclasses import dataclass
-from typing import TYPE_CHECKING
 
 import pytest
 import pytz
@@ -15,16 +14,14 @@ from rescuetime2gcal.preprocessing import (
     filter_by_title,
     merge_within_window,
 )
-from rescuetime2gcal.source_event import URLEvent
-
-if TYPE_CHECKING:
-    from rescuetime2gcal.source_event import SourceEvent
+from rescuetime2gcal.source_event import SourceEvent, URLEvent
 
 
 class FakeParsedEvent(ParsedEvent):
     title: str = "fake title"
     start: datetime.datetime = datetime.datetime(2023, 1, 1, 0, 0, tzinfo=datetime.timezone.utc)
     end: datetime.datetime = datetime.datetime(2023, 1, 1, 0, 0, tzinfo=datetime.timezone.utc)
+    source_event: SourceEvent | None = None
 
     def __post_init__(self):
         self.start = self.start.astimezone(pytz.UTC)
@@ -36,6 +33,7 @@ class FakeDestinationEvent(DestinationEvent):
     start: datetime.datetime = datetime.datetime(2023, 1, 1, 0, 0, tzinfo=datetime.timezone.utc)
     end: datetime.datetime = datetime.datetime(2023, 1, 1, 0, 0, tzinfo=datetime.timezone.utc)
     id: str = "0"
+    source_event: "SourceEvent | None" = None
 
 
 def test_filter_by_title():

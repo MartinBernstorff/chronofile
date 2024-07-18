@@ -7,6 +7,7 @@ from iterpy.arr import Arr
 
 from rescuetime2gcal import delta
 from rescuetime2gcal.preprocessing import DestinationEvent, merge_within_window, parse_events
+from rescuetime2gcal.source_event import SourceEvent, WindowTitleEvent
 
 if TYPE_CHECKING:
     import datetime
@@ -14,7 +15,6 @@ if TYPE_CHECKING:
     from rescuetime2gcal.clients.event_source import EventSource
     from rescuetime2gcal.clients.gcal.client import DestinationClient
     from rescuetime2gcal.config import Config, RecordCategory, RecordMetadata
-    from rescuetime2gcal.source_event import SourceEvent
 
 log = logging.getLogger(__name__)
 
@@ -54,6 +54,7 @@ def main(
         exclude_titles=cfg.exclude_titles,
         merge_gap=cfg.merge_gap,
         metadata_enrichment=cfg.metadata_enrichment,
+        exclude_apps=cfg.exclude_apps,
     )
 
     logging.info(f"Changes to be made {devtools.debug.format(changes)}")
@@ -80,6 +81,7 @@ def _pipeline(  # noqa: D417
     exclude_titles: Sequence[str],
     merge_gap: "datetime.timedelta",
     metadata_enrichment: Sequence["RecordMetadata"],
+    exclude_apps: Sequence[str],
 ) -> Sequence[delta.EventChange]:
     """Event processing without I/O. Separating this from I/O makes debugging and testing easier.
 
@@ -92,7 +94,13 @@ def _pipeline(  # noqa: D417
     # Preprocess the source events
     sufficient_length_events = Arr(source_events).filter(lambda e: e.duration > min_duration)
 
-    parsed_events = sufficient_length_events.map(
+    without_excluded_apps = sufficient_length_events.filter(
+        lambda e: not any(excluded_app.lower() in e.app.lower() for excluded_app in exclude_apps)
+        if isinstance(e, WindowTitleEvent)
+        else True
+    )
+
+    parsed_events = without_excluded_apps.map(
         lambda e: parse_events(event=e, metadata=metadata_enrichment, category2emoji=category2emoji)
     )
 

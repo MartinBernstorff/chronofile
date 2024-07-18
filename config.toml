@@ -5,6 +5,7 @@ exclude_titles = [
     "newtab",
     "raycast",
     "chrome",
+    "arc",
     "system settings",
     "localhost",
     "finder",
@@ -13,6 +14,11 @@ exclude_titles = [
     "branch: main",
     "loginwindow",
 ]
+
+exclude_apps = [
+    "arc",
+    "chrome",
+] # Exclude browsers because they are aaadded from the URL bucket in ActivityWatch
 
 merge_gap = 900  # 15 minutes in seconds
 min_duration = 5 # 5 seconds
@@ -65,7 +71,6 @@ category = "Browsing"
 
 [[metadata_enrichment]]
 title_matcher = ["github"]
-prettified_title = ""
 category = "Programming"
 
 [[metadata_enrichment]]

@@ -115,7 +115,6 @@ def cli(
 if __name__ == "__main__":
     from typer.testing import CliRunner
 
-    # TD: Remove before publish
     CliRunner().invoke(app, ["sync", "--dry-run"])
 
     app()

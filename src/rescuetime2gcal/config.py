@@ -29,8 +29,8 @@ class RecordMetadata:
     title_matcher: Sequence[
         str
     ]  # If a title has a substring matching any of these strings, it will have the metadata applied
-    prettified_title: str | None
     category: RecordCategory
+    prettified_title: str | None = None
 
     def __repr__(self) -> str:
         return f"{self.category}: {self.title_matcher} -> {self.prettified_title}"
@@ -47,6 +47,9 @@ class Config(pydantic.BaseModel):
 
     exclude_titles: Sequence[str]
     # Exclude events who contain these titles. Case insensitive.
+
+    exclude_apps: Sequence[str]
+    # Exclude events from these apps
 
     merge_gap: datetime.timedelta
     # If events have the same title and the first event's end time is within this gap, combine the events
@@ -73,5 +76,6 @@ class Config(pydantic.BaseModel):
             category2emoji={
                 RecordCategory(k): v for k, v in values.get("category2emoji", "").items()
             },
+            exclude_apps=values.get("exclude_apps", []),
             metadata_enrichment=values.get("metadata_enrichment", ""),
         )
