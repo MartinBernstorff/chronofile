@@ -31,7 +31,9 @@ def _to_destination_event(event: GCSAEvent) -> DestinationEvent:
     # Unpack here, to avoid overzealous type ignore
     start: datetime = event.start  # type: ignore
     end: datetime = event.end  # type: ignore
-    return DestinationEvent(title=event.summary, start=start, end=end, id=event.event_id)
+    return DestinationEvent(
+        title=event.summary, start=start, end=end, id=event.event_id, source_event=None
+    )
 
 
 def _dt_to_utc(dt: datetime) -> datetime:

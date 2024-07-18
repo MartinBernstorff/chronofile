@@ -31,6 +31,7 @@ class ParsedEvent(pydantic.BaseModel):
     start: "datetime.datetime"
     end: "datetime.datetime"
     category: Optional["RecordCategory"] = None
+    source_event: SourceEvent | None
 
     @pydantic.field_validator("title")
     def validate_title(cls, value: str) -> str:
@@ -98,14 +99,18 @@ def _parse_url_event(event: "URLEvent") -> ParsedEvent:
             except Exception:
                 continue
 
-            return ParsedEvent(title=title, start=event.start, end=event.start + event.duration)
+            return ParsedEvent(
+                title=title, start=event.start, end=event.start + event.duration, source_event=event
+            )
 
     title = event.url_title if len(event.url_title) != 0 else event.url
 
     if title == "":
         title = "No title"
 
-    return ParsedEvent(title=title, start=event.start, end=event.start + event.duration)
+    return ParsedEvent(
+        title=title, start=event.start, end=event.start + event.duration, source_event=event
+    )
 
 
 def _parse_event(event: "SourceEvent") -> ParsedEvent:
@@ -114,10 +119,15 @@ def _parse_event(event: "SourceEvent") -> ParsedEvent:
             return _parse_url_event(event)
         case WindowTitleEvent():
             title = event.window_title if len(event.window_title) != 0 else event.app
-            return ParsedEvent(title=title, start=event.start, end=event.start + event.duration)
+            return ParsedEvent(
+                title=title, start=event.start, end=event.start + event.duration, source_event=event
+            )
         case BareEvent():
             return ParsedEvent(
-                title=event.title, start=event.start, end=event.start + event.duration
+                title=event.title,
+                start=event.start,
+                end=event.start + event.duration,
+                source_event=event,
             )
         case BaseEvent():
             raise ValueError(f"Event type {type(event)} not supported")
@@ -132,7 +142,9 @@ def filter_by_title(
 
 
 def _new_event(event: ParsedEvent, end_time: "datetime.datetime") -> ParsedEvent:
-    return ParsedEvent(title=event.title, start=event.start, end=end_time)
+    return ParsedEvent(
+        title=event.title, start=event.start, end=end_time, source_event=event.source_event
+    )
 
 
 def merge_within_window(
@@ -180,6 +192,8 @@ def parse_events(
             generic_event.category = meta.category
             if meta.prettified_title is not None:
                 generic_event.title = meta.prettified_title
-            generic_event.title = f"{category2emoji[meta.category]} {generic_event.title}"
+
+            if category2emoji[meta.category] not in generic_event.title:
+                generic_event.title = f"{category2emoji[meta.category]} {generic_event.title}"
 
     return generic_event
