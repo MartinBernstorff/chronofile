@@ -1,6 +1,6 @@
 services:
   app:
-    build: .
+    image: ghcr.io/martinbernstorff/rescuetime2gcal:latest
     volumes:
       - ./config.toml:/app/config.toml
     environment:

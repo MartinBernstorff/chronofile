@@ -1,5 +1,5 @@
 # Builder stage
-FROM python:3.11 as builder
+FROM python:3.11@sha256:c5254471e6073d8942091227f469302f85b30d4b23077226f135360491f5226a as builder
 WORKDIR /app
 
 ENV RYE_HOME="/opt/rye"
@@ -21,7 +21,7 @@ COPY /src/ /app/src
 RUN rye build --wheel --clean
 
 # Runner stage
-FROM python:3.11-slim as runner
+FROM python:3.11-slim@sha256:80bcf8d243a0d763a7759d6b99e5bf89af1869135546698be4bf7ff6c3f98a59 as runner
 WORKDIR /app
 RUN useradd -m appuser
 COPY --from=builder --chown=appuser:appuser /app/dist /app/dist

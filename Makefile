@@ -49,10 +49,10 @@ docker_ci: ## Run all checks in docker
 #########################
 
 docker_build:
-	docker build -t ghcr.io/martinbernstorff/rescuetime-to-gcal:latest .
+	docker build -t ghcr.io/martinbernstorff/rescuetime2gcal:latest .
 
 docker_deploy: docker_build
-	docker run --env-file .env --network host ghcr.io/martinbernstorff/rescuetime-to-gcal:latest 
+	docker compose up -d
 
 docker_smoketest: docker_build
-	docker run --env-file .env --network host ghcr.io/martinbernstorff/rescuetime-to-gcal:latest --dry-run 
+	docker compose run app --dry-run
