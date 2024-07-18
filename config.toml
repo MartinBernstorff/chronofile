@@ -15,7 +15,10 @@ exclude_titles = [
     "loginwindow",
 ]
 
-exclude_apps = ["arc", "chrome"]
+exclude_apps = [
+    "arc",
+    "chrome",
+] # Exclude browsers because they are aaadded from the URL bucket in ActivityWatch
 
 merge_gap = 900  # 15 minutes in seconds
 min_duration = 5 # 5 seconds
