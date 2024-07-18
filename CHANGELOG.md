@@ -2,6 +2,13 @@
 
 
 
+## v0.12.1 (2024-07-18)
+
+### Fix
+
+* fix: watch when deploying from compose ([`632a3ab`](https://github.com/MartinBernstorff/rescuetime2gcal/commit/632a3ab7acb937307d7a451084ee8849b1124e7a))
+
+
 ## v0.12.0 (2024-07-18)
 
 ### Feature
