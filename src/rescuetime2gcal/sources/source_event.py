@@ -1,11 +1,8 @@
 """A source event, i.e. right after ingest."""
 import datetime
 from abc import ABC
-from typing import TYPE_CHECKING
 
 import pydantic
-
-if TYPE_CHECKING:
 
 
 class BaseSourceEvent(pydantic.BaseModel, ABC):
@@ -50,5 +47,3 @@ class WindowTitleEvent(BaseSourceEvent):
 
 
 SourceEvent = BaseSourceEvent | URLEvent | WindowTitleEvent | BareEvent
-
-
