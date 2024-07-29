@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Sequence
 
 import devtools
 
-from rescuetime2gcal.sources.source_event import event_identity
+from rescuetime2gcal.event import event_identity
 
 if TYPE_CHECKING:
     from rescuetime2gcal.event import ChronofileEvent, DestinationEvent

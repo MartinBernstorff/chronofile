@@ -9,7 +9,7 @@ import pytz
 from rescuetime2gcal.config import RecordCategory
 from rescuetime2gcal.sources.source_event import (
     BareEvent,
-    BaseEvent,
+    BaseSourceEvent,
     SourceEvent,
     URLEvent,
     WindowTitleEvent,
@@ -17,6 +17,11 @@ from rescuetime2gcal.sources.source_event import (
 
 if TYPE_CHECKING:
     from rescuetime2gcal.config import RecordCategory, RecordMetadata
+
+
+def event_identity(event: "DestinationEvent | ChronofileEvent") -> str:
+    string_format = "%d/%m/%Y, %H:%M:%S"
+    return f"{event.title} {event.start.strftime(string_format)} to {event.end.strftime(string_format)}"
 
 
 class ChronofileEvent(pydantic.BaseModel):
@@ -84,7 +89,7 @@ def _parse_event(event: "SourceEvent") -> ChronofileEvent:
                 end=event.start + event.duration,
                 source_event=event,
             )
-        case BaseEvent():
+        case BaseSourceEvent():
             raise ValueError(f"Event type {type(event)} not supported")
 
 

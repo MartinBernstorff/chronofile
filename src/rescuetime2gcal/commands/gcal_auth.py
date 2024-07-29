@@ -1,8 +1,8 @@
 import logging
 from typing import Annotated
 
-import typer
-from rescuetime2gcal.commands.sync import app
+import typer  # noqa: TCH002
+from rescuetime2gcal.commands.cli import app
 from rescuetime2gcal.sources.gcal.auth import print_refresh_token
 
 
