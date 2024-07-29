@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 import pytz
+
 from rescuetime2gcal.sources.gcal.client import DestinationClient, GcalClient
 from rescuetime2gcal.test_event import FakeParsedEvent
 

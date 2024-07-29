@@ -2,6 +2,7 @@ import datetime
 import os
 
 import pytz
+
 from rescuetime2gcal.sources import rescuetime
 
 

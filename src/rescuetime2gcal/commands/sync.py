@@ -9,11 +9,12 @@ from typing import TYPE_CHECKING, Annotated, Callable, Mapping, Optional, Sequen
 
 import coloredlogs
 import devtools
-import rescuetime2gcal.diff as diff
 import rich
 import rich.pretty
 import typer  # noqa: TCH002
 from iterpy.arr import Arr
+
+import rescuetime2gcal.diff as diff
 from rescuetime2gcal.commands.cli import app
 from rescuetime2gcal.config import Config, RecordCategory, RecordMetadata
 from rescuetime2gcal.event import DestinationEvent, hydrate_event

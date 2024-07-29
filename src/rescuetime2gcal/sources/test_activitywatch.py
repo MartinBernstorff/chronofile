@@ -2,6 +2,7 @@ import datetime
 import os
 
 import pytest
+
 from rescuetime2gcal.sources import activitywatch
 
 

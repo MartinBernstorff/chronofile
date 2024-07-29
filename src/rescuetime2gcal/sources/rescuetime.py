@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, Sequence
 import devtools
 import pytz
 import requests
+
 from rescuetime2gcal.sources.source_event import BareEvent
 
 if TYPE_CHECKING:
