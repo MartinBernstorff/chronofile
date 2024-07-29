@@ -5,18 +5,18 @@ from typing import TYPE_CHECKING, Sequence
 import pytest
 import pytz
 
-from rescuetime2gcal import delta
-from rescuetime2gcal.delta import EventChange, NewEvent, UpdateEvent
-from rescuetime2gcal.test_preprocessing import FakeDestinationEvent, FakeParsedEvent
+from rescuetime2gcal import diff
+from rescuetime2gcal.diff import EventChange, NewEvent, UpdateEvent
+from rescuetime2gcal.test_event import FakeDestinationEvent, FakeParsedEvent
 
 if TYPE_CHECKING:
-    from rescuetime2gcal.preprocessing import DestinationEvent, ParsedEvent
+    from rescuetime2gcal.event import ChronofileEvent, DestinationEvent
 
 
 @dataclass(frozen=True)
 class ChangesetExample:
     intention: str
-    parsed_events: Sequence["ParsedEvent"]
+    parsed_events: Sequence["ChronofileEvent"]
     destination_events: Sequence["DestinationEvent"]
     then: Sequence[EventChange]
 
@@ -82,7 +82,7 @@ class ChangesetExample:
     ids=lambda e: e.intention,
 )
 def test_changeset(e: ChangesetExample):
-    assert e.then == delta.changeset(e.parsed_events, e.destination_events)
+    assert e.then == diff.diff(e.parsed_events, e.destination_events)
 
 
 if __name__ == "__main__":

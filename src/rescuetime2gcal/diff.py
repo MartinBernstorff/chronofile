@@ -1,60 +1,60 @@
 import copy
 import logging
-
-from abc import ABC
 from dataclasses import dataclass
-from typing import Sequence
+from typing import TYPE_CHECKING, Sequence
 
 import devtools
 
-from rescuetime2gcal.source_event import event_identity
-from rescuetime2gcal.preprocessing import DestinationEvent, ParsedEvent, SourceEvent
+from rescuetime2gcal.sources.source_event import event_identity
+
+if TYPE_CHECKING:
+    from rescuetime2gcal.event import ChronofileEvent, DestinationEvent
 
 log = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)
 class NewEvent:
-    event: ParsedEvent
+    event: "ChronofileEvent"
 
 
 @dataclass(frozen=True)
 class UpdateEvent:
-    event: DestinationEvent
+    event: "DestinationEvent"
 
 
 @dataclass(frozen=True)
 class DeleteEvent:
-    event: DestinationEvent
+    event: "DestinationEvent"
 
 
 EventChange = NewEvent | UpdateEvent | DeleteEvent
 
 
-def deduper(
-    parsed_events: Sequence["ParsedEvent"], destination_events: Sequence["DestinationEvent"]
-) -> Sequence["ParsedEvent"]:
+def _deduper(
+    parsed_events: Sequence["ChronofileEvent"], destination_events: Sequence["ChronofileEvent"]
+) -> Sequence["ChronofileEvent"]:
     origin_hashes = {event_identity(e) for e in destination_events}
     return [e for e in parsed_events if event_identity(e) not in origin_hashes]
 
 
-def _ancestry_identity(event: "DestinationEvent | ParsedEvent") -> str:
+def _ancestry_identity(event: "ChronofileEvent | ChronofileEvent") -> str:
     string_format = "%d/%m/%Y, %H:%M:%S"
     return f"{event.title} {event.start.strftime(string_format)}"
 
 
-def changeset(
-    parsed_events: Sequence[ParsedEvent], destination_events: Sequence[DestinationEvent]
+def diff(
+    parsed_events: Sequence["ChronofileEvent"], destination_events: Sequence["DestinationEvent"]
 ) -> Sequence[EventChange]:
     """Identify which changes are needed on the mirror for it to match truth."""
     if len(destination_events) == 0:
         return [NewEvent(event=e) for e in parsed_events]
 
-    timezones = set(e.timezone for e in [*parsed_events, *destination_events])
+    timezones = {e.timezone for e in [*parsed_events, *destination_events]}
     if len(timezones) != 1:
         raise ValueError(f"All events must be in the same timezone. Found {timezones}")
 
-    deduped_events = deduper(destination_events=destination_events, parsed_events=parsed_events)
+    deduped_events = _deduper(destination_events=destination_events, parsed_events=parsed_events)
 
     changeset: list[EventChange] = []
     for new_event in deduped_events:

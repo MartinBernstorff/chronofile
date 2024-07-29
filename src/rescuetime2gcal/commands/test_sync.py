@@ -1,11 +1,19 @@
 import datetime
-import os
-from typing import Sequence
+from typing import TYPE_CHECKING, Sequence
 
-from rescuetime2gcal.__main__ import main
-from rescuetime2gcal.clients import gcal
+from rescuetime2gcal.test_event import FakeDestinationEvent
+
+if TYPE_CHECKING:
+    from rescuetime2gcal.event import DestinationEvent
+
+import os
+
+from rescuetime2gcal.commands.sync_logic import main
 from rescuetime2gcal.config import Config
-from rescuetime2gcal.source_event import BareEvent, SourceEvent
+from rescuetime2gcal.sources import gcal
+from rescuetime2gcal.sources.source_event import BareEvent, SourceEvent
+
+from .sync_logic import _pipeline
 
 
 class FakeBareEvent(BareEvent):
@@ -59,3 +67,20 @@ def test_e2e():
     )
     events = destination_client.get_events(start=start_window, end=end_window)
     assert len(events) == 2
+
+
+def test_pipeline_should_remove_duplicates():
+    def destination_client() -> Sequence["DestinationEvent"]:
+        return [FakeDestinationEvent(id="0"), FakeDestinationEvent(id="1")]
+
+    changes = _pipeline(
+        source_events=[],
+        destination_events=destination_client(),
+        exclude_titles=[],
+        metadata_enrichment=[],
+        category2emoji={},
+        min_duration=datetime.timedelta(days=1),
+        merge_gap=datetime.timedelta(days=1),
+        exclude_apps=[],
+    )
+    assert changes == [sync.DeleteEvent(event=FakeDestinationEvent(id="1"))]

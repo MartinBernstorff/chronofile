@@ -2,7 +2,7 @@ import datetime
 import os
 
 import pytz
-from rescuetime2gcal.clients import rescuetime
+from rescuetime2gcal.sources import rescuetime
 
 
 def test_get_data():

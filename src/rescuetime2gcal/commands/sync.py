@@ -10,14 +10,13 @@ import coloredlogs
 import rich
 import rich.pretty
 import typer
-
-from rescuetime2gcal.__main__ import main
-from rescuetime2gcal.clients import activitywatch, gcal, rescuetime
-from rescuetime2gcal.clients.gcal.auth import print_refresh_token
 from rescuetime2gcal.config import Config
+from rescuetime2gcal.sources import activitywatch, gcal, rescuetime
+
+from .sync_logic import main
 
 if TYPE_CHECKING:
-    from rescuetime2gcal.clients.event_source import EventSource
+    from rescuetime2gcal.sources.source import EventSource
 
 coloredlogs.install(  # type: ignore
     level="INFO",
@@ -30,17 +29,8 @@ log = logging.getLogger(__name__)
 app = typer.Typer()
 
 
-@app.command(name="auth")
-def auth(
-    gcal_client_id: Annotated[str, typer.Argument(envvar="GCAL_CLIENT_ID")],
-    gcal_client_secret: Annotated[str, typer.Argument(envvar="GCAL_CLIENT_SECRET")],
-):
-    logging.info("Getting refresh token")
-    print_refresh_token(client_id=gcal_client_id, client_secret=gcal_client_secret)
-
-
-@app.command(name="sync")
-def cli(
+@app.command()
+def sync(
     rescuetime_api_key: Annotated[Optional[str], typer.Argument(envvar="RESCUETIME_API_KEY")],
     activitywatch_base_url: Annotated[
         Optional[str], typer.Argument(envvar="ACTIVITYWATCH_BASE_URL")
@@ -100,7 +90,7 @@ def cli(
         sleep_minutes = 5
         log.info(f"Watch is {watch}, sleeping for {sleep_minutes} minutes")
         time.sleep(sleep_minutes * 60)
-        cli(
+        sync(
             rescuetime_api_key=rescuetime_api_key,
             activitywatch_base_url=activitywatch_base_url,
             gcal_email=gcal_email,

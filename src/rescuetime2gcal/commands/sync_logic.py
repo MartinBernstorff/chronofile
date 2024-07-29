@@ -4,28 +4,30 @@ from typing import TYPE_CHECKING, Mapping, Sequence
 
 import devtools
 from iterpy.arr import Arr
-
-from rescuetime2gcal import delta
-from rescuetime2gcal.preprocessing import DestinationEvent, merge_within_window, parse_events
-from rescuetime2gcal.source_event import SourceEvent, WindowTitleEvent
+from rescuetime2gcal import sync
+from rescuetime2gcal.event import hydrate_event
+from rescuetime2gcal.sources.source_event import WindowTitleEvent
+from rescuetime2gcal.timeline import merge_within_window
 
 if TYPE_CHECKING:
     import datetime
 
-    from rescuetime2gcal.clients.event_source import EventSource
-    from rescuetime2gcal.clients.gcal.client import DestinationClient
     from rescuetime2gcal.config import Config, RecordCategory, RecordMetadata
+    from rescuetime2gcal.event import DestinationEvent
+    from rescuetime2gcal.sources.gcal.client import DestinationClient
+    from rescuetime2gcal.sources.source import EventSource
+    from rescuetime2gcal.sources.source_event import SourceEvent
 
 log = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)
 class DeduplicatedGroup:
-    keeper: DestinationEvent
-    duplicates: Sequence[DestinationEvent]
+    keeper: "DestinationEvent"
+    duplicates: Sequence["DestinationEvent"]
 
     @staticmethod
-    def _from_event_group(event_group: Sequence[DestinationEvent]) -> "DeduplicatedGroup":
+    def _from_event_group(event_group: Sequence["DestinationEvent"]) -> "DeduplicatedGroup":
         if len(event_group) > 1:
             return DeduplicatedGroup(keeper=event_group[0], duplicates=event_group[1:])
         return DeduplicatedGroup(keeper=event_group[0], duplicates=[])
@@ -63,11 +65,11 @@ def main(
         log.info("Dry-run is false, syncing changes")
         for change in changes:
             match change:
-                case delta.NewEvent():
+                case sync.NewEvent():
                     destination_client.add_event(change.event)
-                case delta.UpdateEvent():
+                case sync.UpdateEvent():
                     destination_client.update_event(change.event)
-                case delta.DeleteEvent():
+                case sync.DeleteEvent():
                     destination_client.delete_event(change.event)
     else:
         log.info("Dry-run enabled, skipping sync")
@@ -82,7 +84,7 @@ def _pipeline(  # noqa: D417
     merge_gap: "datetime.timedelta",
     metadata_enrichment: Sequence["RecordMetadata"],
     exclude_apps: Sequence[str],
-) -> Sequence[delta.EventChange]:
+) -> Sequence[sync.EventChange]:
     """Event processing without I/O. Separating this from I/O makes debugging and testing easier.
 
     Args:
@@ -101,7 +103,9 @@ def _pipeline(  # noqa: D417
     )
 
     parsed_events = without_excluded_apps.map(
-        lambda e: parse_events(event=e, metadata=metadata_enrichment, category2emoji=category2emoji)
+        lambda e: hydrate_event(
+            event=e, metadata=metadata_enrichment, category2emoji=category2emoji
+        )
     )
 
     filtered_by_title = parsed_events.filter(
@@ -129,6 +133,6 @@ def _pipeline(  # noqa: D417
     )
 
     # Calculate the delta
-    changeset = delta.changeset(merged_within_gap, destination_keepers)
+    changeset = sync.changeset(merged_within_gap, destination_keepers)
 
-    return [*changeset, *[delta.DeleteEvent(event=e) for e in destination_duplicates]]
+    return [*changeset, *[sync.DeleteEvent(event=e) for e in destination_duplicates]]

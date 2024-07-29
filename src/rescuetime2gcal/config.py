@@ -30,10 +30,10 @@ class RecordMetadata:
         str
     ]  # If a title has a substring matching any of these strings, it will have the metadata applied
     category: RecordCategory
-    prettified_title: str | None = None
+    override_title: str | None = None
 
     def __repr__(self) -> str:
-        return f"{self.category}: {self.title_matcher} -> {self.prettified_title}"
+        return f"{self.category}: {self.title_matcher} -> {self.override_title}"
 
 
 class Config(pydantic.BaseModel):

@@ -1,57 +1,13 @@
 import copy
 import datetime
 import random
-from dataclasses import dataclass
 
 import pytest
 import pytz
 from iterpy.arr import Arr
 
-from rescuetime2gcal.preprocessing import (
-    DestinationEvent,
-    ParsedEvent,
-    _parse_event,
-    filter_by_title,
-    merge_within_window,
-)
-from rescuetime2gcal.source_event import SourceEvent, URLEvent
-
-
-class FakeParsedEvent(ParsedEvent):
-    title: str = "fake title"
-    start: datetime.datetime = datetime.datetime(2023, 1, 1, 0, 0, tzinfo=datetime.timezone.utc)
-    end: datetime.datetime = datetime.datetime(2023, 1, 1, 0, 0, tzinfo=datetime.timezone.utc)
-    source_event: SourceEvent | None = None
-
-    def __post_init__(self):
-        self.start = self.start.astimezone(pytz.UTC)
-        self.end = self.end.astimezone(pytz.UTC)
-
-
-class FakeDestinationEvent(DestinationEvent):
-    title: str = "fake title"
-    start: datetime.datetime = datetime.datetime(2023, 1, 1, 0, 0, tzinfo=datetime.timezone.utc)
-    end: datetime.datetime = datetime.datetime(2023, 1, 1, 0, 0, tzinfo=datetime.timezone.utc)
-    id: str = "0"
-    source_event: "SourceEvent | None" = None
-
-
-def test_filter_by_title():
-    events = [
-        FakeParsedEvent(title="tes"),
-        FakeParsedEvent(title="test2"),
-        FakeParsedEvent(title="test3"),
-    ]
-    filtered_events = filter_by_title(data=events, strs_to_match=["test"])
-    assert len(filtered_events) == 1
-    assert filtered_events[0].title == "tes"
-
-
-@dataclass
-class MergeTestCase:
-    name: str
-    input: list[ParsedEvent]
-    expected: list[ParsedEvent]
+from rescuetime2gcal.test_event import FakeParsedEvent, MergeTestCase
+from rescuetime2gcal.timeline import merge_within_window
 
 
 @pytest.mark.parametrize(
@@ -133,37 +89,3 @@ def test_merge_events_within_window(testcase: MergeTestCase):
 
         output = sorted(combined, key=lambda e: e.start)
         assert "\n".join(str(e) for e in output) == "\n".join(str(e) for e in testcase.expected)
-
-
-class FakeURLEvent(URLEvent):
-    url: str = "https://github.com/MartinBernstorff/rescuetime2gcal/pull/39"
-    url_title: str
-    start: datetime.datetime = datetime.datetime(2023, 1, 1, 0, 0, tzinfo=datetime.timezone.utc)
-    duration: datetime.timedelta = datetime.timedelta(seconds=0)
-
-
-@dataclass(frozen=True)
-class PEx:
-    given: "SourceEvent"
-    then: ParsedEvent
-
-
-@pytest.mark.parametrize(
-    ("ex"),
-    [
-        PEx(
-            FakeURLEvent(
-                url="https://github.com/MartinBernstorff/rescuetime2gcal/pull/39",
-                url_title="github_with_subdomain.com",
-            ),
-            FakeParsedEvent(title="GitHub: MartinBernstorff/rescuetime2gcal"),
-        ),
-        PEx(
-            FakeURLEvent(url="https://github.com/", url_title="GitHub without subdomain"),
-            FakeParsedEvent(title="GitHub without subdomain"),
-        ),
-    ],
-    ids=lambda e: e.given.url,
-)
-def test_parse_event_titles(ex: PEx):
-    assert ex.then.title == _parse_event(ex.given).title

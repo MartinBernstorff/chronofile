@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 import pydantic
 
 if TYPE_CHECKING:
-    from rescuetime2gcal.preprocessing import DestinationEvent, ParsedEvent
+    from rescuetime2gcal.event import ChronofileEvent, DestinationEvent
 
 
 class BaseEvent(pydantic.BaseModel, ABC):
@@ -53,6 +53,6 @@ SourceEvent = BaseEvent | URLEvent | WindowTitleEvent | BareEvent
 """A source event, i.e. right after ingest."""
 
 
-def event_identity(event: "DestinationEvent | ParsedEvent") -> str:
+def event_identity(event: "DestinationEvent | ChronofileEvent") -> str:
     string_format = "%d/%m/%Y, %H:%M:%S"
     return f"{event.title} {event.start.strftime(string_format)} to {event.end.strftime(string_format)}"
