@@ -17,8 +17,9 @@ from iterpy.arr import Arr
 import rescuetime2gcal.diff as diff
 from rescuetime2gcal.commands.cli import app
 from rescuetime2gcal.config import Config, RecordCategory, RecordMetadata
+from rescuetime2gcal.destinations import gcal
 from rescuetime2gcal.event import DestinationEvent, hydrate_event
-from rescuetime2gcal.sources import activitywatch, gcal, rescuetime
+from rescuetime2gcal.sources import activitywatch, rescuetime
 from rescuetime2gcal.sources.source import EventSource
 from rescuetime2gcal.sources.source_event import SourceEvent, WindowTitleEvent
 from rescuetime2gcal.timeline import merge_within_window

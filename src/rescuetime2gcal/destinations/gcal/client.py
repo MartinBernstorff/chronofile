@@ -9,9 +9,9 @@ from gcsa.event import Event as GCSAEvent
 from gcsa.google_calendar import GoogleCalendar
 from google.oauth2.credentials import Credentials
 from iterpy.arr import Arr
-
 from rescuetime2gcal.event import DestinationEvent
-from rescuetime2gcal.sources.gcal._consts import required_scopes
+
+from ._consts import required_scopes
 
 if TYPE_CHECKING:
     from rescuetime2gcal.event import ChronofileEvent
