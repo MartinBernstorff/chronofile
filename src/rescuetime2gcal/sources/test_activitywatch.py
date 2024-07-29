@@ -2,7 +2,8 @@ import datetime
 import os
 
 import pytest
-from rescuetime2gcal.clients import activitywatch
+
+from rescuetime2gcal.sources import activitywatch
 
 
 @pytest.fixture(autouse=True)

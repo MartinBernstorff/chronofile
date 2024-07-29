@@ -1,7 +1,7 @@
 import logging
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Protocol, Sequence
+from typing import TYPE_CHECKING, Protocol, Sequence
 
 import devtools
 import pytz
@@ -9,11 +9,15 @@ from gcsa.event import Event as GCSAEvent
 from gcsa.google_calendar import GoogleCalendar
 from google.oauth2.credentials import Credentials
 from iterpy.arr import Arr
-from rescuetime2gcal.clients.gcal._consts import required_scopes
-from rescuetime2gcal.preprocessing import DestinationEvent, ParsedEvent
+from rescuetime2gcal.event import DestinationEvent
+
+from ._consts import required_scopes
+
+if TYPE_CHECKING:
+    from rescuetime2gcal.event import ChronofileEvent
 
 
-def _parsed_to_gcsa_event(event: ParsedEvent) -> GCSAEvent:
+def _parsed_to_gcsa_event(event: "ChronofileEvent") -> GCSAEvent:
     return GCSAEvent(summary=event.title, start=event.start, end=event.end, timezone=event.timezone)
 
 
@@ -59,7 +63,7 @@ def _event_is_all_day(event: GCSAEvent) -> bool:
 class DestinationClient(Protocol):
     """Interface for a client that can add, get, update, and delete events. All responsese must be in UTC."""
 
-    def add_event(self, event: ParsedEvent) -> DestinationEvent:
+    def add_event(self, event: "ChronofileEvent") -> DestinationEvent:
         ...
 
     def get_events(self, start: datetime, end: datetime) -> Sequence[DestinationEvent]:
@@ -92,7 +96,7 @@ class GcalClient(DestinationClient):
             ),
         )
 
-    def add_event(self, event: ParsedEvent) -> DestinationEvent:
+    def add_event(self, event: "ChronofileEvent") -> DestinationEvent:
         val = self._client.add_event(  # type: ignore
             _parsed_to_gcsa_event(event)
         )

@@ -1,14 +1,11 @@
+"""A source event, i.e. right after ingest."""
 import datetime
 from abc import ABC
-from typing import TYPE_CHECKING
 
 import pydantic
 
-if TYPE_CHECKING:
-    from rescuetime2gcal.preprocessing import DestinationEvent, ParsedEvent
 
-
-class BaseEvent(pydantic.BaseModel, ABC):
+class BaseSourceEvent(pydantic.BaseModel, ABC):
     start: "datetime.datetime"
     duration: "datetime.timedelta"
 
@@ -20,7 +17,7 @@ class BaseEvent(pydantic.BaseModel, ABC):
         return f"[{self.start.isoformat(timespec='seconds')}, {self.duration.total_seconds() / 60:.2f}m] {description}"
 
 
-class BareEvent(BaseEvent):
+class BareEvent(BaseSourceEvent):
     title: str
 
     @pydantic.field_validator("title")
@@ -33,7 +30,7 @@ class BareEvent(BaseEvent):
         return super().repr_str(f"Bare, {self.title}")
 
 
-class URLEvent(BaseEvent):
+class URLEvent(BaseSourceEvent):
     url: str
     url_title: str
 
@@ -41,7 +38,7 @@ class URLEvent(BaseEvent):
         return super().repr_str(f"URL, {self.url_title}")
 
 
-class WindowTitleEvent(BaseEvent):
+class WindowTitleEvent(BaseSourceEvent):
     app: str
     window_title: str
 
@@ -49,10 +46,4 @@ class WindowTitleEvent(BaseEvent):
         return super().repr_str(f"Window, {self.app}: {self.window_title}")
 
 
-SourceEvent = BaseEvent | URLEvent | WindowTitleEvent | BareEvent
-"""A source event, i.e. right after ingest."""
-
-
-def event_identity(event: "DestinationEvent | ParsedEvent") -> str:
-    string_format = "%d/%m/%Y, %H:%M:%S"
-    return f"{event.title} {event.start.strftime(string_format)} to {event.end.strftime(string_format)}"
+SourceEvent = BaseSourceEvent | URLEvent | WindowTitleEvent | BareEvent

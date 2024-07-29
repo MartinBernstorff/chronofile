@@ -5,11 +5,11 @@ from typing import TYPE_CHECKING
 
 import pytest
 import pytz
-from rescuetime2gcal.clients.gcal.client import DestinationClient, GcalClient
-from rescuetime2gcal.test_preprocessing import FakeParsedEvent
+from rescuetime2gcal.destinations.gcal.client import DestinationClient, GcalClient
+from rescuetime2gcal.test_event import FakeParsedEvent
 
 if TYPE_CHECKING:
-    from rescuetime2gcal.preprocessing import ParsedEvent
+    from rescuetime2gcal.event import ChronofileEvent
 
 
 @pytest.fixture(autouse=True)
@@ -27,7 +27,7 @@ def _skip_if_no_gcal_credentials():  # type: ignore
 
 
 def _clean_test_interval(
-    client: DestinationClient, start: datetime.datetime, end: datetime.datetime
+    client: "DestinationClient", start: datetime.datetime, end: datetime.datetime
 ):
     for event in client.get_events(start, end):
         client.delete_event(event)
@@ -56,7 +56,7 @@ def _clean_test_interval(
     ],
 )
 def test_client_sync(
-    client: DestinationClient, system_timezone: pytz.BaseTzInfo, base_event: "ParsedEvent"
+    client: "DestinationClient", system_timezone: pytz.BaseTzInfo, base_event: "ChronofileEvent"
 ):
     # Update the system timezone
     os.environ["TZ"] = system_timezone  # type: ignore
