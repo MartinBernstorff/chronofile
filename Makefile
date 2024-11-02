@@ -13,7 +13,7 @@ quicksync:
 	uv sync --frozen
 
 test:
-	@uv test
+	@pytest .
 
 lint: ## Format code
 	@echo "––– Linting –––"
