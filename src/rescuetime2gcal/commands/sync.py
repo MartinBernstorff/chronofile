@@ -40,6 +40,8 @@ def _try_activitywatch(
     activitywatch_base_url: str | None,
 ) -> Optional[Callable[[], Sequence[SourceEvent]]]:
     if activitywatch_base_url:
+        if not activitywatch_base_url.endswith("/"):
+            activitywatch_base_url += "/"
         return partial(
             activitywatch.load_all_events,
             date=datetime.datetime.now(),
@@ -224,3 +226,14 @@ def sync(
             dry_run=dry_run,
             watch=watch,
         )
+
+
+if __name__ == "__main__":
+    sync(
+        rescuetime_api_key="B6300jX6LJHN6RU0uhZCQfOJEMrn2RfLIY0bkT_z",
+        activitywatch_base_url="http://localhost:5600/api",
+        gcal_email="martinbernstorff@gmail.com",
+        gcal_client_id="952562068458-eaok38c6ojn9cmm2s08v8l6hocok5a21.apps.googleusercontent.com",
+        gcal_client_secret="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",
+        gcal_refresh_token="1//09T97WtsOSt53CgYIARAAGAkSNwF-L9IrtGhjuisEq3yinw_ipWXqLWU8CrQFmEN-8MgUcOiUGDPt1RNJ49ZnZXr9LxHDQ-bFlWw",
+    )
