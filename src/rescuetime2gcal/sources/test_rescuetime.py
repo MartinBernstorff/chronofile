@@ -10,6 +10,7 @@ from rescuetime2gcal.sources import rescuetime
 def test_get_data():
     if os.environ.get("RESCUETIME_API_KEY") is None:
         pytest.skip("No RESCUETIME_API_KEY set")
+
     rescuetime.load(
         api_key=os.environ["RESCUETIME_API_KEY"],
         anchor_date=datetime.datetime.now(),
