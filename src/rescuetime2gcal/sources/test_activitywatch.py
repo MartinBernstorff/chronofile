@@ -27,5 +27,8 @@ def test_load_url_events():
 
 
 def test_load_all():
-    events = activitywatch.load_all_events(date=datetime.datetime.now())
+    base_url = os.environ.get("ACTIVITYWATCH_BASE_URL")
+    if base_url is None:
+        pytest.skip("No ACTIVITYWATCH_BASE_URL set")
+    events = activitywatch.load_all_events(date=datetime.datetime.now(), base_url=base_url)
     assert len(events) > 0

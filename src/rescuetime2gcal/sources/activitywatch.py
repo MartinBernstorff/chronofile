@@ -21,10 +21,11 @@ class AwBucket(pydantic.BaseModel):
 
 
 def _load_bucket_contents(
-    bucket_id: str, date: "datetime.datetime", base_url: str = "http://localhost:5600/api/"
+    bucket_id: str, date: "datetime.datetime", base_url: str
 ) -> Sequence[Mapping[str, Any]]:
     params = {"bucket_id": bucket_id, "start": date.strftime("%Y-%m-%d")}
-    response = requests.get(f"{base_url}/0/buckets/{bucket_id}/events", params=params).json()
+    url = f"{base_url}0/buckets/{bucket_id}/events"
+    response = requests.get(url=url, params=params).json()
     return response
 
 
@@ -70,10 +71,8 @@ def _initialise_bucket_loader(
             return partial(load_url_events, bucket.id, date)
 
 
-def load_all_events(
-    date: "datetime.datetime", base_url: str = "http://localhost:5600/api/"
-) -> Sequence[SourceEvent]:
-    bucket_data = requests.get(f"{base_url}/0/buckets").json()
+def load_all_events(date: "datetime.datetime", base_url: str) -> Sequence[SourceEvent]:
+    bucket_data = requests.get(f"{base_url}0/buckets").json()
 
     supported_buckets: Sequence[Mapping[str, Any]] = []
     for b in bucket_data.values():

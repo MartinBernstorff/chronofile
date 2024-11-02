@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 
 import pytest
 import pytz
+
 from rescuetime2gcal.destinations.gcal.client import DestinationClient, GcalClient
 from rescuetime2gcal.test_event import FakeParsedEvent
 
@@ -33,17 +34,6 @@ def _clean_test_interval(
         client.delete_event(event)
 
 
-@pytest.mark.parametrize(
-    ("client"),
-    [
-        GcalClient(
-            calendar_id=os.environ["TEST_CALENDAR_ID"],
-            client_id=os.environ["GCAL_CLIENT_ID"],
-            client_secret=os.environ["GCAL_CLIENT_SECRET"],
-            refresh_token=os.environ["GCAL_REFRESH_TOKEN"],
-        )
-    ],
-)
 @pytest.mark.parametrize(("system_timezone"), ["Europe/Copenhagen", "America/New_York"])
 @pytest.mark.parametrize(
     ("base_event"),
@@ -55,9 +45,14 @@ def _clean_test_interval(
         )
     ],
 )
-def test_client_sync(
-    client: "DestinationClient", system_timezone: pytz.BaseTzInfo, base_event: "ChronofileEvent"
-):
+def test_client_sync(system_timezone: pytz.BaseTzInfo, base_event: "ChronofileEvent"):
+    client = GcalClient(
+        calendar_id=os.environ["TEST_CALENDAR_ID"],
+        client_id=os.environ["GCAL_CLIENT_ID"],
+        client_secret=os.environ["GCAL_CLIENT_SECRET"],
+        refresh_token=os.environ["GCAL_REFRESH_TOKEN"],
+    )
+
     # Update the system timezone
     os.environ["TZ"] = system_timezone  # type: ignore
     time.tzset()

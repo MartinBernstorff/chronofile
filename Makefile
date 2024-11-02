@@ -7,29 +7,23 @@ MAKEFLAGS = --no-print-directory
 
 # Dependency management
 install:
-	rye sync
+	uv sync
 
 quicksync:
-	rye sync --no-lock
+	uv sync --frozen
 
 test:
-	@rye test
-
-test-with-coverage: 
-	@echo "––– Testing –––"
-	@make test
-	@rye run diff-cover .coverage.xml
-	@echo "✅✅✅ Tests passed ✅✅✅"
+	@pytest .
 
 lint: ## Format code
 	@echo "––– Linting –––"
-	@rye run ruff format .
-	@rye run ruff . --fix --unsafe-fixes
+	@uv run ruff format .
+	@uv run ruff . --fix --unsafe-fixes
 	@echo "✅✅✅ Lint ✅✅✅"
 
 types: ## Type-check code
 	@echo "––– Type-checking –––"
-	@rye run pyright .
+	@uv run pyright .
 	@echo "✅✅✅ Types ✅✅✅"
 
 validate_ci: ## Run all checks

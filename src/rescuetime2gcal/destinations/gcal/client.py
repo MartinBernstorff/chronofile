@@ -9,6 +9,7 @@ from gcsa.event import Event as GCSAEvent
 from gcsa.google_calendar import GoogleCalendar
 from google.oauth2.credentials import Credentials
 from iterpy.arr import Arr
+
 from rescuetime2gcal.event import DestinationEvent
 
 from ._consts import required_scopes
@@ -31,12 +32,20 @@ def _destination_to_gcsa_event(event: "DestinationEvent") -> GCSAEvent:
     )
 
 
+def _empty_if_none(value: str | None) -> str:
+    return value if value is not None else ""
+
+
 def _to_destination_event(event: GCSAEvent) -> DestinationEvent:
     # Unpack here, to avoid overzealous type ignore
     start: datetime = event.start  # type: ignore
     end: datetime = event.end  # type: ignore
     return DestinationEvent(
-        title=event.summary, start=start, end=end, id=event.event_id, source_event=None
+        title=_empty_if_none(event.summary),
+        start=start,
+        end=end,
+        id=_empty_if_none(event.event_id),
+        source_event=None,
     )
 
 
@@ -63,17 +72,13 @@ def _event_is_all_day(event: GCSAEvent) -> bool:
 class DestinationClient(Protocol):
     """Interface for a client that can add, get, update, and delete events. All responsese must be in UTC."""
 
-    def add_event(self, event: "ChronofileEvent") -> DestinationEvent:
-        ...
+    def add_event(self, event: "ChronofileEvent") -> DestinationEvent: ...
 
-    def get_events(self, start: datetime, end: datetime) -> Sequence[DestinationEvent]:
-        ...
+    def get_events(self, start: datetime, end: datetime) -> Sequence[DestinationEvent]: ...
 
-    def update_event(self, event: DestinationEvent) -> DestinationEvent:
-        ...
+    def update_event(self, event: DestinationEvent) -> DestinationEvent: ...
 
-    def delete_event(self, event: DestinationEvent) -> None:
-        ...
+    def delete_event(self, event: DestinationEvent) -> None: ...
 
 
 @dataclass

@@ -40,6 +40,8 @@ def _try_activitywatch(
     activitywatch_base_url: str | None,
 ) -> Optional[Callable[[], Sequence[SourceEvent]]]:
     if activitywatch_base_url:
+        if not activitywatch_base_url.endswith("/"):
+            activitywatch_base_url += "/"
         return partial(
             activitywatch.load_all_events,
             date=datetime.datetime.now(),
