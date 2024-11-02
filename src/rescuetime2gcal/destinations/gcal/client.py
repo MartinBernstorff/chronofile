@@ -32,7 +32,7 @@ def _destination_to_gcsa_event(event: "DestinationEvent") -> GCSAEvent:
     )
 
 
-def empty_if_none(value: str | None) -> str:
+def _empty_if_none(value: str | None) -> str:
     return value if value is not None else ""
 
 
@@ -41,10 +41,10 @@ def _to_destination_event(event: GCSAEvent) -> DestinationEvent:
     start: datetime = event.start  # type: ignore
     end: datetime = event.end  # type: ignore
     return DestinationEvent(
-        title=empty_if_none(event.summary),
+        title=_empty_if_none(event.summary),
         start=start,
         end=end,
-        id=empty_if_none(event.event_id),
+        id=_empty_if_none(event.event_id),
         source_event=None,
     )
 
