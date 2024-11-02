@@ -2,6 +2,21 @@
 
 
 
+## v0.13.1 (2024-11-02)
+
+### Fix
+
+* fix: allow ending slash in urls (#45) ([`79f740f`](https://github.com/MartinBernstorff/rescuetime2gcal/commit/79f740f3ed28a9a406f8f036b71f8735b44e9847))
+
+### Refactor
+
+* refactor: split into commands (#44) ([`e5e65f9`](https://github.com/MartinBernstorff/rescuetime2gcal/commit/e5e65f932f530bd55118745165aa7490348eb348))
+
+### Unknown
+
+* update activitywatch.py ([`03b159a`](https://github.com/MartinBernstorff/rescuetime2gcal/commit/03b159a5aadd54bc669eccd7a6a9d21f7cc50bce))
+
+
 ## v0.13.0 (2024-07-18)
 
 ### Feature
