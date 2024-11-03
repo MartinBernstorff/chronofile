@@ -49,7 +49,7 @@ include-package-data = true
 "*" = ["py.typed", "*.pyi"]
 
 [project.scripts]
-r2s = "rescuetime2gcal.cli:app"
+r2s = "rescuetime2gcal.main:app"
 
 [tool.semantic_release]
 version_toml = ["pyproject.toml:project.version"]
