@@ -2,6 +2,13 @@
 
 
 
+## v0.13.2 (2024-11-03)
+
+### Fix
+
+* fix: cli structure (#46) ([`a5436a6`](https://github.com/MartinBernstorff/rescuetime2gcal/commit/a5436a6520de72251c460b950ace2ef6594ed12f))
+
+
 ## v0.13.1 (2024-11-02)
 
 ### Fix
