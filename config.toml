@@ -119,11 +119,6 @@ prettified_title = "Stack Overflow"
 category = "Programming"
 
 [[metadata_enrichment]]
-title_matcher = ["twitter"]
-prettified_title = "Browsing"
-category = "Browsing"
-
-[[metadata_enrichment]]
 title_matcher = ["wandb.ai"]
 prettified_title = "Programming"
 category = "Programming"
@@ -139,7 +134,7 @@ prettified_title = "Omnivore"
 category = "Reading"
 
 [[metadata_enrichment]]
-title_matcher = ["twitter"]
+title_matcher = ["twitter", "X"]
 prettified_title = "Twitter"
 category = "Browsing"
 
