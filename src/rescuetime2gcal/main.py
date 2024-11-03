@@ -9,7 +9,7 @@ import typer
 from iterpy.arr import Arr
 
 import rescuetime2gcal.diff as diff
-from rescuetime2gcal.commands.sync_logic import _pipeline, _try_activitywatch, _try_rescuetime, log
+from rescuetime2gcal.commands.sync_logic import log, pipeline, try_activitywatch, try_rescuetime
 from rescuetime2gcal.config import Config
 from rescuetime2gcal.destinations import gcal
 from rescuetime2gcal.destinations.gcal.auth import print_refresh_token
@@ -43,8 +43,8 @@ def sync(
     event_sources: Sequence[EventSource] = [
         s
         for s in [
-            _try_rescuetime(rescuetime_api_key, cfg),
-            _try_activitywatch(activitywatch_base_url),
+            try_rescuetime(rescuetime_api_key, cfg),
+            try_activitywatch(activitywatch_base_url),
         ]
         if s is not None
     ]
@@ -63,7 +63,7 @@ def sync(
         refresh_token=gcal_refresh_token,
     )
 
-    changes = _pipeline(
+    changes = pipeline(
         source_events=input_events,
         destination_events=destination_client.get_events(
             start=min([event.start for event in input_events]),

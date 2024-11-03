@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 
 from rescuetime2gcal.sources.source_event import BareEvent, SourceEvent
 
-from .sync_logic import _pipeline  # type: ignore
+from .sync_logic import pipeline  # type: ignore
 
 
 class FakeBareEvent(BareEvent):
@@ -29,7 +29,7 @@ def test_should_remove_duplicates():
     def destination_client() -> Sequence["DestinationEvent"]:
         return [FakeDestinationEvent(id="0"), FakeDestinationEvent(id="1")]
 
-    changes = _pipeline(
+    changes = pipeline(
         source_events=[],
         destination_events=destination_client(),
         exclude_titles=[],

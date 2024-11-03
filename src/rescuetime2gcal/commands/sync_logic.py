@@ -25,7 +25,7 @@ coloredlogs.install(  # type: ignore
 log = logging.getLogger(__name__)
 
 
-def _try_activitywatch(
+def try_activitywatch(
     activitywatch_base_url: str | None,
 ) -> Optional[Callable[[], Sequence[SourceEvent]]]:
     if activitywatch_base_url:
@@ -39,7 +39,7 @@ def _try_activitywatch(
     return None
 
 
-def _try_rescuetime(
+def try_rescuetime(
     rescuetime_api_key: str | None, cfg: "Config"
 ) -> Optional[Callable[[], Sequence[SourceEvent]]]:
     if rescuetime_api_key:
@@ -65,7 +65,7 @@ class DeduplicatedGroup:
         return DeduplicatedGroup(keeper=event_group[0], duplicates=[])
 
 
-def _pipeline(  # noqa: D417
+def pipeline(  # noqa: D417
     source_events: Sequence["SourceEvent"],
     destination_events: Sequence["DestinationEvent"],
     min_duration: "datetime.timedelta",
