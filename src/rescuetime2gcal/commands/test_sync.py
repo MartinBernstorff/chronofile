@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 
 from rescuetime2gcal.sources.source_event import BareEvent, SourceEvent
 
-from .sync import _pipeline  # type: ignore
+from .sync_logic import _pipeline  # type: ignore
 
 
 class FakeBareEvent(BareEvent):
