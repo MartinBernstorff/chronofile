@@ -172,3 +172,13 @@ category = "Programming"
 title_matcher = ["Orbstack"]
 prettified_title = "Orbstack"
 category = "Programming"
+
+[[metadata_enrichment]]
+title_matcher = ["Open WebUI"]
+prettified_title = "Open WebUI"
+category = "Programming"
+
+[[metadata_enrichment]]
+title_matcher = "Trifork Chat"
+prettified_title = "Trifork Chat"
+category = "Communicating"
