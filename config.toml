@@ -179,6 +179,6 @@ prettified_title = "Open WebUI"
 category = "Programming"
 
 [[metadata_enrichment]]
-title_matcher = "Trifork Chat"
+title_matcher = ["Trifork Chat"]
 prettified_title = "Trifork Chat"
 category = "Communicating"
