@@ -182,3 +182,8 @@ category = "Programming"
 title_matcher = ["Trifork Chat"]
 override_title = "Trifork Chat"
 category = "Communicating"
+
+[[metadata_enrichment]]
+title_matcher = ["fut-patient"]
+override_title = "fut-patient"
+category = "Programming"
