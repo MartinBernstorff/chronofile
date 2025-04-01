@@ -6,7 +6,7 @@ import devtools
 import pytz
 import requests
 
-from rescuetime2gcal.sources.source_event import BareEvent
+from rescuetime2gcal.event import BareEvent
 
 if TYPE_CHECKING:
     import pytz.tzfile

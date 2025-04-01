@@ -124,7 +124,7 @@ name = "click"
 version = "8.1.7"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "colorama", marker = "platform_system == 'Windows'" },
+    { name = "colorama", marker = "sys_platform == 'win32'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/96/d3/f04c7bfcf5c1862a2a5b845c6b2b360488cf47af55dfa79c98f6a6bf98b5/click-8.1.7.tar.gz", hash = "sha256:ca9853ad459e787e2192211578cc907e7594e294c7ccc834310722b41b9ca6de", size = 336121 }
 wheels = [
@@ -799,7 +799,7 @@ wheels = [
 
 [[package]]
 name = "rescuetime2gcal"
-version = "0.13.1"
+version = "0.13.2"
 source = { editable = "." }
 dependencies = [
     { name = "coloredlogs" },
@@ -812,7 +812,7 @@ dependencies = [
     { name = "typer" },
 ]
 
-[package.dependency-groups]
+[package.dev-dependencies]
 dev = [
     { name = "diff-cover" },
     { name = "pyright" },
@@ -836,7 +836,7 @@ requires-dist = [
     { name = "typer", specifier = ">=0.12.3" },
 ]
 
-[package.metadata.dependency-groups]
+[package.metadata.requires-dev]
 dev = [
     { name = "diff-cover", specifier = "==8.0.3" },
     { name = "pyright", specifier = "==1.1.350" },
@@ -981,7 +981,7 @@ version = "4.3.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "pytz-deprecation-shim" },
-    { name = "tzdata", marker = "platform_system == 'Windows'" },
+    { name = "tzdata", marker = "sys_platform == 'win32'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/d7/33/68fe21c4a3ecf5e093b5179ea23be777037b1e83722f5559a1e2223d2422/tzlocal-4.3.1.tar.gz", hash = "sha256:ee32ef8c20803c19a96ed366addd3d4a729ef6309cb5c7359a0cc2eeeb7fa46a", size = 31637 }
 wheels = [

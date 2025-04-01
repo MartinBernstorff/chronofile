@@ -36,37 +36,37 @@ Writing = "✍️"
 
 [[metadata_enrichment]]
 title_matcher = ["workflowy"]
-prettified_title = ""
+override_title = ""
 category = "Planning"
 
 [[metadata_enrichment]]
 title_matcher = ["tldraw"]
-prettified_title = "TLDraw"
+override_title = "TLDraw"
 category = "Planning"
 
 [[metadata_enrichment]]
 title_matcher = ["2718"]
-prettified_title = "Marimo"
+override_title = "Marimo"
 category = "Programming"
 
 [[metadata_enrichment]]
 title_matcher = ["skim"]
-prettified_title = "Skim"
+override_title = "Skim"
 category = "Reading"
 
 [[metadata_enrichment]]
 title_matcher = ["dr.dk"]
-prettified_title = "DR"
+override_title = "DR"
 category = "Browsing"
 
 [[metadata_enrichment]]
 title_matcher = ["citrix"]
-prettified_title = "Citrix"
+override_title = "Citrix"
 category = "Programming"
 
 [[metadata_enrichment]]
 title_matcher = ["facebook"]
-prettified_title = "Facebook"
+override_title = "Facebook"
 category = "Browsing"
 
 [[metadata_enrichment]]
@@ -75,110 +75,110 @@ category = "Programming"
 
 [[metadata_enrichment]]
 title_matcher = ["hey"]
-prettified_title = "Hey"
+override_title = "Hey"
 category = "Browsing"
 
 [[metadata_enrichment]]
 title_matcher = ["linkedin"]
-prettified_title = "LinkedIn"
+override_title = "LinkedIn"
 category = "Browsing"
 
 [[metadata_enrichment]]
 title_matcher = ["Notes"]
-prettified_title = "Notes"
+override_title = "Notes"
 category = "Planning"
 
 [[metadata_enrichment]]
 title_matcher = ["mail"]
-prettified_title = "Mail"
+override_title = "Mail"
 category = "Communicating"
 
 [[metadata_enrichment]]
 title_matcher = ["macrumors"]
-prettified_title = "Browsing"
+override_title = "Browsing"
 category = "Browsing"
 
 [[metadata_enrichment]]
 title_matcher = ["reddit"]
-prettified_title = "Reddit"
+override_title = "Reddit"
 category = "Browsing"
 
 [[metadata_enrichment]]
 title_matcher = ["slack"]
-prettified_title = "Slack"
+override_title = "Slack"
 category = "Communicating"
 
 [[metadata_enrichment]]
 title_matcher = ["star realms"]
-prettified_title = "Star Realms"
+override_title = "Star Realms"
 category = "Gaming"
 
 [[metadata_enrichment]]
 title_matcher = ["stackoverflow"]
-prettified_title = "Stack Overflow"
+override_title = "Stack Overflow"
 category = "Programming"
 
 [[metadata_enrichment]]
 title_matcher = ["twitter"]
-prettified_title = "Browsing"
+override_title = "Browsing"
 category = "Browsing"
 
 [[metadata_enrichment]]
 title_matcher = ["wandb.ai"]
-prettified_title = "Programming"
+override_title = "Programming"
 category = "Programming"
 
 [[metadata_enrichment]]
 title_matcher = ["spotify"]
-prettified_title = "Spotify"
+override_title = "Spotify"
 category = "Sound"
 
 [[metadata_enrichment]]
 title_matcher = ["omnivore"]
-prettified_title = "Omnivore"
+override_title = "Omnivore"
 category = "Reading"
 
 [[metadata_enrichment]]
 title_matcher = ["twitter"]
-prettified_title = "Twitter"
+override_title = "Twitter"
 category = "Browsing"
 
 [[metadata_enrichment]]
 title_matcher = ["Word"]
-prettified_title = "Word"
+override_title = "Word"
 category = "Writing"
 
 [[metadata_enrichment]]
 title_matcher = ["Calendar"]
-prettified_title = "Calendar"
+override_title = "Calendar"
 category = "Planning"
 
 [[metadata_enrichment]]
 title_matcher = ["Obsidian"]
-prettified_title = "Obsidian"
+override_title = "Obsidian"
 category = "Writing"
 
 [[metadata_enrichment]]
 title_matcher = ["Docs"]
-prettified_title = ""
+override_title = ""
 category = "Programming"
 
 [[metadata_enrichment]]
 title_matcher = ["Alacritty"]
-prettified_title = "Alacritty"
+override_title = "Alacritty"
 category = "Programming"
 
 [[metadata_enrichment]]
 title_matcher = ["Orbstack"]
-prettified_title = "Orbstack"
+override_title = "Orbstack"
 category = "Programming"
 
 [[metadata_enrichment]]
 title_matcher = ["Open WebUI"]
-prettified_title = "Open WebUI"
+override_title = "Open WebUI"
 category = "Programming"
 
 [[metadata_enrichment]]
 title_matcher = ["Trifork Chat"]
-prettified_title = "Trifork Chat"
+override_title = "Trifork Chat"
 category = "Communicating"

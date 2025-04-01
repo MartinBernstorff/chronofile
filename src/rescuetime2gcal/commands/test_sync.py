@@ -2,13 +2,14 @@ import datetime
 from typing import TYPE_CHECKING, Sequence
 
 from rescuetime2gcal.diff import DeleteEvent
+from rescuetime2gcal.event import BareEvent
 from rescuetime2gcal.test_event import FakeDestinationEvent
 
 if TYPE_CHECKING:
     from rescuetime2gcal.event import DestinationEvent
 
 
-from rescuetime2gcal.sources.source_event import BareEvent, SourceEvent
+from rescuetime2gcal.event import SourceEvent
 
 from .sync_logic import pipeline  # type: ignore
 

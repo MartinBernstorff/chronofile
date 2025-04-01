@@ -22,7 +22,6 @@ app = typer.Typer()
 
 @app.command()
 def sync(
-    rescuetime_api_key: Annotated[Optional[str], typer.Argument(envvar="RESCUETIME_API_KEY")],
     activitywatch_base_url: Annotated[
         Optional[str], typer.Argument(envvar="ACTIVITYWATCH_BASE_URL")
     ],
@@ -31,6 +30,9 @@ def sync(
     gcal_client_secret: Annotated[str, typer.Argument(envvar="GCAL_CLIENT_SECRET")],
     gcal_refresh_token: Annotated[str, typer.Argument(envvar="GCAL_REFRESH_TOKEN")],
     config_path: Annotated[str, typer.Argument(envvar="CONFIG_PATH")] = "config.toml",
+    rescuetime_api_key: Annotated[
+        Optional[str], typer.Argument(envvar="RESCUETIME_API_KEY")
+    ] = None,
     dry_run: bool = False,
     watch: Annotated[bool, typer.Option(envvar="WATCH")] = False,
 ):

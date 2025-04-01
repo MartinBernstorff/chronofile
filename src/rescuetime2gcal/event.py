@@ -1,5 +1,6 @@
 import datetime
 import re
+from abc import ABC
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Mapping, Optional, Sequence
 
@@ -7,16 +8,14 @@ import pydantic
 import pytz
 
 from rescuetime2gcal.config import RecordCategory
-from rescuetime2gcal.sources.source_event import (
-    BareEvent,
-    BaseSourceEvent,
-    SourceEvent,
-    URLEvent,
-    WindowTitleEvent,
-)
 
 if TYPE_CHECKING:
     from rescuetime2gcal.config import RecordCategory, RecordMetadata
+
+
+def to_utc(dt: "datetime.datetime") -> "datetime.datetime":
+    """Convert a datetime to UTC, handling naive datetimes as UTC."""
+    return dt.astimezone(datetime.timezone.utc)
 
 
 def event_identity(event: "DestinationEvent | ChronofileEvent") -> str:
@@ -31,7 +30,7 @@ class ChronofileEvent(pydantic.BaseModel):
     start: "datetime.datetime"
     end: "datetime.datetime"
     category: Optional["RecordCategory"] = None
-    source_event: SourceEvent | None
+    source_event: "SourceEvent | None"
 
     @pydantic.field_validator("title")
     def validate_title(cls, value: str) -> str:
@@ -41,15 +40,17 @@ class ChronofileEvent(pydantic.BaseModel):
 
     @pydantic.field_validator("start")
     def validate_start(cls, value: "datetime.datetime") -> "datetime.datetime":
-        if not _is_utc(value):
+        utc_value = to_utc(value)
+        if not is_utc(utc_value):
             raise ValueError("Timezone must be UTC")
-        return value
+        return utc_value
 
     @pydantic.field_validator("end")
     def validate_end(cls, value: "datetime.datetime") -> "datetime.datetime":
-        if not _is_utc(value):
+        utc_value = to_utc(value)
+        if not is_utc(utc_value):
             raise ValueError("Timezone must be UTC")
-        return value
+        return utc_value
 
     @property
     def timezone(self) -> str:
@@ -73,6 +74,54 @@ class DestinationEvent(ChronofileEvent):
     id: str
 
 
+class BaseSourceEvent(pydantic.BaseModel, ABC):
+    start: "datetime.datetime"
+    duration: "datetime.timedelta"
+
+    def __post_init__(self):
+        if self.start.tzinfo != datetime.timezone.utc:
+            raise ValueError("Start time must be in UTC to ensure correct timezone conversion")
+
+    def repr_str(self, description: str) -> str:
+        return f"[{self.start.isoformat(timespec='seconds')}, {self.duration.total_seconds() / 60:.2f}m] {description}"
+
+    @pydantic.field_validator("start")
+    def validate_start(cls, value: "datetime.datetime") -> "datetime.datetime":
+        utc_value = to_utc(value)
+        if not is_utc(utc_value):
+            raise ValueError("Timezone must be UTC")
+        return utc_value
+
+
+class BareEvent(BaseSourceEvent):
+    title: str
+
+    @pydantic.field_validator("title")
+    def validate_title(cls, value: str) -> str:
+        if len(value) < 1:
+            raise ValueError("Title must contain content")
+        return value
+
+    def __repr__(self) -> str:
+        return super().repr_str(f"Bare, {self.title}")
+
+
+class URLEvent(BaseSourceEvent):
+    url: str
+    url_title: str
+
+    def __repr__(self) -> str:
+        return super().repr_str(f"URL, {self.url_title}")
+
+
+class WindowTitleEvent(BaseSourceEvent):
+    app: str
+    window_title: str
+
+    def __repr__(self) -> str:
+        return super().repr_str(f"Window, {self.app}: {self.window_title}")
+
+
 def _parse_event(event: "SourceEvent") -> ChronofileEvent:
     match event:
         case URLEvent():
@@ -93,7 +142,7 @@ def _parse_event(event: "SourceEvent") -> ChronofileEvent:
             raise ValueError(f"Event type {type(event)} not supported")
 
 
-def _is_utc(value: "datetime.datetime") -> bool:
+def is_utc(value: "datetime.datetime") -> bool:
     return value.tzinfo in (pytz.UTC, datetime.timezone.utc)
 
 
@@ -147,7 +196,7 @@ def _add_category(generic_event: ChronofileEvent, meta: "RecordMetadata"):
     generic_event.category = meta.category
 
 
-def _override_title(generic_event: ChronofileEvent, meta: "RecordMetadata"):
+def _prettified_title(generic_event: ChronofileEvent, meta: "RecordMetadata"):
     if meta.override_title is not None:
         generic_event.title = meta.override_title
 
@@ -172,7 +221,10 @@ def hydrate_event(
     for meta in metadata:
         if _event_matches_metadata(generic_event, meta):
             _add_category(generic_event, meta)
-            _override_title(generic_event, meta)
+            _prettified_title(generic_event, meta)
             _add_emoji(category2emoji, generic_event, meta)
 
     return generic_event
+
+
+SourceEvent = BaseSourceEvent | URLEvent | WindowTitleEvent | BareEvent

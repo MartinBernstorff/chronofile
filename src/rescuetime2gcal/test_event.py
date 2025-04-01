@@ -4,8 +4,13 @@ from dataclasses import dataclass
 import pytest
 import pytz
 
-from rescuetime2gcal.event import ChronofileEvent, DestinationEvent, _parse_event
-from rescuetime2gcal.sources.source_event import SourceEvent, URLEvent
+from rescuetime2gcal.event import (
+    ChronofileEvent,
+    DestinationEvent,
+    SourceEvent,
+    URLEvent,
+    _parse_event,
+)
 
 
 class FakeParsedEvent(ChronofileEvent):
