@@ -2,6 +2,17 @@
 
 
 
+## v0.13.4 (2025-05-23)
+
+### Fix
+
+* fix: trigger version bump ([`265949d`](https://github.com/MartinBernstorff/chronofile/commit/265949dd88d6eed652e77a62e85c8b303472d71b))
+
+### Unknown
+
+* cleanup: leftover rescuetime config ([`b81a7d1`](https://github.com/MartinBernstorff/chronofile/commit/b81a7d1058018a1b0990415e5f4bc6c90a4beda8))
+
+
 ## v0.13.3 (2025-05-23)
 
 ### Chore
