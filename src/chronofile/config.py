@@ -5,7 +5,6 @@ from enum import Enum
 from typing import Mapping, Sequence
 
 import pydantic
-import pytz
 import toml
 
 
@@ -39,9 +38,6 @@ class RecordMetadata:
 class Config(pydantic.BaseModel):
     model_config = pydantic.ConfigDict(arbitrary_types_allowed=True)
 
-    rescuetime_timezone: pytz.tzinfo.BaseTzInfo
-    # Timezone of the rescuetime user. Is not provided by the API, so must be provided manually.
-
     sync_window: datetime.timedelta
     # How far back from the current date to look for events
 
@@ -68,7 +64,6 @@ class Config(pydantic.BaseModel):
         values = toml.load(pathlib.Path(path))
 
         return Config(
-            rescuetime_timezone=pytz.timezone(values.get("rescuetime_timezone", "")),
             sync_window=datetime.timedelta(seconds=values.get("sync_window", 60 * 60 * 5)),
             exclude_titles=values.get("exclude_titles", ""),
             merge_gap=datetime.timedelta(seconds=values.get("merge_gap", 60 * 10)),

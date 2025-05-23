@@ -30,9 +30,6 @@ def sync(
     gcal_client_secret: Annotated[str, typer.Argument(envvar="GCAL_CLIENT_SECRET")],
     gcal_refresh_token: Annotated[str, typer.Argument(envvar="GCAL_REFRESH_TOKEN")],
     config_path: Annotated[str, typer.Argument(envvar="CONFIG_PATH")] = "config.toml",
-    rescuetime_api_key: Annotated[
-        Optional[str], typer.Argument(envvar="RESCUETIME_API_KEY")
-    ] = None,
     dry_run: bool = False,
     watch: Annotated[bool, typer.Option(envvar="WATCH")] = False,
 ):
@@ -47,9 +44,7 @@ def sync(
     ]
 
     if len(event_sources) == 0:
-        raise ValueError(
-            "No event sources provided. Specify either rescuetime_api_key or activitywatch_base_url"
-        )
+        raise ValueError("No event sources provided.")
 
     input_events = Arr(event_sources).map(lambda f: f()).flatten().to_list()
 
@@ -95,7 +90,6 @@ def sync(
         log.info(f"Watch is {watch}, sleeping for {sleep_minutes} minutes")
         time.sleep(sleep_minutes * 60)
         sync(
-            rescuetime_api_key=rescuetime_api_key,
             activitywatch_base_url=activitywatch_base_url,
             gcal_email=gcal_email,
             gcal_client_id=gcal_client_id,
