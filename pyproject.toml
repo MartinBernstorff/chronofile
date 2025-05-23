@@ -1,8 +1,8 @@
 [project]
 version = "0.13.2"
 requires-python = ">=3.11"
-name = "rescuetime2gcal"
-description = "Rescuetime2Gcal"
+name = "chronofile"
+description = ""
 dependencies = [
   "coloredlogs>=15.0.1",
   "devtools>=0.12.2",
@@ -34,9 +34,9 @@ file = "README.md"
 content-type = "text/markdown"
 
 [project.urls]
-homepage = "https://github.com/MartinBernstorff/rescuetime2gcal"
-repository = "https://github.com/MartinBernstorff/rescuetime2gcal"
-documentation = "https://MartinBernstorff.github.io/rescuetime2gcal/"
+homepage = "https://github.com/MartinBernstorff/chronofile"
+repository = "https://github.com/MartinBernstorff/chronofile"
+documentation = "https://MartinBernstorff.github.io/chronofile/"
 
 [build-system]
 requires = ["setuptools>=61.0.0", "wheel", "setuptools_scm"]
@@ -49,7 +49,7 @@ include-package-data = true
 "*" = ["py.typed", "*.pyi"]
 
 [project.scripts]
-r2s = "rescuetime2gcal.main:app"
+chronofile = "chronofile.main:app"
 
 [tool.semantic_release]
 version_toml = ["pyproject.toml:project.version"]

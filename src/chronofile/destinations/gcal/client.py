@@ -10,12 +10,12 @@ from gcsa.google_calendar import GoogleCalendar
 from google.oauth2.credentials import Credentials
 from iterpy.arr import Arr
 
-from rescuetime2gcal.event import DestinationEvent
+from chronofile.event import DestinationEvent
 
 from ._consts import required_scopes
 
 if TYPE_CHECKING:
-    from rescuetime2gcal.event import ChronofileEvent
+    from chronofile.event import ChronofileEvent
 
 
 def _parsed_to_gcsa_event(event: "ChronofileEvent") -> GCSAEvent:
@@ -72,13 +72,17 @@ def _event_is_all_day(event: GCSAEvent) -> bool:
 class DestinationClient(Protocol):
     """Interface for a client that can add, get, update, and delete events. All responsese must be in UTC."""
 
-    def add_event(self, event: "ChronofileEvent") -> DestinationEvent: ...
+    def add_event(self, event: "ChronofileEvent") -> DestinationEvent:
+        ...
 
-    def get_events(self, start: datetime, end: datetime) -> Sequence[DestinationEvent]: ...
+    def get_events(self, start: datetime, end: datetime) -> Sequence[DestinationEvent]:
+        ...
 
-    def update_event(self, event: DestinationEvent) -> DestinationEvent: ...
+    def update_event(self, event: DestinationEvent) -> DestinationEvent:
+        ...
 
-    def delete_event(self, event: DestinationEvent) -> None: ...
+    def delete_event(self, event: DestinationEvent) -> None:
+        ...
 
 
 @dataclass

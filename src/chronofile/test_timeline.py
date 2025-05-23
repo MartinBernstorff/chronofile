@@ -6,8 +6,8 @@ import pytest
 import pytz
 from iterpy.arr import Arr
 
-from rescuetime2gcal.test_event import FakeParsedEvent, MergeTestCase
-from rescuetime2gcal.timeline import merge_within_window
+from chronofile.test_event import FakeParsedEvent, MergeTestCase
+from chronofile.timeline import merge_within_window
 
 
 @pytest.mark.parametrize(

@@ -6,11 +6,11 @@ from typing import TYPE_CHECKING
 import pytest
 import pytz
 
-from rescuetime2gcal.destinations.gcal.client import DestinationClient, GcalClient
-from rescuetime2gcal.test_event import FakeParsedEvent
+from chronofile.destinations.gcal.client import DestinationClient, GcalClient
+from chronofile.test_event import FakeParsedEvent
 
 if TYPE_CHECKING:
-    from rescuetime2gcal.event import ChronofileEvent
+    from chronofile.event import ChronofileEvent
 
 
 @pytest.fixture(autouse=True)

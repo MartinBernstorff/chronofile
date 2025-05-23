@@ -4,13 +4,7 @@ from dataclasses import dataclass
 import pytest
 import pytz
 
-from rescuetime2gcal.event import (
-    ChronofileEvent,
-    DestinationEvent,
-    SourceEvent,
-    URLEvent,
-    _parse_event,
-)
+from chronofile.event import ChronofileEvent, DestinationEvent, SourceEvent, URLEvent, _parse_event
 
 
 class FakeParsedEvent(ChronofileEvent):
@@ -40,7 +34,7 @@ class MergeTestCase:
 
 
 class FakeURLEvent(URLEvent):
-    url: str = "https://github.com/MartinBernstorff/rescuetime2gcal/pull/39"
+    url: str = "https://github.com/MartinBernstorff/chronofile/pull/39"
     url_title: str
     start: datetime.datetime = datetime.datetime(2023, 1, 1, 0, 0, tzinfo=datetime.timezone.utc)
     duration: datetime.timedelta = datetime.timedelta(seconds=0)
@@ -57,10 +51,10 @@ class PEx:
     [
         PEx(
             FakeURLEvent(
-                url="https://github.com/MartinBernstorff/rescuetime2gcal/pull/39",
+                url="https://github.com/MartinBernstorff/chronofile/pull/39",
                 url_title="github_with_subdomain.com",
             ),
-            FakeParsedEvent(title="GitHub: MartinBernstorff/rescuetime2gcal"),
+            FakeParsedEvent(title="GitHub: MartinBernstorff/chronofile"),
         ),
         PEx(
             FakeURLEvent(url="https://github.com/", url_title="GitHub without subdomain"),

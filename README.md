@@ -1,11 +1,11 @@
-# Rescuetime2Gcal
+# Chronofile
 
 
 [![Roadmap](https://img.shields.io/badge/Board-Roadmap-green)][roadmap]
 
-[dev container]: https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com//Rescuetime2Gcal/
-[pypi status]: https://pypi.org/project/Rescuetime2Gcal/
-[documentation]: https://.github.io/Rescuetime2Gcal/
+[dev container]: https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com//Chronofile/
+[pypi status]: https://pypi.org/project/Chronofile/
+[documentation]: https://.github.io/Chronofile/
 [roadmap]: https://github.com/users//projects/
 
 
@@ -31,7 +31,7 @@
 | 👩‍💻 **Usage Questions**          | [GitHub Discussions]   |
 | 🗯 **General Discussion**       | [GitHub Discussions]   |
 
-[github issue tracker]: https://github.com//rescuetime2gcal/issues
-[github discussions]: https://github.com//rescuetime2gcal/discussions
+[github issue tracker]: https://github.com//chronofile/issues
+[github discussions]: https://github.com//chronofile/discussions
 
 

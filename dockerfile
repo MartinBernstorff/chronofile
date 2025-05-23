@@ -20,4 +20,4 @@ COPY --from=builder --chown=app:app /app /app
 ENV PATH="/app/.venv/bin:$PATH"
 
 USER appuser
-ENTRYPOINT [ "r2s", "sync" ]
+ENTRYPOINT [ "chronofile", "sync" ]

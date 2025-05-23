@@ -3,7 +3,7 @@ import os
 
 import pytest
 
-from rescuetime2gcal.sources import activitywatch
+from chronofile.sources import activitywatch
 
 
 @pytest.fixture(autouse=True)

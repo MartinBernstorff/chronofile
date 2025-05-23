@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING, Sequence
 
-from rescuetime2gcal.event import ChronofileEvent
+from chronofile.event import ChronofileEvent
 
 if TYPE_CHECKING:
     import datetime

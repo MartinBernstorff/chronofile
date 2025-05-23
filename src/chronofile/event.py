@@ -7,10 +7,10 @@ from typing import TYPE_CHECKING, Mapping, Optional, Sequence
 import pydantic
 import pytz
 
-from rescuetime2gcal.config import RecordCategory
+from chronofile.config import RecordCategory
 
 if TYPE_CHECKING:
-    from rescuetime2gcal.config import RecordCategory, RecordMetadata
+    from chronofile.config import RecordCategory, RecordMetadata
 
 
 def to_utc(dt: "datetime.datetime") -> "datetime.datetime":

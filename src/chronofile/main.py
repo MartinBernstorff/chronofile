@@ -8,14 +8,14 @@ import rich.pretty
 import typer
 from iterpy.arr import Arr
 
-import rescuetime2gcal.diff as diff
-from rescuetime2gcal.commands.sync_logic import log, pipeline, try_activitywatch, try_rescuetime
-from rescuetime2gcal.config import Config
-from rescuetime2gcal.destinations import gcal
-from rescuetime2gcal.destinations.gcal.auth import print_refresh_token
+import chronofile.diff as diff
+from chronofile.commands.sync_logic import log, pipeline, try_activitywatch
+from chronofile.config import Config
+from chronofile.destinations import gcal
+from chronofile.destinations.gcal.auth import print_refresh_token
 
 if TYPE_CHECKING:
-    from rescuetime2gcal.sources.source import EventSource
+    from chronofile.sources.source import EventSource
 
 app = typer.Typer()
 
@@ -38,17 +38,12 @@ def sync(
 ):
     cfg = Config.from_toml(config_path)
 
-    logging.info(f"Running rescuetime2gcal version {importlib.metadata.version('rescuetime2gcal')}")
+    logging.info(f"Running chronofile version {importlib.metadata.version('chronofile')}")
     logging.info(rich.pretty.pprint(cfg))
     logging.info("Starting sync")
 
     event_sources: Sequence[EventSource] = [
-        s
-        for s in [
-            try_rescuetime(rescuetime_api_key, cfg),
-            try_activitywatch(activitywatch_base_url),
-        ]
-        if s is not None
+        s for s in [try_activitywatch(activitywatch_base_url)] if s is not None
     ]
 
     if len(event_sources) == 0:
