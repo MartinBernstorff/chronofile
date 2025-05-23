@@ -5,10 +5,10 @@ from typing import TYPE_CHECKING, Sequence
 
 import devtools
 
-from rescuetime2gcal.event import event_identity
+from chronofile.event import event_identity
 
 if TYPE_CHECKING:
-    from rescuetime2gcal.event import ChronofileEvent, DestinationEvent
+    from chronofile.event import ChronofileEvent, DestinationEvent
 
 log = logging.getLogger(__name__)
 

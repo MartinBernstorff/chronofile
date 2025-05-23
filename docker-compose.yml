@@ -1,11 +1,10 @@
 services:
   app:
-    image: ghcr.io/martinbernstorff/rescuetime2gcal:latest
+    image: ghcr.io/martinbernstorff/chronofile:latest
     volumes:
       - ./config.toml:/app/config.toml
     environment:
       - CONFIG_PATH=/app/config.toml
-      - RESCUETIME_API_KEY
       - ACTIVITYWATCH_BASE_URL
       - GCAL_EMAIL
       - GCAL_CLIENT_ID

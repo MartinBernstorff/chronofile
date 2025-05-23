@@ -5,12 +5,12 @@ from typing import TYPE_CHECKING, Sequence
 import pytest
 import pytz
 
-from rescuetime2gcal import diff
-from rescuetime2gcal.diff import EventChange, NewEvent, UpdateEvent
-from rescuetime2gcal.test_event import FakeDestinationEvent, FakeParsedEvent
+from chronofile import diff
+from chronofile.diff import EventChange, NewEvent, UpdateEvent
+from chronofile.test_event import FakeDestinationEvent, FakeParsedEvent
 
 if TYPE_CHECKING:
-    from rescuetime2gcal.event import ChronofileEvent, DestinationEvent
+    from chronofile.event import ChronofileEvent, DestinationEvent
 
 
 @dataclass(frozen=True)

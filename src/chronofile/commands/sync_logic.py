@@ -7,13 +7,13 @@ from typing import TYPE_CHECKING, Callable, Mapping, Optional, Sequence
 import coloredlogs
 from iterpy.arr import Arr
 
-import rescuetime2gcal.diff as diff
-from rescuetime2gcal.event import DestinationEvent, SourceEvent, WindowTitleEvent, hydrate_event
-from rescuetime2gcal.sources import activitywatch, rescuetime
-from rescuetime2gcal.timeline import merge_within_window
+import chronofile.diff as diff
+from chronofile.event import DestinationEvent, SourceEvent, WindowTitleEvent, hydrate_event
+from chronofile.sources import activitywatch
+from chronofile.timeline import merge_within_window
 
 if TYPE_CHECKING:
-    from rescuetime2gcal.config import Config, RecordCategory, RecordMetadata
+    from chronofile.config import RecordCategory, RecordMetadata
 
 coloredlogs.install(  # type: ignore
     level="INFO",
@@ -34,20 +34,6 @@ def try_activitywatch(
             activitywatch.load_all_events,
             date=datetime.datetime.now(),
             base_url=activitywatch_base_url,
-        )
-    return None
-
-
-def try_rescuetime(
-    rescuetime_api_key: str | None, cfg: "Config"
-) -> Optional[Callable[[], Sequence[SourceEvent]]]:
-    if rescuetime_api_key:
-        return partial(
-            rescuetime.load,
-            api_key=rescuetime_api_key,
-            anchor_date=datetime.datetime.now(),
-            lookback_window=cfg.sync_window,
-            timezone=cfg.rescuetime_timezone,
         )
     return None
 

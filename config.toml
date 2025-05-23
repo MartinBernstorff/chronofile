@@ -1,4 +1,3 @@
-rescuetime_timezone = "Europe/Copenhagen"
 sync_window = 43200                       # 0.5 days in seconds
 
 exclude_titles = [

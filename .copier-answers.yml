@@ -4,9 +4,9 @@ _src_path: https://github.com/MartinBernstorff/nimble-python-template
 email: martinbernstorff@gmail.com
 full_name: Martin Bernstorff
 github_username: MartinBernstorff
-package_name: rescuetime2gcal
-project_name: Rescuetime2Gcal
-project_slug: rescuetime2gcal
+package_name: chronofile
+project_name: chronofile
+project_slug: chronofile
 python_version: '3.11'
 release_docker_image: true
 release_package: false

@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING, Protocol, Sequence
 
 if TYPE_CHECKING:
-    from rescuetime2gcal.event import SourceEvent
+    from chronofile.event import SourceEvent
 
 
 class EventSource(Protocol):

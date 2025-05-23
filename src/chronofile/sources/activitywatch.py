@@ -6,7 +6,7 @@ from typing import Any, Callable, Literal, Mapping, Sequence
 import pydantic
 import requests
 
-from rescuetime2gcal.event import SourceEvent, URLEvent, WindowTitleEvent
+from chronofile.event import SourceEvent, URLEvent, WindowTitleEvent
 
 log = logging.getLogger(__name__)
 

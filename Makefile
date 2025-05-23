@@ -2,7 +2,7 @@
 # Start template makefile #
 ###########################
 
-SRC_PATH = rescuetime2gcal
+SRC_PATH = chronofile
 MAKEFLAGS = --no-print-directory
 
 # Dependency management
@@ -35,15 +35,15 @@ validate_ci: ## Run all checks
 
 docker_ci: ## Run all checks in docker
 	@echo "––– Running all checks in docker –––"
-	docker build -t rescuetime2gcal_ci  -f .github/Dockerfile.dev .
-	docker run --env-file .env rescuetime2gcal_ci make validate_ci
+	docker build -t chronofile_ci  -f .github/Dockerfile.dev .
+	docker run --env-file .env chronofile_ci make validate_ci
 
 #########################
 # End template makefile #
 #########################
 
 docker_build:
-	docker build -t ghcr.io/martinbernstorff/rescuetime2gcal:latest .
+	docker build -t ghcr.io/martinbernstorff/chronofile:latest .
 
 docker_deploy: docker_build
 	docker compose up -d
